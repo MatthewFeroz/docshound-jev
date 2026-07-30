@@ -62,6 +62,9 @@ class DocSource(BaseModel):
     snippet: str
     source_type: str = "official_docs"
     confidence: float = Field(ge=0, le=1)
+    gap_name: str | None = None
+    coverage: Literal["covered", "partially_covered", "missing"] | None = None
+    assessment: str | None = None
 
 
 class AgentState(BaseModel):
