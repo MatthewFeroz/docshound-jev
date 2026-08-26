@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import AsyncMock, patch
+from uuid import UUID
 
 import httpx
 
@@ -15,6 +16,24 @@ from app.tools.docs_discovery import (
     parse_sitemap_document,
 )
 from app.tools.docs_retrieval import rank_chunks_for_gaps
+
+
+class _NoopTraceRun:
+    trace_id = UUID("22222222-2222-2222-2222-222222222222")
+
+    def end(self, outputs=None) -> None:
+        return None
+
+
+class _NoopTrace:
+    def __init__(self, *args, **kwargs) -> None:
+        self.run = _NoopTraceRun()
+
+    async def __aenter__(self) -> _NoopTraceRun:
+        return self.run
+
+    async def __aexit__(self, exc_type, exc, traceback) -> None:
+        return None
 
 
 def _gap() -> GapCluster:
@@ -201,6 +220,10 @@ class DocsSearchTests(unittest.IsolatedAsyncioTestCase):
             patch(
                 "app.tools.docs._assess_coverage",
                 new=AsyncMock(return_value={0: assessment}),
+            ),
+            patch(
+                "app.tracing.langsmith_trace",
+                side_effect=_NoopTrace,
             ),
         ):
             sources = await search_official_docs(

@@ -116,9 +116,7 @@ async def research_pull_requests(repo: str, limit: int) -> list[PullRequest]:
                         body=item.get("body"),
                         url=item["html_url"],
                         state="merged",
-                        merged_at=datetime.fromisoformat(
-                            item["merged_at"].replace("Z", "+00:00")
-                        ),
+                        merged_at=datetime.fromisoformat(item["merged_at"].replace("Z", "+00:00")),
                         labels=[label["name"] for label in item.get("labels", [])],
                         created_at=datetime.fromisoformat(
                             item["created_at"].replace("Z", "+00:00")

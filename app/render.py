@@ -1,4 +1,5 @@
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from fastapi.templating import Jinja2Templates
 
@@ -7,6 +8,18 @@ _TOOL_LABELS = {
     "cluster_issues": "cluster_issues",
     "store_results": "store_results",
     "search_official_docs": "search_official_docs",
+}
+_STAGE_INDEX = {
+    "research": 1,
+    "analyze": 2,
+    "search_docs": 3,
+    "store": 4,
+}
+_ACTION_LABELS = {
+    "research": "Research repository",
+    "analyze": "Analyze evidence",
+    "search_docs": "Inspect official docs",
+    "store": "Finalize run",
 }
 
 
@@ -19,17 +32,51 @@ def _timeline(templates: Jinja2Templates, **ctx: Any) -> str:
     return _render(templates, "_partials/timeline_event.html", ctx)
 
 
-def _oob_gaps_count(count: int) -> str:
-    return (
-        f'<span class="panel-sub" id="gaps-count" hx-swap-oob="outerHTML">'
-        f"{count} found</span>"
+def _inspector_status(templates: Jinja2Templates, **ctx: Any) -> str:
+    return _render(
+        templates,
+        "_partials/inspector_run_status.html",
+        {"oob": True, **ctx},
     )
+
+
+def _stage_status(templates: Jinja2Templates, **ctx: Any) -> str:
+    stage = ctx["stage"]
+    return _render(
+        templates,
+        "_partials/inspector_stage_head.html",
+        {
+            "stage_index": _STAGE_INDEX[stage],
+            "oob": True,
+            **ctx,
+        },
+    )
+
+
+def _span(templates: Jinja2Templates, event: dict[str, Any], oob: bool) -> str:
+    return _render(
+        templates,
+        "_partials/inspector_span.html",
+        {
+            "oob": oob,
+            "progress_current": None,
+            "progress_total": None,
+            "progress_detail": None,
+            "duration_ms": None,
+            "output_summary": None,
+            "output_details": {},
+            "error": None,
+            **event,
+        },
+    )
+
+
+def _oob_gaps_count(count: int) -> str:
+    return f'<span class="panel-sub" id="gaps-count" hx-swap-oob="outerHTML">{count} found</span>'
 
 
 def _hide_empty() -> str:
-    return (
-        '<div class="gaps-empty" id="gaps-empty" hx-swap-oob="outerHTML" hidden></div>'
-    )
+    return '<div class="gaps-empty" id="gaps-empty" hx-swap-oob="outerHTML" hidden></div>'
 
 
 def render_events(
@@ -41,14 +88,26 @@ def render_events(
 
     if etype == "run_started":
         yield {
-            "event": "timeline",
-            "data": _timeline(
+            "event": "inspector_oob",
+            "data": _inspector_status(
                 templates,
-                kind="system",
-                icon="●",
-                label=f"run started · {event['repo']}",
-                detail=event["run_id"][:8],
-                meta=None,
+                status="running",
+                title=f"Starting analysis of {event['repo']}",
+                detail="Preparing the agent router and repository context.",
+                progress=0,
+            ),
+        }
+        return
+
+    if etype == "agent_thinking":
+        yield {
+            "event": "inspector_oob",
+            "data": _inspector_status(
+                templates,
+                status="running",
+                title=event.get("label") or "Choosing the next action",
+                detail=event.get("detail") or "",
+                progress=event.get("progress", 0),
             ),
         }
         return
@@ -56,16 +115,79 @@ def render_events(
     if etype == "agent_decision":
         reason = event.get("reason") or ""
         action = event.get("action") or "?"
+        progress = max(0, _STAGE_INDEX.get(action, 1) - 1)
         yield {
-            "event": "timeline",
-            "data": _timeline(
+            "event": "inspector_oob",
+            "data": _inspector_status(
                 templates,
-                kind="decision",
-                icon="◆",
-                label=f"agent decision → {action}",
+                status="running",
+                title=f"Next: {_ACTION_LABELS.get(action, action)}",
                 detail=reason,
-                meta=None,
+                progress=progress,
             ),
+        }
+        return
+
+    if etype == "stage_started":
+        stage = event["stage"]
+        stage_html = _stage_status(
+            templates,
+            stage=stage,
+            label=event["label"],
+            status="running",
+            detail=event.get("detail") or "",
+            duration_ms=None,
+            started_at=event.get("started_at"),
+        )
+        run_html = _inspector_status(
+            templates,
+            status="running",
+            title=event["label"],
+            detail=event.get("detail") or "",
+            progress=_STAGE_INDEX[stage] - 1,
+        )
+        yield {
+            "event": "inspector_oob",
+            "data": f"{stage_html}{run_html}",
+        }
+        return
+
+    if etype == "stage_completed":
+        stage = event["stage"]
+        stage_html = _stage_status(
+            templates,
+            stage=stage,
+            label=event["label"],
+            status=event.get("status") or "success",
+            detail=event.get("detail") or "",
+            duration_ms=event.get("duration_ms"),
+            started_at=None,
+        )
+        run_html = _inspector_status(
+            templates,
+            status="running",
+            title=f"{event['label']} complete",
+            detail=event.get("detail") or "",
+            progress=_STAGE_INDEX[stage],
+        )
+        yield {
+            "event": "inspector_oob",
+            "data": f"{stage_html}{run_html}",
+        }
+        return
+
+    if etype == "span_started":
+        stage = event.get("stage", "analyze")
+        yield {
+            "event": f"span_{stage}",
+            "data": _span(templates, event, oob=False),
+        }
+        return
+
+    if etype in {"span_progress", "span_completed"}:
+        yield {
+            "event": "inspector_oob",
+            "data": _span(templates, event, oob=True),
         }
         return
 
@@ -194,17 +316,30 @@ def render_events(
 
     if etype == "run_completed":
         status = event.get("status", "completed")
-        kind = "error" if status == "failed" else "success"
-        icon = "✕" if kind == "error" else "✓"
+        title = (
+            "Run failed"
+            if status == "failed"
+            else "Run completed with errors"
+            if status == "completed_with_errors"
+            else "Run completed"
+        )
+        detail = (
+            "; ".join(event.get("errors") or [])
+            if event.get("errors")
+            else (
+                f"{event.get('issues_scraped', 0)} issues · "
+                f"{event.get('pull_requests_scraped', 0)} pull requests · "
+                f"{event.get('clusters_found', 0)} gaps"
+            )
+        )
         yield {
-            "event": "timeline",
-            "data": _timeline(
+            "event": "inspector_oob",
+            "data": _inspector_status(
                 templates,
-                kind=kind,
-                icon=icon,
-                label=f"run {status}",
-                detail=None,
-                meta=None,
+                status=status,
+                title=title,
+                detail=detail,
+                progress=4 if status != "failed" else 0,
             ),
         }
         return

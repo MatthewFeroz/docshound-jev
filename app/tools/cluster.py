@@ -8,7 +8,6 @@ from openai import AsyncOpenAI
 from app.config import get_settings
 from app.state import GapCluster, Issue, PullRequest
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -31,15 +30,11 @@ async def cluster_issues(
         try:
             clusters = await _cluster_with_llm(issues, pull_requests)
             if clusters:
-                validated = _validate_cluster_sources(
-                    clusters, issues, pull_requests
-                )
+                validated = _validate_cluster_sources(clusters, issues, pull_requests)
                 return _ensure_shipped_change(validated, pull_requests)
         except Exception:
             logger.exception("LLM clustering failed; using heuristic fallback")
-    return _ensure_shipped_change(
-        _cluster_heuristically(issues, pull_requests), pull_requests
-    )
+    return _ensure_shipped_change(_cluster_heuristically(issues, pull_requests), pull_requests)
 
 
 async def _cluster_with_llm(
@@ -70,7 +65,6 @@ async def _cluster_with_llm(
 
     response = await client.chat.completions.create(
         model=settings.openai_model,
-        temperature=0,
         response_format={"type": "json_object"},
         messages=[
             {
@@ -96,8 +90,9 @@ async def _cluster_with_llm(
                     "is now available. Prefer changes that would help a user operate, "
                     "configure, migrate, or understand the project. Include two to four "
                     "shipped_change findings when suitable merged PRs are supplied. "
-                    "For open_gap findings, if the issues do not contain a confirmed solution, say what still "
-                    "needs verification instead of inventing steps. Do not add "
+                    "For open_gap findings, if the issues do not contain a confirmed "
+                    "solution, say what still needs verification instead of inventing "
+                    "steps. Do not add "
                     "vendor-specific setup, commands, environment variables, links, "
                     "or visual styling unless they appear in the supplied issues. "
                     "Do not add review metadata or a source-issues section; the "
@@ -205,9 +200,7 @@ def _validate_cluster_sources(
         cluster.issue_numbers = [
             number for number in cluster.issue_numbers if number in valid_issue_numbers
         ]
-        cluster.pr_numbers = [
-            number for number in cluster.pr_numbers if number in valid_pr_numbers
-        ]
+        cluster.pr_numbers = [number for number in cluster.pr_numbers if number in valid_pr_numbers]
         if cluster.finding_type == "shipped_change" and not cluster.pr_numbers:
             continue
         if cluster.finding_type == "shipped_change":
@@ -278,9 +271,7 @@ def _ensure_shipped_change(
     shipped = GapCluster(
         name=title,
         summary=_pull_request_summary(primary),
-        recurring_question=(
-            "What changed, and what should users know about the shipped behavior?"
-        ),
+        recurring_question=("What changed, and what should users know about the shipped behavior?"),
         issue_numbers=[],
         pr_numbers=[primary.number],
         finding_type="shipped_change",
@@ -341,14 +332,11 @@ def attach_review_drafts(
 ) -> list[GapCluster]:
     issue_by_number = {issue.number: issue for issue in issues}
     pull_request_by_number = {
-        pull_request.number: pull_request
-        for pull_request in (pull_requests or [])
+        pull_request.number: pull_request for pull_request in (pull_requests or [])
     }
     for cluster in clusters:
         related = [
-            issue_by_number[number]
-            for number in cluster.issue_numbers
-            if number in issue_by_number
+            issue_by_number[number] for number in cluster.issue_numbers if number in issue_by_number
         ]
         related_pull_requests = [
             pull_request_by_number[number]
@@ -366,17 +354,14 @@ def attach_review_drafts(
                 _remove_generated_source_section(cluster.draft_markdown)
             )
         else:
-            markdown = _fallback_review_markdown(
-                cluster, related, related_pull_requests
-            )
+            markdown = _fallback_review_markdown(cluster, related, related_pull_requests)
 
         issue_resolution = _resolution_from_issues(related)
         if cluster.finding_type != "shipped_change" and issue_resolution:
             markdown = _replace_resolution_section(markdown, issue_resolution)
 
         cluster.draft_markdown = (
-            f"{markdown.rstrip()}\n\n"
-            f"{_source_links(related, related_pull_requests)}"
+            f"{markdown.rstrip()}\n\n{_source_links(related, related_pull_requests)}"
         )
     return clusters
 
@@ -397,18 +382,21 @@ def _fallback_review_markdown(
         excerpt = _issue_excerpt(pull_request.body)
         if excerpt:
             evidence_markdown += (
-                f"\n\n### Merged PR #{pull_request.number}: "
-                f"{pull_request.title}\n\n{excerpt}"
+                f"\n\n### Merged PR #{pull_request.number}: {pull_request.title}\n\n{excerpt}"
             )
     if not evidence_markdown:
         evidence_markdown = "The linked issues do not include enough description to quote."
 
     resolution = _resolution_from_pull_requests(related_pull_requests)
-    resolution = resolution or _resolution_from_issues(related) or (
-        "The source issues do not establish a confirmed resolution. Before publishing,\n"
-        "verify the expected behavior with the maintainers and replace this note with the\n"
-        "supported fix or workaround. The final documentation should directly answer the\n"
-        "question above and include a working example derived from the verified behavior."
+    resolution = (
+        resolution
+        or _resolution_from_issues(related)
+        or (
+            "The source issues do not establish a confirmed resolution. Before publishing,\n"
+            "verify the expected behavior with the maintainers and replace this note with the\n"
+            "supported fix or workaround. The final documentation should directly answer the\n"
+            "question above and include a working example derived from the verified behavior."
+        )
     )
 
     return f"""# {cluster.draft_title}
@@ -428,9 +416,7 @@ def _fallback_review_markdown(
 {evidence_markdown}"""
 
 
-def _shipped_change_markdown(
-    cluster: GapCluster, related_pull_requests: list[PullRequest]
-) -> str:
+def _shipped_change_markdown(cluster: GapCluster, related_pull_requests: list[PullRequest]) -> str:
     resolution = _resolution_from_pull_requests(related_pull_requests)
     return f"""# {cluster.draft_title}
 
@@ -477,8 +463,7 @@ def _resolution_from_pull_requests(
         if not body:
             body = "The pull request was merged without a description."
         blocks.append(
-            f"Implemented in [merged PR #{pull_request.number}]"
-            f"({pull_request.url}):\n\n{body}"
+            f"Implemented in [merged PR #{pull_request.number}]({pull_request.url}):\n\n{body}"
         )
     return "\n\n".join(blocks)
 
@@ -549,16 +534,10 @@ def _remove_generated_source_section(markdown: str) -> str:
     return markdown.strip()
 
 
-def _source_links(
-    related: list[Issue], related_pull_requests: list[PullRequest]
-) -> str:
-    lines = [
-        f"- [Issue #{issue.number}: {issue.title}]({issue.url})"
-        for issue in related[:8]
-    ]
+def _source_links(related: list[Issue], related_pull_requests: list[PullRequest]) -> str:
+    lines = [f"- [Issue #{issue.number}: {issue.title}]({issue.url})" for issue in related[:8]]
     lines.extend(
-        f"- [Merged PR #{pull_request.number}: {pull_request.title}]"
-        f"({pull_request.url})"
+        f"- [Merged PR #{pull_request.number}: {pull_request.title}]({pull_request.url})"
         for pull_request in related_pull_requests[:8]
     )
     if not lines:

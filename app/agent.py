@@ -57,12 +57,9 @@ async def run_agent(request: RunRequest, state: AgentState | None = None) -> Age
 
     state.issues = [Issue.model_validate(issue) for issue in result.get("issues", [])]
     state.pull_requests = [
-        PullRequest.model_validate(pull_request)
-        for pull_request in result.get("pull_requests", [])
+        PullRequest.model_validate(pull_request) for pull_request in result.get("pull_requests", [])
     ]
-    state.clusters = [
-        GapCluster.model_validate(cluster) for cluster in result.get("clusters", [])
-    ]
+    state.clusters = [GapCluster.model_validate(cluster) for cluster in result.get("clusters", [])]
     from app.state import DocSource
 
     state.docs_sources = [

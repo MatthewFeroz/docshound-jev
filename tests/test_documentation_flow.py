@@ -2,13 +2,13 @@ import base64
 import json
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
 
-from app.approved_documents import ApprovedDocument
 from app import documentation_prs, run_store
+from app.approved_documents import ApprovedDocument
 from app.documentation_prs import (
     create_documentation_pull_request,
     prepare_documentation_change,
@@ -147,18 +147,21 @@ class DocumentationFlowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(created.pr_number, 87)
         self.assertEqual(created.pr_url, "https://github.com/acme/docs/pull/87")
         branch_request = next(
-            payload for method, path, payload in requests
+            payload
+            for method, path, payload in requests
             if method == "POST" and path.endswith("/git/refs")
         )
         self.assertEqual(branch_request["sha"], "base-sha")
         content_request = next(
-            payload for method, path, payload in requests
+            payload
+            for method, path, payload in requests
             if method == "PUT" and "/contents/" in path
         )
         committed = base64.b64decode(content_request["content"]).decode("utf-8")
         self.assertEqual(committed, change.content)
         pull_request = next(
-            payload for method, path, payload in requests
+            payload
+            for method, path, payload in requests
             if method == "POST" and path.endswith("/pulls")
         )
         self.assertEqual(pull_request["base"], "main")
@@ -186,7 +189,7 @@ class RunStoreTests(unittest.TestCase):
                             confidence=0.9,
                         )
                     ],
-                    started_at=datetime.now(timezone.utc),
+                    started_at=datetime.now(UTC),
                 )
                 run_store.save_run(state)
                 loaded = run_store.load_run(state.run_id)

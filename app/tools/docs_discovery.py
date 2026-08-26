@@ -3,6 +3,7 @@ import ipaddress
 import re
 import time
 from collections import deque
+from collections.abc import Callable
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from urllib.parse import urldefrag, urljoin, urlparse, urlunparse
@@ -11,7 +12,6 @@ from xml.etree import ElementTree
 import httpx
 
 from app.config import get_settings
-
 
 MAX_DOCUMENT_URLS = 40
 MAX_SITEMAPS = 8
@@ -85,9 +85,7 @@ class _ReadableHTMLParser(HTMLParser):
         self._anchor_href: str | None = None
         self._anchor_parts: list[str] = []
 
-    def handle_starttag(
-        self, tag: str, attrs: list[tuple[str, str | None]]
-    ) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attrs_dict = dict(attrs)
         if tag in {"script", "style", "noscript", "svg", "template"}:
             self._ignored_depth += 1
@@ -228,10 +226,7 @@ async def discover_document_urls(
     if len(filtered) <= 1:
         landing_page = await fetch_document_page(client, normalized_root)
         if landing_page:
-            navigation_urls = [
-                urljoin(landing_page.url, href)
-                for href, _ in landing_page.links
-            ]
+            navigation_urls = [urljoin(landing_page.url, href) for href, _ in landing_page.links]
             filtered = _filter_document_urls(
                 [normalized_root, *navigation_urls],
                 normalized_root,
@@ -250,8 +245,7 @@ def parse_sitemap_document(xml: str) -> tuple[list[str], list[str]]:
     locations = [
         (element.text or "").strip()
         for element in root.iter()
-        if element.tag.rsplit("}", 1)[-1].lower() == "loc"
-        and (element.text or "").strip()
+        if element.tag.rsplit("}", 1)[-1].lower() == "loc" and (element.text or "").strip()
     ]
     if root_name == "sitemapindex":
         return [], locations
@@ -263,12 +257,26 @@ def parse_sitemap_document(xml: str) -> tuple[list[str], list[str]]:
 async def fetch_document_pages(
     client: httpx.AsyncClient,
     urls: list[str],
+    progress: Callable[[int, int, str], None] | None = None,
 ) -> list[DocumentPage]:
     semaphore = asyncio.Semaphore(8)
+    progress_lock = asyncio.Lock()
+    completed = 0
 
     async def fetch(url: str) -> DocumentPage | None:
+        nonlocal completed
         async with semaphore:
-            return await fetch_document_page(client, url)
+            page = await fetch_document_page(client, url)
+        async with progress_lock:
+            completed += 1
+            if progress:
+                label = page.title if page else "Page unavailable"
+                progress(
+                    completed,
+                    len(urls),
+                    f"{completed} of {len(urls)} · {label}",
+                )
+        return page
 
     pages = await asyncio.gather(*(fetch(url) for url in urls))
     return [page for page in pages if page and len(page.text) >= 80]
@@ -306,11 +314,7 @@ async def fetch_document_page(
         title = " ".join(parser.title_parts).strip() or _title_from_url(final_url)
         parts = parser.main_parts or parser.body_parts
         text = "\n".join(parts)
-        links = tuple(
-            (href, anchor_text)
-            for href, anchor_text in parser.links
-            if href
-        )
+        links = tuple((href, anchor_text) for href, anchor_text in parser.links if href)
     else:
         title = _title_from_url(final_url)
         text = raw
@@ -392,9 +396,7 @@ def _filter_document_urls(urls: list[str], docs_root: str) -> list[str]:
         parsed = urlparse(normalized)
         if (parsed.scheme, parsed.netloc) != root_origin:
             continue
-        if scope and not (
-            parsed.path == scope or parsed.path.startswith(f"{scope.rstrip('/')}/")
-        ):
+        if scope and not (parsed.path == scope or parsed.path.startswith(f"{scope.rstrip('/')}/")):
             continue
         suffix = _path_suffix(parsed.path)
         if suffix in _NON_DOCUMENT_EXTENSIONS:
@@ -450,10 +452,7 @@ def _normalize_public_url(url: str) -> str | None:
     except ValueError:
         address = None
     if address and (
-        address.is_private
-        or address.is_loopback
-        or address.is_link_local
-        or address.is_reserved
+        address.is_private or address.is_loopback or address.is_link_local or address.is_reserved
     ):
         return None
     clean, _ = urldefrag(urlunparse(parsed._replace(query="")))

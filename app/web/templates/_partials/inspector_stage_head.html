@@ -1,0 +1,16 @@
+<div id="stage-status-{{ stage }}"
+     class="trace-stage-head status-{{ status }}"
+     {% if oob %}hx-swap-oob="outerHTML"{% endif %}>
+  <div class="stage-index">{{ "%02d"|format(stage_index) }}</div>
+  <div class="stage-copy">
+    <div class="stage-title-row">
+      <h3>{{ label }}</h3>
+      <span class="stage-state">{{ status }}</span>
+    </div>
+    <p>{{ detail }}</p>
+  </div>
+  <div class="stage-duration"
+       {% if status == "running" and started_at %}data-started-at="{{ started_at }}"{% endif %}>
+    {% if duration_ms is not none %}{{ "%.1f"|format(duration_ms / 1000) }}s{% elif status == "running" %}0.0s{% else %}—{% endif %}
+  </div>
+</div>

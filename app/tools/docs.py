@@ -19,7 +19,7 @@ from app.tools.docs_retrieval import (
     rank_chunks_for_gaps,
     source_confidence,
 )
-
+from app.tracing import observe_operation, publish_span_progress
 
 MAX_RETURNED_SOURCES = 24
 
@@ -47,14 +47,61 @@ async def search_official_docs(
         follow_redirects=True,
         headers={"User-Agent": "docshound"},
     ) as client:
-        docs_root = await discover_docs_root(client, repo, docs_url)
+        docs_root = await observe_operation(
+            "discover_docs_root",
+            discover_docs_root,
+            client,
+            repo,
+            docs_url,
+            input_summary=(f"{repo} · {'configured URL' if docs_url else 'automatic discovery'}"),
+            input_details={
+                "repository": repo,
+                "configured_docs_url": docs_url,
+            },
+            output_summary=lambda root: (
+                f"Documentation root: {root}" if root else "No standalone documentation root found"
+            ),
+            output_details=lambda root: {"docs_root": root},
+        )
         document_urls = (
-            await discover_document_urls(client, docs_root)
+            await observe_operation(
+                "discover_document_urls",
+                discover_document_urls,
+                client,
+                docs_root,
+                input_summary=f"Inspect {docs_root}",
+                input_details={"docs_root": docs_root},
+                output_summary=lambda urls: f"{len(urls)} in-scope documentation pages mapped",
+                output_details=lambda urls: {"page_count": len(urls)},
+            )
             if docs_root
             else []
         )
-        pages = await fetch_document_pages(client, document_urls)
-        readme = await fetch_repository_readme(client, repo)
+        pages = await observe_operation(
+            "fetch_document_pages",
+            fetch_document_pages,
+            client,
+            document_urls,
+            progress=publish_span_progress,
+            input_summary=f"{len(document_urls)} documentation URLs",
+            input_details={"url_count": len(document_urls)},
+            output_summary=lambda fetched: f"{len(fetched)} documentation pages retrieved",
+            output_details=lambda fetched: {"page_count": len(fetched)},
+            trace_outputs=_retriever_trace_outputs,
+        )
+        readme = await observe_operation(
+            "fetch_repository_readme",
+            fetch_repository_readme,
+            client,
+            repo,
+            input_summary=repo,
+            input_details={"repository": repo},
+            output_summary=lambda page: (
+                "Repository README retrieved" if page else "Repository README unavailable"
+            ),
+            output_details=lambda page: {"retrieved": page is not None},
+            trace_outputs=lambda page: _retriever_trace_outputs([page] if page else []),
+        )
         if readme:
             pages.append(readme)
 
@@ -62,8 +109,43 @@ async def search_official_docs(
     if not clusters:
         return _baseline_sources(repo, docs_root, pages)
 
-    ranked = rank_chunks_for_gaps(clusters, pages)
-    assessments = await _assess_coverage(clusters, ranked)
+    ranked = await observe_operation(
+        "rank_docs_for_gaps",
+        rank_chunks_for_gaps,
+        clusters,
+        pages,
+        input_summary=f"{len(clusters)} gaps · {len(pages)} pages",
+        input_details={
+            "gap_count": len(clusters),
+            "page_count": len(pages),
+        },
+        output_summary=lambda results: (
+            f"{sum(len(chunks) for chunks in results.values())} excerpts ranked"
+        ),
+        output_details=lambda results: {
+            "gap_count": len(results),
+            "excerpt_count": sum(len(chunks) for chunks in results.values()),
+        },
+        trace_outputs=_ranking_trace_outputs,
+    )
+    assessments = await observe_operation(
+        "assess_doc_coverage",
+        _assess_coverage,
+        clusters,
+        ranked,
+        input_summary=(
+            f"{len(clusters)} gaps · {sum(len(chunks) for chunks in ranked.values())} excerpts"
+        ),
+        input_details={
+            "gap_count": len(clusters),
+            "excerpt_count": sum(len(chunks) for chunks in ranked.values()),
+        },
+        output_summary=_coverage_summary,
+        output_details=_coverage_details,
+        trace_outputs=lambda results: {
+            "assessments": [assessment.model_dump(mode="json") for assessment in results.values()]
+        },
+    )
     sources = _build_sources(repo, docs_root, clusters, ranked, assessments)
     return sources[:MAX_RETURNED_SOURCES]
 
@@ -73,8 +155,7 @@ async def _assess_coverage(
     ranked: dict[int, list[RetrievedChunk]],
 ) -> dict[int, GapCoverageAssessment]:
     fallback = {
-        index: _heuristic_assessment(index, ranked.get(index, []))
-        for index in range(len(clusters))
+        index: _heuristic_assessment(index, ranked.get(index, [])) for index in range(len(clusters))
     }
     settings = get_settings()
     if not settings.openai_api_key:
@@ -210,11 +291,7 @@ def _build_sources(
 
         preferred_urls = set(assessment.source_urls)
         cited_chunks = (
-            [
-                chunk
-                for chunk in chunks
-                if chunk.page.url in preferred_urls
-            ]
+            [chunk for chunk in chunks if chunk.page.url in preferred_urls]
             if preferred_urls
             else chunks
         )
@@ -279,3 +356,65 @@ def _dedupe_pages(pages: list[DocumentPage]) -> list[DocumentPage]:
         seen.add(page.url)
         deduped.append(page)
     return deduped
+
+
+def _retriever_trace_outputs(
+    pages: list[DocumentPage],
+) -> dict[str, list[dict]]:
+    return {
+        "output": [
+            {
+                "page_content": page.text[:5000],
+                "type": "Document",
+                "metadata": {
+                    "title": page.title,
+                    "source": page.url,
+                    "source_type": page.source_type,
+                },
+            }
+            for page in pages
+        ]
+    }
+
+
+def _ranking_trace_outputs(
+    ranked: dict[int, list[RetrievedChunk]],
+) -> dict[str, list[dict]]:
+    documents = []
+    for gap_index, chunks in ranked.items():
+        for chunk in chunks:
+            documents.append(
+                {
+                    "page_content": chunk.text[:3000],
+                    "type": "Document",
+                    "metadata": {
+                        "gap_index": gap_index,
+                        "gap_name": chunk.gap_name,
+                        "title": chunk.page.title,
+                        "source": chunk.page.url,
+                        "score": chunk.score,
+                        "matched_terms": list(chunk.matched_terms),
+                    },
+                }
+            )
+    return {"ranked_documents": documents}
+
+
+def _coverage_summary(
+    assessments: dict[int, GapCoverageAssessment],
+) -> str:
+    details = _coverage_details(assessments)
+    return (
+        f"{details['covered']} covered · "
+        f"{details['partially_covered']} partial · "
+        f"{details['missing']} missing"
+    )
+
+
+def _coverage_details(
+    assessments: dict[int, GapCoverageAssessment],
+) -> dict[str, int]:
+    return {
+        status: sum(assessment.coverage == status for assessment in assessments.values())
+        for status in ("covered", "partially_covered", "missing")
+    }

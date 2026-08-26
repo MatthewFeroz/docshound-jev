@@ -153,5 +153,22 @@
     </section>
   </main>
 
+<script>
+(() => {
+  if (window.docshoundElapsedTimer) return;
+
+  const updateElapsedTimes = () => {
+    const now = Date.now() / 1000;
+    document.querySelectorAll("[data-started-at]").forEach((element) => {
+      const startedAt = Number(element.dataset.startedAt);
+      if (!Number.isFinite(startedAt)) return;
+      element.textContent = `${Math.max(0, now - startedAt).toFixed(1)}s`;
+    });
+  };
+
+  window.docshoundElapsedTimer = window.setInterval(updateElapsedTimes, 100);
+  updateElapsedTimes();
+})();
+</script>
 </body>
 </html>

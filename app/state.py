@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 from uuid import uuid4
 
@@ -50,9 +50,7 @@ class GapCluster(BaseModel):
     draft_title: str | None = None
     draft_summary: str | None = None
     draft_markdown: str | None = None
-    review_status: Literal["pending_review", "approved", "rejected", "published"] = (
-        "pending_review"
-    )
+    review_status: Literal["pending_review", "approved", "rejected", "published"] = "pending_review"
     approved_document_slug: str | None = None
 
 
@@ -71,7 +69,7 @@ class AgentState(BaseModel):
     run_id: str = Field(default_factory=lambda: str(uuid4()))
     repo: str
     dry_run: bool = True
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     issues: list[Issue] = Field(default_factory=list)
     pull_requests: list[PullRequest] = Field(default_factory=list)
     clusters: list[GapCluster] = Field(default_factory=list)

@@ -2,12 +2,11 @@ import json
 import re
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import bleach
 import markdown
-
 
 DB_PATH = Path(__file__).parent.parent / "data" / "docshound.db"
 
@@ -86,7 +85,7 @@ def save_approved_document(
     markdown_source: str,
     source_issues: list[dict[str, str | int]],
 ) -> ApprovedDocument:
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     slug = _document_slug(title, run_id, gap_index)
     with _connect() as connection:
         connection.execute(

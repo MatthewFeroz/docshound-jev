@@ -1,0 +1,22 @@
+<header id="inspector-run-status"
+        class="inspector-status status-{{ status }}"
+        {% if oob %}hx-swap-oob="outerHTML"{% endif %}>
+  <div class="inspector-status-topline">
+    <span class="inspector-kicker">Live Run Inspector</span>
+    <span class="run-status-chip status-{{ status }}">
+      <i></i>{{ status|replace('_', ' ') }}
+    </span>
+  </div>
+  <h2>{{ title }}</h2>
+  <p>{{ detail }}</p>
+  <div class="run-progress-track"
+       role="progressbar"
+       aria-label="Agent run progress"
+       aria-valuemin="0"
+       aria-valuemax="4"
+       aria-valuenow="{{ progress }}">
+    {% for index in range(1, 5) %}
+    <span class="{% if index <= progress %}complete{% elif index == progress + 1 and status == 'running' %}active{% endif %}"></span>
+    {% endfor %}
+  </div>
+</header>

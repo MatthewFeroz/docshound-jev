@@ -6,11 +6,15 @@ from pydantic import BaseModel, Field
 
 from app import events
 from app.config import get_settings
-from app.state import DocSource, GapCluster, Issue, PullRequest
+from app.state import GapCluster, Issue, PullRequest
 from app.tools.cluster import attach_review_drafts, cluster_issues
 from app.tools.docs import search_official_docs
 from app.tools.github import research_pull_requests, research_repo
-from app.tracing import run_traced
+from app.tracing import (
+    run_traced,
+    stage_completed,
+    stage_started,
+)
 
 
 class AgentDecision(BaseModel):
@@ -43,6 +47,25 @@ class DocsHoundGraphState(TypedDict, total=False):
 async def llm_decide(state: DocsHoundGraphState) -> DocsHoundGraphState:
     fallback_action = _safe_next_action(state)
     settings = get_settings()
+    events.publish(
+        state["run_id"],
+        {
+            "type": "agent_thinking",
+            "label": "Choosing the next action",
+            "detail": (
+                "The router is checking completed stages and selecting the next safe operation."
+            ),
+            "progress": sum(
+                bool(state.get(key))
+                for key in (
+                    "researched",
+                    "analyzed",
+                    "docs_searched",
+                    "stored",
+                )
+            ),
+        },
+    )
     if not settings.openai_api_key:
         state["next_action"] = fallback_action
         state["decision_reason"] = "OPENAI_API_KEY is not set; used fallback router."
@@ -88,7 +111,6 @@ Choose the next action.
         model = ChatOpenAI(
             model=settings.openai_model,
             api_key=settings.openai_api_key,
-            temperature=0,
         ).with_structured_output(AgentDecision)
         decision = await model.ainvoke(prompt)
         action = _guard_action(state, decision.action)
@@ -153,6 +175,13 @@ def route(
 
 
 async def research(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    stage_started(
+        state["run_id"],
+        "research",
+        "Collecting recent repository evidence from GitHub.",
+    )
+    stage_status: Literal["success", "error"] = "success"
+    stage_summary = "Repository evidence collected."
     try:
         issues = await run_traced(
             "research_repo",
@@ -176,21 +205,38 @@ async def research(state: DocsHoundGraphState) -> DocsHoundGraphState:
             state.get("limit", 50),
         )
         state["pull_requests"] = [
-            pull_request.model_dump(mode="json")
-            for pull_request in pull_requests
+            pull_request.model_dump(mode="json") for pull_request in pull_requests
         ]
         events.publish(
             state["run_id"],
             {"type": "pull_requests_fetched", "count": len(pull_requests)},
         )
+        stage_summary = (
+            f"{len(issues)} issues and {len(pull_requests)} merged pull requests collected."
+        )
     except Exception as exc:
         state.setdefault("errors", []).append(str(exc))
+        stage_status = "error"
+        stage_summary = "Repository research finished with an error."
     finally:
         state["researched"] = True
+        stage_completed(
+            state["run_id"],
+            "research",
+            stage_summary,
+            stage_status,
+        )
     return state
 
 
 async def analyze(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    stage_started(
+        state["run_id"],
+        "analyze",
+        "Grouping repository evidence into documentation gaps.",
+    )
+    stage_status: Literal["success", "error"] = "success"
+    stage_summary = "Evidence analysis completed."
     try:
         issues = [Issue.model_validate(issue) for issue in state.get("issues", [])]
         pull_requests = [
@@ -205,7 +251,15 @@ async def analyze(state: DocsHoundGraphState) -> DocsHoundGraphState:
             issues,
             pull_requests,
         )
-        clusters = attach_review_drafts(clusters, issues, pull_requests)
+        clusters = await run_traced(
+            "draft_findings",
+            state["run_id"],
+            state["repo"],
+            attach_review_drafts,
+            clusters,
+            issues,
+            pull_requests,
+        )
         cluster_dicts = [cluster.model_dump(mode="json") for cluster in clusters]
         state["clusters"] = cluster_dicts
         for index, cluster in enumerate(cluster_dicts):
@@ -213,19 +267,32 @@ async def analyze(state: DocsHoundGraphState) -> DocsHoundGraphState:
                 state["run_id"],
                 {"type": "gap_found", "index": index, "cluster": cluster},
             )
+        stage_summary = f"{len(clusters)} documentation gaps prepared for review."
     except Exception as exc:
         state.setdefault("errors", []).append(str(exc))
+        stage_status = "error"
+        stage_summary = "Evidence analysis finished with an error."
     finally:
         state["analyzed"] = True
+        stage_completed(
+            state["run_id"],
+            "analyze",
+            stage_summary,
+            stage_status,
+        )
     return state
 
 
 async def search_docs(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    stage_started(
+        state["run_id"],
+        "search_docs",
+        "Discovering and assessing first-party documentation.",
+    )
+    stage_status: Literal["success", "error"] = "success"
+    stage_summary = "Official documentation inspection completed."
     try:
-        clusters = [
-            GapCluster.model_validate(cluster)
-            for cluster in state.get("clusters", [])
-        ]
+        clusters = [GapCluster.model_validate(cluster) for cluster in state.get("clusters", [])]
         sources = await run_traced(
             "search_official_docs",
             state["run_id"],
@@ -245,15 +312,38 @@ async def search_docs(state: DocsHoundGraphState) -> DocsHoundGraphState:
                 "sources": source_dicts,
             },
         )
+        covered = sum(source.get("coverage") == "covered" for source in source_dicts)
+        partial = sum(source.get("coverage") == "partially_covered" for source in source_dicts)
+        stage_summary = (
+            f"{len(source_dicts)} cited sources · {covered} covered · {partial} partially covered."
+        )
     except Exception as exc:
         state.setdefault("errors", []).append(str(exc))
+        stage_status = "error"
+        stage_summary = "Documentation inspection finished with an error."
     finally:
         state["docs_searched"] = True
+        stage_completed(
+            state["run_id"],
+            "search_docs",
+            stage_summary,
+            stage_status,
+        )
     return state
 
 
 async def store(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    stage_started(
+        state["run_id"],
+        "store",
+        "Finalizing the run state and audit trail.",
+    )
     state["stored"] = True
+    stage_completed(
+        state["run_id"],
+        "store",
+        "Run state finalized and ready for review.",
+    )
     return state
 
 

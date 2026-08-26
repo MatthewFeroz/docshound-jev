@@ -1,15 +1,14 @@
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from app.state import AgentState
-
 
 DB_PATH = Path(__file__).parent.parent / "data" / "docshound.db"
 
 
 def save_run(state: AgentState) -> None:
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     with _connect() as connection:
         connection.execute(
             """

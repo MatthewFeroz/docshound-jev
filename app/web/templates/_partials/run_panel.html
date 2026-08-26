@@ -1,22 +1,81 @@
 <div class="run-panel"
      sse-connect="/runs/{{ run_id }}/events"
      data-run-id="{{ run_id }}">
-  <section class="panel timeline-panel">
-    <header class="panel-head">
-      <h2>Agent Timeline</h2>
-      <span class="panel-sub">run <code>{{ run_id[:8] }}</code></span>
-    </header>
-    <ol id="timeline" class="timeline"
-        sse-swap="timeline"
-        hx-swap="beforeend scroll:bottom">
-      <li class="event kind-system">
-        <span class="event-icon">●</span>
-        <div class="event-body">
-          <div class="event-label">Run started. Collecting issues and merged pull requests…</div>
-          <div class="event-detail">repo {{ repo }}</div>
-        </div>
-      </li>
-    </ol>
+  <section class="panel inspector-panel" aria-label="Live run inspector">
+    {% set status = "running" %}
+    {% set title = "Preparing the agent run" %}
+    {% set detail = "Connecting the live inspector and preparing the first decision." %}
+    {% set progress = 0 %}
+    {% set oob = false %}
+    {% include "_partials/inspector_run_status.html" %}
+
+    <div class="inspector-stage-list">
+      <section class="trace-stage" data-stage="research">
+        {% set stage = "research" %}
+        {% set stage_index = 1 %}
+        {% set label = "Research repository" %}
+        {% set status = "waiting" %}
+        {% set detail = "Issues and merged pull requests" %}
+        {% set duration_ms = none %}
+        {% set started_at = none %}
+        {% include "_partials/inspector_stage_head.html" %}
+        <div class="trace-spans"
+             id="stage-spans-research"
+             sse-swap="span_research"
+             hx-swap="beforeend"></div>
+      </section>
+
+      <section class="trace-stage" data-stage="analyze">
+        {% set stage = "analyze" %}
+        {% set stage_index = 2 %}
+        {% set label = "Analyze evidence" %}
+        {% set status = "waiting" %}
+        {% set detail = "Clusters and review drafts" %}
+        {% set duration_ms = none %}
+        {% set started_at = none %}
+        {% include "_partials/inspector_stage_head.html" %}
+        <div class="trace-spans"
+             id="stage-spans-analyze"
+             sse-swap="span_analyze"
+             hx-swap="beforeend"></div>
+      </section>
+
+      <section class="trace-stage" data-stage="search_docs">
+        {% set stage = "search_docs" %}
+        {% set stage_index = 3 %}
+        {% set label = "Inspect official docs" %}
+        {% set status = "waiting" %}
+        {% set detail = "Discovery, retrieval, ranking, and coverage" %}
+        {% set duration_ms = none %}
+        {% set started_at = none %}
+        {% include "_partials/inspector_stage_head.html" %}
+        <div class="trace-spans"
+             id="stage-spans-search_docs"
+             sse-swap="span_search_docs"
+             hx-swap="beforeend"></div>
+      </section>
+
+      <section class="trace-stage" data-stage="store">
+        {% set stage = "store" %}
+        {% set stage_index = 4 %}
+        {% set label = "Finalize run" %}
+        {% set status = "waiting" %}
+        {% set detail = "Persist the review state and audit trail" %}
+        {% set duration_ms = none %}
+        {% set started_at = none %}
+        {% include "_partials/inspector_stage_head.html" %}
+        <div class="trace-spans"
+             id="stage-spans-store"
+             sse-swap="span_store"
+             hx-swap="beforeend"></div>
+      </section>
+    </div>
+
+    <div class="inspector-foot">
+      <span class="live-signal"><i></i> live event stream</span>
+      <span>run <code>{{ run_id[:8] }}</code></span>
+    </div>
+    <div hidden sse-swap="inspector_oob" hx-swap="none"></div>
   </section>
 
   <section class="panel gaps-panel">

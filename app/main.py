@@ -11,6 +11,7 @@ from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
 
 from app import events
+from app.agent import run_agent
 from app.approved_documents import (
     document_body_markdown,
     get_approved_document,
@@ -18,7 +19,6 @@ from app.approved_documents import (
     render_markdown,
     save_approved_document,
 )
-from app.agent import run_agent
 from app.documentation_prs import (
     DocumentationPullRequestError,
     create_documentation_pull_request,
@@ -85,9 +85,7 @@ def _gap_context(state: AgentState, index: int) -> dict:
     if index < 0 or index >= len(state.clusters):
         raise HTTPException(status_code=404, detail="Gap not found")
     cluster = state.clusters[index]
-    source_issues = [
-        issue for issue in state.issues if issue.number in set(cluster.issue_numbers)
-    ]
+    source_issues = [issue for issue in state.issues if issue.number in set(cluster.issue_numbers)]
     source_pull_requests = [
         pull_request
         for pull_request in state.pull_requests
@@ -247,9 +245,7 @@ async def approve_gap(
         raise HTTPException(status_code=422, detail="The approved document cannot be empty")
 
     cluster = state.clusters[index]
-    source_issues = [
-        issue for issue in state.issues if issue.number in set(cluster.issue_numbers)
-    ]
+    source_issues = [issue for issue in state.issues if issue.number in set(cluster.issue_numbers)]
     source_pull_requests = [
         pull_request
         for pull_request in state.pull_requests
@@ -317,9 +313,7 @@ async def approved_document_page(request: Request, slug: str) -> HTMLResponse:
         "document.html",
         {
             "document": document,
-            "rendered_markdown": render_markdown(
-                document_body_markdown(document.markdown)
-            ),
+            "rendered_markdown": render_markdown(document_body_markdown(document.markdown)),
             "documentation_change": get_documentation_change(slug),
         },
     )
@@ -358,9 +352,7 @@ async def preview_documentation_pull_request(
 
 
 @app.get("/docs/{slug}/pull-request", response_class=HTMLResponse)
-async def documentation_pull_request_page(
-    request: Request, slug: str
-) -> HTMLResponse:
+async def documentation_pull_request_page(request: Request, slug: str) -> HTMLResponse:
     document = get_approved_document(slug)
     if document is None:
         raise HTTPException(status_code=404, detail="Approved document not found")
@@ -380,9 +372,7 @@ async def documentation_pull_request_page(
 
 
 @app.post("/docs/{slug}/pull-request/create", response_class=HTMLResponse)
-async def create_documentation_pull_request_route(
-    request: Request, slug: str
-) -> HTMLResponse:
+async def create_documentation_pull_request_route(request: Request, slug: str) -> HTMLResponse:
     document = get_approved_document(slug)
     if document is None:
         raise HTTPException(status_code=404, detail="Approved document not found")

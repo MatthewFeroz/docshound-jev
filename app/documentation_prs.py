@@ -5,7 +5,7 @@ import re
 import sqlite3
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, replace
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 
@@ -13,7 +13,6 @@ import httpx
 
 from app.approved_documents import ApprovedDocument, document_body_markdown
 from app.config import get_settings
-
 
 DB_PATH = Path(__file__).parent.parent / "data" / "docshound.db"
 GITHUB_API = "https://api.github.com"
@@ -95,7 +94,7 @@ async def prepare_documentation_change(
 
     content = _build_document_content(document, file_format)
     patch = _build_patch(file_path, previous_content, content)
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     change = DocumentationChange(
         document_slug=document.slug,
         target_repo=target_repo,
@@ -139,8 +138,7 @@ async def create_documentation_pull_request(
             base_ref = await _request_json(
                 github,
                 "GET",
-                f"/repos/{change.target_repo}/git/ref/heads/"
-                f"{quote(change.base_branch, safe='')}",
+                f"/repos/{change.target_repo}/git/ref/heads/{quote(change.base_branch, safe='')}",
             )
             base_sha = str((base_ref.get("object") or {}).get("sha") or "")
             if not base_sha:
@@ -174,8 +172,7 @@ async def create_documentation_pull_request(
             branch_content: str | None = None
             if branch_already_exists:
                 response = await github.get(
-                    f"/repos/{change.target_repo}/contents/"
-                    f"{quote(change.file_path, safe='/')}",
+                    f"/repos/{change.target_repo}/contents/{quote(change.file_path, safe='/')}",
                     params={"ref": change.branch_name},
                 )
                 if response.status_code == 200:
@@ -189,9 +186,7 @@ async def create_documentation_pull_request(
 
             content_payload: dict[str, object] = {
                 "message": f"docs: {document.title}",
-                "content": base64.b64encode(change.content.encode("utf-8")).decode(
-                    "ascii"
-                ),
+                "content": base64.b64encode(change.content.encode("utf-8")).decode("ascii"),
                 "branch": change.branch_name,
             }
             if branch_file_sha:
@@ -200,8 +195,7 @@ async def create_documentation_pull_request(
                 await _request_json(
                     github,
                     "PUT",
-                    f"/repos/{change.target_repo}/contents/"
-                    f"{quote(change.file_path, safe='/')}",
+                    f"/repos/{change.target_repo}/contents/{quote(change.file_path, safe='/')}",
                     json_body=content_payload,
                 )
 
@@ -241,7 +235,7 @@ async def create_documentation_pull_request(
             pr_number=int(pull_request["number"]),
             pr_url=str(pull_request["html_url"]),
             error=None,
-            updated_at=datetime.now(timezone.utc).isoformat(),
+            updated_at=datetime.now(UTC).isoformat(),
         )
         save_documentation_change(completed)
         return completed
@@ -250,7 +244,7 @@ async def create_documentation_pull_request(
             change,
             status="failed",
             error=str(exc),
-            updated_at=datetime.now(timezone.utc).isoformat(),
+            updated_at=datetime.now(UTC).isoformat(),
         )
         save_documentation_change(failed)
         raise
@@ -326,20 +320,14 @@ def _choose_document_path(
         return path, "mdx" if extension == ".mdx" else "markdown", "manual path"
 
     configs = sorted(
-        (
-            path
-            for path in paths
-            if PurePosixPath(path).name in {"docs.json", "mint.json"}
-        ),
+        (path for path in paths if PurePosixPath(path).name in {"docs.json", "mint.json"}),
         key=lambda path: (path.count("/"), len(path)),
     )
     slug = _slugify(document.title)
     if configs:
         config_parent = str(PurePosixPath(configs[0]).parent)
         root = "" if config_parent == "." else f"{config_parent}/"
-        existing_directories = {
-            path.rsplit("/", 1)[0] for path in paths if "/" in path
-        }
+        existing_directories = {path.rsplit("/", 1)[0] for path in paths if "/" in path}
         directory = next(
             (
                 f"{root}{candidate}".rstrip("/")
@@ -380,13 +368,7 @@ def _build_document_content(document: ApprovedDocument, file_format: str) -> str
     if file_format == "mdx":
         title = _yaml_string(document.title)
         summary = _yaml_string(document.summary)
-        body = (
-            "---\n"
-            f"title: {title}\n"
-            f"description: {summary}\n"
-            "---\n\n"
-            f"{body}"
-        )
+        body = f"---\ntitle: {title}\ndescription: {summary}\n---\n\n{body}"
     return f"{body.rstrip()}\n"
 
 
@@ -402,15 +384,11 @@ def _build_patch(file_path: str, previous: str, content: str) -> str:
     )
 
 
-def _pull_request_body(
-    document: ApprovedDocument, change: DocumentationChange
-) -> str:
+def _pull_request_body(document: ApprovedDocument, change: DocumentationChange) -> str:
     source_lines = []
     for source in document.source_issues:
         kind = "Merged PR" if source.get("kind") == "pull_request" else "Issue"
-        source_lines.append(
-            f"- [{kind} #{source['number']}: {source['title']}]({source['url']})"
-        )
+        source_lines.append(f"- [{kind} #{source['number']}: {source['title']}]({source['url']})")
     sources = "\n".join(source_lines) or "- No linked repository sources."
     return (
         "## Documentation update\n\n"
@@ -432,9 +410,7 @@ def _branch_name(document: ApprovedDocument) -> str:
 def _validate_repo(repo: str) -> str:
     cleaned = repo.strip()
     if not REPO_PATTERN.fullmatch(cleaned):
-        raise DocumentationPullRequestError(
-            "Enter the target repository as owner/repository."
-        )
+        raise DocumentationPullRequestError("Enter the target repository as owner/repository.")
     return cleaned
 
 
@@ -458,9 +434,7 @@ def _yaml_string(value: str) -> str:
 
 
 @asynccontextmanager
-async def _github_client(
-    token: str | None, client: httpx.AsyncClient | None
-):
+async def _github_client(token: str | None, client: httpx.AsyncClient | None):
     if client is not None:
         yield client
         return

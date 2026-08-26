@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from app.state import GapCluster
 from app.tools.docs_discovery import DocumentPage
 
-
 _STOP_WORDS = {
     "about",
     "after",
@@ -63,11 +62,7 @@ def rank_chunks_for_gaps(
     pages: list[DocumentPage],
     per_gap: int = 3,
 ) -> dict[int, list[RetrievedChunk]]:
-    page_chunks = [
-        (page, chunk)
-        for page in pages
-        for chunk in chunk_document(page.text)
-    ]
+    page_chunks = [(page, chunk) for page in pages for chunk in chunk_document(page.text)]
     ranked: dict[int, list[RetrievedChunk]] = {}
 
     for gap_index, cluster in enumerate(clusters):
@@ -152,9 +147,7 @@ def _query_terms(cluster: GapCluster) -> set[str]:
     )
     counts = Counter(_tokenize(text))
     return {
-        token
-        for token, _ in counts.most_common(24)
-        if token not in _STOP_WORDS and len(token) >= 3
+        token for token, _ in counts.most_common(24) if token not in _STOP_WORDS and len(token) >= 3
     }
 
 
@@ -195,14 +188,11 @@ def _important_phrases(cluster: GapCluster) -> set[str]:
     phrases: set[str] = set()
     for value in (cluster.name, cluster.recurring_question):
         tokens = [
-            token
-            for token in _tokenize(value)
-            if token not in _STOP_WORDS and len(token) >= 3
+            token for token in _tokenize(value) if token not in _STOP_WORDS and len(token) >= 3
         ]
         for size in (2, 3):
             phrases.update(
-                " ".join(tokens[index : index + size])
-                for index in range(len(tokens) - size + 1)
+                " ".join(tokens[index : index + size]) for index in range(len(tokens) - size + 1)
             )
     return phrases
 
