@@ -15,3 +15,10 @@ data/*.db-wal
 .agents/
 .claude/
 .cursor/
+
+# Personal study notes and teaching artifacts (kept local, not published)
+MISSION.md
+RESOURCES.md
+lessons/
+reference/
+assets/
