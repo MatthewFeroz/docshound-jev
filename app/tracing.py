@@ -86,6 +86,17 @@ OPERATION_SPECS = {
         label="Assess documentation coverage",
         description="Classify each gap as covered, partial, or missing using cited excerpts.",
     ),
+    "retrieve_semantic_docs": OperationSpec(
+        stage="search_docs",
+        label="Search documentation with NVIDIA Nemotron",
+        description="Combine semantic embeddings with keyword search; report fallback use.",
+        run_type="retriever",
+    ),
+    "rerank_docs_for_gap": OperationSpec(
+        stage="search_docs",
+        label="Rerank documentation with NVIDIA",
+        description="Prioritize candidate passages while preserving original evidence.",
+    ),
 }
 
 _CURRENT_RUN_ID: ContextVar[str | None] = ContextVar(

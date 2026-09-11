@@ -30,6 +30,39 @@ repository and it will:
 Every step streams to the browser as it happens, and every operation is traced
 locally — and to LangSmith when it is enabled.
 
+## NVIDIA semantic search and reranking
+
+DocsHound can combine its existing keyword search with NVIDIA Nemotron embeddings
+and rerank the resulting documentation passages before assessing coverage. Enable
+either capability independently in your root `.env`:
+
+```dotenv
+NVIDIA_API_KEY=your-key
+NVIDIA_EMBED_ENABLED=true
+NVIDIA_RERANK_ENABLED=true
+```
+
+Restart the app after changing configuration. The defaults use
+`nvidia/nemotron-3-embed-1b` for embeddings and
+`nvidia/llama-nemotron-rerank-vl-1b-v2` for reranking; endpoints, passage limits,
+and timeouts are configurable in `.env.example`. Both features are disabled by
+default, preserving the existing search behavior. Missing credentials, API
+failures, timeouts, and malformed responses retain the available keyword results.
+NVIDIA operations and fallback reasons appear in the existing live trace UI.
+
+The integration preserves the current FastAPI + HTMX application, GitHub issue
+and merged-PR research, human review, saved documents, patch previews, and
+documentation pull-request publishing.
+
+Run a small live embedding check after configuring your key:
+
+```bash
+python -m app.nvidia_check
+```
+
+This checks a two-passage fixture against the real endpoint; it is not a retrieval
+quality benchmark. The automated NVIDIA tests use mocked HTTP responses.
+
 ## Architecture
 
 ```mermaid

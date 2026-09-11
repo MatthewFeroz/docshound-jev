@@ -1,4 +1,5 @@
 import base64
+import gc
 import json
 import tempfile
 import unittest
@@ -47,6 +48,8 @@ class DocumentationFlowTests(unittest.IsolatedAsyncioTestCase):
 
     def tearDown(self) -> None:
         documentation_prs.DB_PATH = self.original_change_db
+        # SQLite connection cycles must be collected before Windows can unlink the files.
+        gc.collect()
         self.temp_dir.cleanup()
 
     async def test_prepare_detects_mdx_repository_and_builds_patch(self) -> None:
@@ -198,6 +201,7 @@ class RunStoreTests(unittest.TestCase):
                 self.assertEqual(loaded.clusters[0].pr_numbers, [42])
             finally:
                 run_store.DB_PATH = original
+                gc.collect()
 
 
 if __name__ == "__main__":

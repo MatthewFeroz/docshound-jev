@@ -19,6 +19,7 @@ from app.tools.docs_retrieval import (
     rank_chunks_for_gaps,
     source_confidence,
 )
+from app.tools.nvidia_search import enhance_ranked_evidence
 from app.tracing import observe_operation, publish_span_progress
 
 MAX_RETURNED_SOURCES = 24
@@ -128,6 +129,10 @@ async def search_official_docs(
         },
         trace_outputs=_ranking_trace_outputs,
     )
+    settings = get_settings()
+    if settings.nvidia_embed_enabled or settings.nvidia_rerank_enabled:
+        ranked = await enhance_ranked_evidence(clusters, pages, ranked, settings)
+
     assessments = await observe_operation(
         "assess_doc_coverage",
         _assess_coverage,
@@ -299,7 +304,7 @@ def _build_sources(
             cited_chunks,
             key=lambda chunk: (
                 chunk.page.url in preferred_urls,
-                chunk.score,
+                chunk.rerank_score if chunk.rerank_score is not None else chunk.score,
             ),
             reverse=True,
         )
@@ -393,6 +398,8 @@ def _ranking_trace_outputs(
                         "title": chunk.page.title,
                         "source": chunk.page.url,
                         "score": chunk.score,
+                        "semantic_score": chunk.semantic_score,
+                        "rerank_score": chunk.rerank_score,
                         "matched_terms": list(chunk.matched_terms),
                     },
                 }

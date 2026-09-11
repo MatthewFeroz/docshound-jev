@@ -55,12 +55,16 @@ class RetrievedChunk:
     text: str
     score: float
     matched_terms: tuple[str, ...]
+    rerank_score: float | None = None
+    semantic_score: float | None = None
 
 
 def rank_chunks_for_gaps(
     clusters: list[GapCluster],
     pages: list[DocumentPage],
     per_gap: int = 3,
+    *,
+    dedupe_pages: bool = True,
 ) -> dict[int, list[RetrievedChunk]]:
     page_chunks = [(page, chunk) for page in pages for chunk in chunk_document(page.text)]
     ranked: dict[int, list[RetrievedChunk]] = {}
@@ -91,7 +95,9 @@ def rank_chunks_for_gaps(
             ),
             reverse=True,
         )
-        ranked[gap_index] = _dedupe_pages(candidates, per_gap)
+        ranked[gap_index] = (
+            _dedupe_pages(candidates, per_gap) if dedupe_pages else candidates[:per_gap]
+        )
 
     return ranked
 
