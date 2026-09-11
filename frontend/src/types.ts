@@ -1,0 +1,278 @@
+export type Severity = "low" | "medium" | "high";
+export type ReviewStatus =
+  "pending_review" | "approved" | "rejected" | "published" | "no_change_needed";
+
+export interface DocSource {
+  title: string;
+  url: string;
+  snippet: string;
+  source_type: string;
+  confidence: number;
+  repository_path: string | null;
+}
+
+export interface DocumentationSource {
+  kind: "github" | "website";
+  repo: string | null;
+  root: string | null;
+  url: string | null;
+  confidence: number;
+  discovered_by: string;
+  page_count: number | null;
+}
+
+export interface SourceResolution {
+  product_repo: string;
+  documentation_sources: DocumentationSource[];
+  selected_source: DocumentationSource;
+  documentation_activity_repos: string[];
+}
+
+export interface DocumentationCoverage {
+  status:
+    "missing" | "partial" | "documented" | "in_progress" | "unable_to_verify";
+  rationale: string;
+  recommended_action: "create_page" | "update_page" | "no_change";
+  recommended_path: string | null;
+  relevant_sources: DocSource[];
+}
+
+export interface Issue {
+  number: number;
+  title: string;
+  body: string | null;
+  url: string;
+  state: string;
+  labels: string[];
+  comments_count: number;
+  created_at: string;
+  updated_at: string;
+  source_repo: string | null;
+}
+
+export interface PullRequest {
+  number: number;
+  title: string;
+  body: string | null;
+  url: string;
+  state: string;
+  merged_at: string | null;
+  labels: string[];
+  created_at: string;
+  updated_at: string;
+  source_repo: string | null;
+}
+
+export interface GapCluster {
+  name: string;
+  summary: string;
+  recurring_question: string;
+  issue_numbers: number[];
+  pr_numbers: number[];
+  issue_refs: string[];
+  pr_refs: string[];
+  finding_type: "open_gap" | "shipped_change";
+  severity: Severity;
+  confidence: number;
+  draft_title: string | null;
+  draft_summary: string | null;
+  draft_markdown: string | null;
+  review_status: ReviewStatus;
+  approved_document_slug: string | null;
+  documentation_coverage: DocumentationCoverage | null;
+}
+
+export interface ApprovedSource {
+  number: number;
+  title: string;
+  url: string;
+  kind?: "issue" | "pull_request";
+  repo?: string;
+}
+
+export interface ApprovedDocument {
+  slug: string;
+  run_id: string;
+  gap_index: number;
+  repo: string;
+  title: string;
+  summary: string;
+  markdown: string;
+  source_issues: ApprovedSource[];
+  approved_at: string;
+  updated_at: string;
+}
+
+export interface DocumentationChange {
+  document_slug: string;
+  target_repo: string;
+  publish_repo: string | null;
+  base_branch: string;
+  branch_name: string;
+  file_path: string;
+  file_format: string;
+  detected_by: string;
+  edit_action: "create_page" | "update_page";
+  content: string;
+  patch: string;
+  existing_sha: string | null;
+  status: string;
+  pr_number: number | null;
+  pr_url: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Finding {
+  run_id: string;
+  repo: string;
+  index: number;
+  cluster: GapCluster;
+  source_issues: Issue[];
+  source_pull_requests: PullRequest[];
+  approved_document: ApprovedDocument | null;
+  documentation_change: DocumentationChange | null;
+}
+
+export type RunOutcome =
+  | "in_progress"
+  | "recommendations_found"
+  | "no_activity"
+  | "no_recommendations"
+  | "partial_failure"
+  | "failed";
+
+export interface Run {
+  scan_limits?: Record<string, number>;
+  usage?: UsageSummary | null;
+  operation_events?: RunEvent[];
+  run_id: string;
+  status: "running" | "completed" | "completed_with_errors" | "failed";
+  outcome: RunOutcome;
+  summary: string;
+  repo: string;
+  dry_run: boolean;
+  documentation_source: DocumentationSource | null;
+  issues_scraped: number;
+  pull_requests_scraped: number;
+  clusters_found: number;
+  docs_sources: DocSource[];
+  docs_candidates_inspected: number;
+  documentation_issues_scraped: number;
+  documentation_pull_requests_scraped: number;
+  top_gaps: GapCluster[];
+  decisions: Array<Record<string, unknown>>;
+  warnings: string[];
+  errors: string[];
+}
+
+export interface CreateRunResponse {
+  run_id: string;
+  status: string;
+  repo: string;
+  documentation_source: DocumentationSource | null;
+}
+
+export interface RuntimeConfig {
+  nvidia_embed_enabled?: boolean;
+  nvidia_rerank_enabled?: boolean;
+  nvidia_configured?: boolean;
+  nvidia_embed_model?: string;
+  repo_docs_max_files?: number;
+  nvidia_embed_max_passages?: number;
+  write_enabled: boolean;
+  llm_gateway: string | null;
+  llm_primary_model: string | null;
+  llm_fallback_model: string | null;
+  llm_configured: boolean;
+  credential_input_enabled: boolean;
+  github_configured: boolean;
+  github_server_configured: boolean;
+  github_account: string | null;
+  github_verified_repo: string | null;
+  github_document_fetch_limit: number;
+  github_documents_per_finding: number;
+}
+
+export interface DocumentPayload {
+  document: ApprovedDocument;
+  body_markdown: string;
+  documentation_change: DocumentationChange | null;
+  suggested_file_path: string | null;
+  suggested_action: "create_page" | "update_page" | "no_change" | null;
+  suggested_target_repo: string | null;
+  write_enabled: boolean;
+}
+
+export interface RunEvent {
+  usage?: UsageSummary;
+  span_id?: string;
+  trace_id?: string;
+  parent_span_id?: string;
+  stage?: string;
+  label?: string;
+  input_summary?: string;
+  input_details?: Record<string, unknown>;
+  output_summary?: string;
+  output_details?: Record<string, unknown>;
+  progress_current?: number;
+  progress_total?: number;
+  progress_detail?: string;
+  type: string;
+  run_id?: string;
+  status?: string;
+  outcome?: RunOutcome;
+  summary?: string;
+  warnings?: string[];
+  errors?: string[];
+  name?: string;
+  action?: string;
+  reason?: string;
+  count?: number;
+  inspected_count?: number;
+  duration_ms?: number;
+  error?: string;
+  title?: string;
+  index?: number;
+  cluster?: GapCluster;
+  repo?: string;
+  issues_count?: number;
+  pull_requests_count?: number;
+}
+
+export interface UsageTotals {
+  call_count: number;
+  pending_calls: number;
+  failed_calls: number;
+  calls_with_usage: number;
+  calls_without_full_usage: number;
+  unpriced_calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cached_input_tokens: number;
+  reasoning_tokens: number;
+  total_tokens: number;
+  estimated_cost_usd: number | null;
+}
+export interface UsageSummary extends UsageTotals {
+  groups: Array<
+    UsageTotals & { provider: string; model: string; operation: string }
+  >;
+}
+export interface UsageHistory {
+  summary: UsageSummary;
+  runs: Array<{
+    run_id: string;
+    repo: string;
+    status: string;
+    started_at: string;
+    scan_limits: Record<string, number>;
+    usage: UsageSummary | null;
+  }>;
+}
+export interface ScanOptions {
+  limit: number;
+  repo_docs_max_files: number;
+  nvidia_embed_max_passages: number;
+}

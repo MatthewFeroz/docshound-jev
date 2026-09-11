@@ -1,7 +1,5 @@
 {
-  "dependencies": ["."],
-  "graphs": {
-    "docshound": "./app/langgraph_agent.py:graph"
-  },
+  "dependencies": ["./backend"],
+  "graphs": {"docshound": "./backend/app/langgraph_agent.py:graph"},
   "env": ".env"
 }

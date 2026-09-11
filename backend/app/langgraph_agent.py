@@ -1,0 +1,464 @@
+import asyncio
+from typing import Literal, TypedDict
+
+from langgraph.graph import END, StateGraph
+from pydantic import BaseModel, Field
+
+from app import events
+from app.llm import complete_json, llm_is_configured
+from app.observability import observed_stage
+from app.state import DocumentationSource, GapCluster, Issue, PullRequest
+from app.tools.cluster import (
+    cluster_issues,
+    draft_review_documents,
+    summarize_analysis_inputs,
+    summarize_cluster_outputs,
+)
+from app.tools.docs import search_official_docs
+from app.tools.github import research_pull_requests, research_repo
+from app.tracing import run_traced, setup_tracing, summarize_documentation_route
+
+setup_tracing()
+
+
+class AgentDecision(BaseModel):
+    action: Literal["research", "analyze", "search_docs", "draft", "store"] = Field(
+        description="The next tool node the agent should run."
+    )
+    reason: str = Field(description="Short reason for the selected action.")
+
+
+class DocsHoundGraphState(TypedDict, total=False):
+    run_id: str
+    repo: str
+    docs_url: str | None
+    documentation_source: dict | None
+    include_documentation_activity: bool
+    repo_docs_max_files: int
+    nvidia_embed_max_passages: int
+    limit: int
+    dry_run: bool
+    issues: list[dict]
+    pull_requests: list[dict]
+    clusters: list[dict]
+    docs_sources: list[dict]
+    docs_candidates_inspected: int
+    documentation_issues_scraped: int
+    documentation_pull_requests_scraped: int
+    warnings: list[str]
+    errors: list[str]
+    next_action: str
+    decision_reason: str
+    decisions: list[dict]
+    researched: bool
+    analyzed: bool
+    docs_searched: bool
+    drafted: bool
+    stored: bool
+
+
+async def llm_decide(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    fallback_action = _safe_next_action(state)
+    if fallback_action == "store":
+        state["next_action"] = "store"
+        state["decision_reason"] = (
+            "The workflow reached a terminal state, so the run can be "
+            "finalized without another model request."
+        )
+        _record_decision(state)
+        return state
+
+    if not llm_is_configured():
+        state["next_action"] = fallback_action
+        state["decision_reason"] = "No LLM credential is set; used fallback router."
+        _record_decision(state)
+        return state
+
+    prompt = f"""
+You are DocsHound, a ReAct-style documentation gap agent.
+
+Goal:
+Find documentation gaps in issues and shipped changes in merged pull requests,
+then preserve the audit trail for review.
+
+Available actions:
+- research: fetch recent GitHub issues and merged pull requests for the repo
+- analyze: identify recurring gaps and shipped changes that need documentation
+- search_docs: search relevant first-party documentation and assess coverage
+- draft: write only the missing or partial documentation after coverage is known
+- store: finalize the run and its audit trail
+
+Rules:
+- Research must happen before analysis.
+- Analysis should happen after issues are available.
+- Search docs should happen after analysis.
+- Draft should happen after docs search.
+- Store should happen after drafting, or after an error.
+- Do not choose an action that has already completed unless there is no other valid action.
+
+Current state:
+- repo: {state.get("repo")}
+- docs_url: {state.get("docs_url")}
+- documentation_source: {state.get("documentation_source")}
+- researched: {state.get("researched", False)}
+- analyzed: {state.get("analyzed", False)}
+- docs_searched: {state.get("docs_searched", False)}
+- drafted: {state.get("drafted", False)}
+- stored: {state.get("stored", False)}
+- issues_count: {len(state.get("issues", []))}
+- merged_pull_requests_count: {len(state.get("pull_requests", []))}
+- clusters_count: {len(state.get("clusters", []))}
+- docs_sources_count: {len(state.get("docs_sources", []))}
+- errors_count: {len(state.get("errors", []))}
+
+Choose the next action.
+"""
+    try:
+        completion = await complete_json(
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "Select the next DocsHound workflow action. Return JSON "
+                        "with exactly two fields: action and reason."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+            validator=AgentDecision.model_validate,
+            operation="routing",
+        )
+        decision = completion.value
+        action = _guard_action(state, decision.action)
+        state["next_action"] = action
+        if action != decision.action:
+            state["decision_reason"] = (
+                f"LLM chose {decision.action}, but guardrail selected {action}. "
+                f"LLM reason: {decision.reason}"
+            )
+        else:
+            state["decision_reason"] = decision.reason
+    except Exception as exc:
+        state["next_action"] = fallback_action
+        state["decision_reason"] = f"LLM routing failed, used fallback: {exc}"
+
+    _record_decision(state)
+    return state
+
+
+def _safe_next_action(
+    state: DocsHoundGraphState,
+) -> Literal["research", "analyze", "search_docs", "draft", "store"]:
+    if state.get("errors"):
+        return "store"
+    if not state.get("researched") and not state.get("errors"):
+        return "research"
+    if (state.get("issues") or state.get("pull_requests")) and not state.get(
+        "analyzed"
+    ):
+        return "analyze"
+    if state.get("analyzed") and not state.get("docs_searched"):
+        return "search_docs"
+    if state.get("docs_searched") and not state.get("drafted"):
+        return "draft"
+    return "store"
+
+
+def _guard_action(
+    state: DocsHoundGraphState,
+    action: Literal["research", "analyze", "search_docs", "draft", "store"],
+) -> Literal["research", "analyze", "search_docs", "draft", "store"]:
+    safe = _safe_next_action(state)
+    if action == safe:
+        return action
+    if action == "store" and state.get("errors"):
+        return "store"
+    return safe
+
+
+def _record_decision(state: DocsHoundGraphState) -> None:
+    decision = {
+        "action": state.get("next_action"),
+        "reason": state.get("decision_reason", ""),
+        "issues_count": len(state.get("issues", [])),
+        "pull_requests_count": len(state.get("pull_requests", [])),
+        "clusters_count": len(state.get("clusters", [])),
+        "docs_sources_count": len(state.get("docs_sources", [])),
+        "errors_count": len(state.get("errors", [])),
+    }
+    state.setdefault("decisions", []).append(decision)
+    events.publish(state["run_id"], {"type": "agent_decision", **decision})
+
+
+def route(
+    state: DocsHoundGraphState,
+) -> Literal["research", "analyze", "search_docs", "draft", "store"]:
+    return state["next_action"]  # type: ignore[return-value]
+
+
+@observed_stage("research")
+async def research(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    try:
+        issues, pull_requests = await asyncio.gather(
+            run_traced(
+                "research_repo",
+                state["run_id"],
+                state["repo"],
+                research_repo,
+                state["repo"],
+                state.get("limit", 50),
+            ),
+            run_traced(
+                "research_pull_requests",
+                state["run_id"],
+                state["repo"],
+                research_pull_requests,
+                state["repo"],
+                state.get("limit", 50),
+            ),
+        )
+        state["issues"] = [issue.model_dump(mode="json") for issue in issues]
+        events.publish(
+            state["run_id"],
+            {"type": "issues_fetched", "count": len(issues)},
+        )
+        state["pull_requests"] = [
+            pull_request.model_dump(mode="json") for pull_request in pull_requests
+        ]
+        events.publish(
+            state["run_id"],
+            {"type": "pull_requests_fetched", "count": len(pull_requests)},
+        )
+
+        source_payload = state.get("documentation_source")
+        source = (
+            DocumentationSource.model_validate(source_payload)
+            if source_payload
+            else None
+        )
+        docs_repo = source.repo if source and source.kind == "github" else None
+        if (
+            state.get("include_documentation_activity", True)
+            and docs_repo
+            and docs_repo.lower() != state["repo"].lower()
+        ):
+            try:
+                docs_limit = min(state.get("limit", 50), 25)
+                docs_issues, docs_pull_requests = await asyncio.gather(
+                    run_traced(
+                        "research_documentation_issues",
+                        state["run_id"],
+                        docs_repo,
+                        research_repo,
+                        docs_repo,
+                        docs_limit,
+                    ),
+                    run_traced(
+                        "research_documentation_pull_requests",
+                        state["run_id"],
+                        docs_repo,
+                        research_pull_requests,
+                        docs_repo,
+                        docs_limit,
+                        True,
+                    ),
+                )
+                state["issues"].extend(
+                    issue.model_dump(mode="json") for issue in docs_issues
+                )
+                state["pull_requests"].extend(
+                    pull_request.model_dump(mode="json")
+                    for pull_request in docs_pull_requests
+                )
+                state["documentation_issues_scraped"] = len(docs_issues)
+                state["documentation_pull_requests_scraped"] = len(docs_pull_requests)
+                events.publish(
+                    state["run_id"],
+                    {
+                        "type": "documentation_activity_fetched",
+                        "repo": docs_repo,
+                        "issues_count": len(docs_issues),
+                        "pull_requests_count": len(docs_pull_requests),
+                    },
+                )
+            except Exception as exc:
+                warning = f"Documentation activity could not be fetched from {docs_repo}: {exc}"
+                state.setdefault("warnings", []).append(warning)
+                events.publish(
+                    state["run_id"],
+                    {
+                        "type": "documentation_activity_warning",
+                        "repo": docs_repo,
+                        "error": str(exc),
+                    },
+                )
+    except Exception as exc:
+        state.setdefault("errors", []).append(str(exc))
+    finally:
+        state["researched"] = True
+    return state
+
+
+@observed_stage("analyze")
+async def analyze(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    try:
+        issues = [Issue.model_validate(issue) for issue in state.get("issues", [])]
+        pull_requests = [
+            PullRequest.model_validate(pull_request)
+            for pull_request in state.get("pull_requests", [])
+        ]
+        clusters = await run_traced(
+            "cluster_issues",
+            state["run_id"],
+            state["repo"],
+            cluster_issues,
+            issues,
+            pull_requests,
+            state["repo"],
+            trace_input=summarize_analysis_inputs(
+                {"issues": issues, "pull_requests": pull_requests}
+            ),
+            trace_output=summarize_cluster_outputs,
+        )
+        cluster_dicts = [cluster.model_dump(mode="json") for cluster in clusters]
+        state["clusters"] = cluster_dicts
+    except Exception as exc:
+        state.setdefault("errors", []).append(str(exc))
+    finally:
+        state["analyzed"] = True
+    return state
+
+
+@observed_stage("search_docs")
+async def search_docs(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    try:
+        clusters = [
+            GapCluster.model_validate(cluster) for cluster in state.get("clusters", [])
+        ]
+        documentation_source = (
+            DocumentationSource.model_validate(state["documentation_source"])
+            if state.get("documentation_source")
+            else None
+        )
+        trace_input = summarize_documentation_route(
+            state["repo"],
+            (
+                documentation_source.model_dump(mode="json")
+                if documentation_source
+                else None
+            ),
+            state.get("docs_url"),
+        )
+        trace_input["findings_count"] = len(clusters)
+        clusters, sources, inspected_count = await run_traced(
+            "search_official_docs",
+            state["run_id"],
+            state["repo"],
+            search_official_docs,
+            state["repo"],
+            state.get("docs_url"),
+            clusters,
+            documentation_source=documentation_source,
+            repo_docs_max_files=state.get("repo_docs_max_files"),
+            nvidia_embed_max_passages=state.get("nvidia_embed_max_passages"),
+            activity_pull_requests=[
+                PullRequest.model_validate(pull_request)
+                for pull_request in state.get("pull_requests", [])
+            ],
+            trace_input=trace_input,
+        )
+        source_dicts = [source.model_dump(mode="json") for source in sources]
+        state["clusters"] = [cluster.model_dump(mode="json") for cluster in clusters]
+        state["docs_sources"] = source_dicts
+        state["docs_candidates_inspected"] = inspected_count
+        events.publish(
+            state["run_id"],
+            {
+                "type": "docs_sources_found",
+                "count": len(source_dicts),
+                "inspected_count": inspected_count,
+                "sources": source_dicts,
+            },
+        )
+    except Exception as exc:
+        state.setdefault("errors", []).append(str(exc))
+    finally:
+        state["docs_searched"] = True
+    return state
+
+
+@observed_stage("draft")
+async def draft(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    try:
+        issues = [Issue.model_validate(issue) for issue in state.get("issues", [])]
+        pull_requests = [
+            PullRequest.model_validate(pull_request)
+            for pull_request in state.get("pull_requests", [])
+        ]
+        clusters = [
+            GapCluster.model_validate(cluster) for cluster in state.get("clusters", [])
+        ]
+        clusters = await run_traced(
+            "draft_review_documents",
+            state["run_id"],
+            state["repo"],
+            draft_review_documents,
+            clusters,
+            issues,
+            pull_requests,
+            trace_input=summarize_analysis_inputs(
+                {
+                    "clusters": clusters,
+                    "issues": issues,
+                    "pull_requests": pull_requests,
+                }
+            ),
+            trace_output=summarize_cluster_outputs,
+        )
+        cluster_dicts = [cluster.model_dump(mode="json") for cluster in clusters]
+        state["clusters"] = cluster_dicts
+        for index, cluster in enumerate(cluster_dicts):
+            events.publish(
+                state["run_id"],
+                {"type": "gap_found", "index": index, "cluster": cluster},
+            )
+    except Exception as exc:
+        state.setdefault("errors", []).append(str(exc))
+    finally:
+        state["drafted"] = True
+    return state
+
+
+@observed_stage("store")
+async def store(state: DocsHoundGraphState) -> DocsHoundGraphState:
+    state["stored"] = True
+    return state
+
+
+builder = StateGraph(DocsHoundGraphState)
+builder.add_node("llm_decide", llm_decide)
+builder.add_node("research", research)
+builder.add_node("analyze", analyze)
+builder.add_node("search_docs", search_docs)
+builder.add_node("draft", draft)
+builder.add_node("store", store)
+
+builder.set_entry_point("llm_decide")
+builder.add_conditional_edges(
+    "llm_decide",
+    route,
+    {
+        "research": "research",
+        "analyze": "analyze",
+        "search_docs": "search_docs",
+        "draft": "draft",
+        "store": "store",
+    },
+)
+builder.add_edge("research", "llm_decide")
+builder.add_edge("analyze", "llm_decide")
+builder.add_edge("search_docs", "llm_decide")
+builder.add_edge("draft", "llm_decide")
+builder.add_edge("store", END)
+
+graph = builder.compile()
