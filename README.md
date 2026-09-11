@@ -1,488 +1,296 @@
 # DocsHound
 
 <p align="center">
-  <img src="app/web/static/logos/docshound-logo.svg" alt="DocsHound" width="180">
-</p>
-
-<p align="center">
-  <a href="https://github.com/MatthewFeroz/docshound/actions/workflows/ci.yml"><img src="https://github.com/MatthewFeroz/docshound/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
+  <img src="frontend/public/logos/docshound-logo.svg" alt="DocsHound" width="180">
 </p>
 
 DocsHound turns open issues and merged pull requests into grounded, reviewable
 documentation updates.
 
-It is a LangGraph agent behind a FastAPI + HTMX application. Point it at a public
-repository and it will:
+The project contains two independently deployable applications:
 
-1. Collect recent issues and merged pull requests independently.
-2. Separate unresolved documentation gaps from shipped changes.
-3. Discover the project's real documentation site and assess whether each gap is
-   already covered.
-4. Draft Markdown grounded in the linked repository evidence.
-5. Let a human edit and approve the document.
-6. Detect the target documentation layout and prepare Markdown or MDX.
-7. Preview the exact repository patch.
-8. Create a documentation branch, commit, and pull request when write access is
-   connected.
+- `frontend/` — React, TypeScript, and Vite static application
+- `backend/` — FastAPI JSON/SSE API and agent runtime
 
-Every step streams to the browser as it happens, and every operation is traced
-locally — and to LangSmith when it is enabled.
+Credentials submitted through the local connection panels are sent directly to
+the backend, held only in process memory, and never returned by the API.
 
-## Architecture
-
-```mermaid
-flowchart LR
-  browser["Browser<br/>HTMX + SSE"]
-  routes["FastAPI routes<br/>app/main.py"]
-  coordinator["Run coordinator<br/>app/agent.py"]
-  lg["LangGraph<br/>app/langgraph_agent.py"]
-  tracing["Stages + spans<br/>app/tracing.py"]
-  bus["Per-run queue<br/>app/events.py"]
-  render["Events to HTML<br/>app/render.py"]
-  sse["SSE stream<br/>/runs/{id}/events"]
-  sqlite[("SQLite<br/>data/docshound.db")]
-
-  browser -->|"POST /web/runs"| routes
-  routes --> coordinator --> lg --> tracing --> bus --> render --> sse
-  sse -->|"HTML fragments"| browser
-
-  lg -.->|"issues, merged PRs"| gh["GitHub REST API"]
-  lg -.->|"sitemaps, pages"| docs["Documentation sites"]
-  lg -.->|"routing, clustering,<br/>coverage grading"| openai["OpenAI · optional"]
-  tracing -.->|"tool + retriever runs"| langsmith["LangSmith · optional"]
-  routes -.->|"branch, commit, PR"| gh
-
-  coordinator --> sqlite
-  routes <--> sqlite
-```
-
-The browser never polls for run state. `POST /web/runs` returns the inspector
-shell, then the agent pushes pre-rendered HTML fragments over one SSE connection.
-
-## The agent graph
-
-The graph is a ReAct-style router loop. `llm_decide` picks the next action, every
-worker node returns to the router, and only `store` exits.
-
-```mermaid
-stateDiagram-v2
-  [*] --> llm_decide
-  llm_decide --> research: research
-  llm_decide --> analyze: analyze
-  llm_decide --> search_docs: search_docs
-  llm_decide --> store: store
-  research --> llm_decide
-  analyze --> llm_decide
-  search_docs --> llm_decide
-  store --> [*]
-```
-
-Routing is model-proposed but **not** model-controlled. `_safe_next_action`
-computes the deterministically correct next step from completed-stage flags, and
-`_guard_action` overrides the model whenever it disagrees:
-
-| Situation | Result |
-| --- | --- |
-| No `OPENAI_API_KEY` | Deterministic fallback router, recorded as such |
-| Model call raises | Deterministic fallback router, error kept in the reason |
-| Model picks a different action | Guardrail wins, both choices recorded |
-| Model picks `store` while errors exist | Model wins, the run ends early |
-
-Every decision is appended to `state["decisions"]` and published as an
-`agent_decision` event, so the audit trail shows what the model wanted and what
-actually ran.
-
-### Nodes and operations
-
-Each stage owns a set of traced operations, defined in `OPERATION_SPECS` in
-`app/tracing.py`. Spans nest by `parent_span_id` and `depth`.
+## Product flow
 
 ```text
-research
-├── research_repo                 GET /repos/{repo}/issues, state=all, sort=updated
-└── research_pull_requests        GET /repos/{repo}/pulls, closed + merged_at only
-
-analyze
-├── cluster_issues                LLM clustering, validated, heuristic fallback
-└── draft_findings                Grounded Markdown per cluster
-
-search_docs
-└── search_official_docs
-    ├── discover_docs_root        homepage + README link scoring
-    ├── discover_document_urls    robots.txt, sitemaps, then nav fallback
-    ├── fetch_document_pages      [retriever] bounded concurrent fetch
-    ├── fetch_repository_readme   [retriever] first-party fallback evidence
-    ├── rank_docs_for_gaps        chunk + score excerpts per gap
-    └── assess_doc_coverage       covered / partially_covered / missing
-
-store
-└── (no operations; finalizes state and the audit trail)
+Repository activity
+        ↓
+Open gaps + shipped changes
+        ↓
+Search relevant first-party documentation
+        ↓
+Assess coverage: missing, partial, or documented
+        ↓
+Grounded Markdown draft for missing or partial coverage
+        ↓
+Human review and approval
+        ↓
+New-page or existing-page patch preview
+        ↓
+Documentation pull request
 ```
-
-`fetch_document_pages` and `fetch_repository_readme` are traced as LangSmith
-`retriever` runs, so retrieved pages show up as documents rather than opaque tool
-output.
-
-## Documentation coverage pipeline
-
-`search_docs` is the deepest part of the agent. It finds the project's real docs
-site, retrieves a bounded corpus, and grades each gap against cited excerpts.
-
-```mermaid
-flowchart TD
-  start(["clusters from analyze"]) --> root
-
-  root["discover_docs_root"] --> root_q{"docs root found?"}
-  root_q -->|"configured docs_url"| urls
-  root_q -->|"score homepage + README links"| urls
-  root_q -->|"no · empty URL list"| fetch
-
-  urls["discover_document_urls<br/>robots.txt then /sitemap.xml"] --> urls_q{"more than one URL?"}
-  urls_q -->|"yes"| fetch
-  urls_q -->|"no"| nav["fall back to landing-page navigation"] --> fetch
-
-  fetch["fetch_document_pages<br/>max 40 URLs, 8 concurrent, 10 min cache"] --> readme
-  readme["fetch_repository_readme"] --> dedupe["dedupe by final URL"]
-
-  dedupe --> gaps_q{"any clusters?"}
-  gaps_q -->|"no"| baseline["baseline sources<br/>first 8 pages"]
-  gaps_q -->|"yes"| rank
-
-  rank["rank_docs_for_gaps<br/>1400-char chunks, top 3 pages per gap"] --> assess
-  assess["assess_doc_coverage"] --> assess_q{"OPENAI_API_KEY set?"}
-  assess_q -->|"yes"| llm["LLM verdict per gap<br/>URLs filtered to that gap's evidence"]
-  assess_q -->|"no"| heuristic["heuristic verdict<br/>missing or partially_covered"]
-
-  llm --> build["DocSource list<br/>max 24, with coverage + assessment"]
-  heuristic --> build
-  baseline --> out(["docs_sources"])
-  build --> out
-```
-
-Safety and scope rules that are enforced in code, not prompts:
-
-- Retrieval is SSRF-guarded. `_normalize_public_url` rejects non-HTTP schemes,
-  `localhost`, and private, loopback, link-local, or reserved IPs.
-- Crawling stays inside the docs root's origin and path scope, and skips other
-  locales once a root locale is detected.
-- The coverage prompt marks excerpts as untrusted evidence, and returned
-  `source_urls` are filtered to URLs that were actually supplied for that gap.
-- A gap with no retrieved excerpt is forced to `missing`, whatever the model says.
-
-## Clustering and drafting
-
-`app/tools/cluster.py` is where model output gets constrained back to evidence.
-
-```mermaid
-flowchart TD
-  input(["issues + merged PRs"]) --> gate{"OPENAI_API_KEY<br/>and 2+ items?"}
-  gate -->|"no"| heur["_cluster_heuristically<br/>keyword buckets, support-question fallback"]
-  gate -->|"yes"| llm["_cluster_with_llm<br/>JSON object, max 8 clusters"]
-  llm -->|"raises"| heur
-
-  llm --> validate["_validate_cluster_sources"]
-  validate --> v1["drop issue and PR numbers<br/>that were never fetched"]
-  v1 --> v2["drop shipped_change findings<br/>with no merged PR"]
-  v2 --> v3["keep only issues the PR<br/>actually closes or fixes"]
-  v3 --> v4["rewrite shipped_change title<br/>and summary from the PR itself"]
-
-  heur --> ensure
-  v4 --> ensure["_ensure_shipped_change<br/>add the highest-value merged PR if none"]
-  ensure --> drafts["attach_review_drafts"]
-
-  drafts --> d1["shipped_change: What changed, from PR bodies"]
-  drafts --> d2["open_gap: Documentation gap + Resolution"]
-  d1 --> sources["append verified Sources links"]
-  d2 --> sources
-  sources --> out(["reviewable GapCluster list"])
-```
-
-Findings come in two kinds:
-
-- **`open_gap`** — recurring questions with no confirmed answer. If the issues do
-  not establish a resolution, the draft says what still needs verification rather
-  than inventing steps.
-- **`shipped_change`** — a merged pull request whose user-facing behavior needs
-  explaining. Title, summary, and resolution are rebuilt from the PR, so the model
-  cannot attribute a change to a PR that did not ship it.
-
-## Review to pull request
-
-```mermaid
-sequenceDiagram
-  participant U as Reviewer
-  participant A as FastAPI
-  participant D as SQLite
-  participant G as GitHub
-
-  U->>A: Edit Markdown, POST .../approve
-  A->>D: save_approved_document
-  A-->>U: 303 to /docs/{slug}
-  U->>A: POST /docs/{slug}/pull-request/preview
-  A->>G: GET repo, recursive tree, existing file
-  A->>A: choose path + format, build unified diff
-  A->>D: save_documentation_change (preview_ready)
-  A-->>U: target repo, branch, path, exact patch
-  U->>A: POST /docs/{slug}/pull-request/create
-  alt GITHUB_WRITE_TOKEN set
-    A->>G: create ref, PUT contents, POST pulls
-    A->>D: save_documentation_change (created)
-    A-->>U: pull request URL
-  else no write token
-    A-->>U: preview only, patch stays downloadable
-  end
-```
-
-Target detection reads the repository tree and picks a destination:
-
-| Detected | Destination | Format |
-| --- | --- | --- |
-| `docs.json` or `mint.json` | first existing `guides/`, `documentation/`, or `reference/` beside the config, else `guides/` | MDX + frontmatter |
-| `docusaurus.config.*` | `docs/` beside the config | MDX + frontmatter |
-| `mkdocs.yml` / `mkdocs.yaml` | `docs/` beside the config | Markdown |
-| existing `docs/` | `docs/` | Markdown |
-| existing `documentation/` | `documentation/` | Markdown |
-| nothing detected | `docs/` | Markdown |
-
-The repository and path can both be overridden during review. Branch creation,
-commits, and PR creation are idempotent: an existing branch is reused, an
-unchanged file is not recommitted, and a `422` on PR creation falls back to
-returning the open pull request.
-
-## Observability
-
-Two audiences, one instrumentation layer in `app/tracing.py`.
-
-```mermaid
-flowchart LR
-  op["observe_operation()"] --> span_start["span_started"]
-  op --> span_prog["span_progress"]
-  op --> span_done["span_completed"]
-  op --> ls["LangSmith run<br/>tool or retriever"]
-
-  span_start --> bus["events.publish"]
-  span_prog --> bus
-  span_done --> bus
-  bus --> render["render_events()"]
-  render --> chan["span_research / span_analyze<br/>span_search_docs / span_store<br/>inspector_oob / gap_card / timeline"]
-  chan --> ui["Inspector UI"]
-```
-
-- **Stages** — `stage_started` / `stage_completed` carry a label, status, detail,
-  and wall-clock `duration_ms`.
-- **Spans** — `observe_operation` emits `span_started`, optional `span_progress`,
-  and `span_completed` with input summary, output summary, duration, and error.
-  Span identity is shared with LangSmith: the same UUID is the local `span_id` and
-  the LangSmith `run_id`, so a row in the UI maps to one trace run.
-- **Progress** — long operations call `publish_span_progress`, which reads the
-  active span from a `ContextVar`, so nothing has to thread IDs through call sites.
-- **Streaming** — `render_events` turns each event into an HTMX out-of-band swap
-  on a named SSE channel. `GET /runs/{id}/events` serves HTML; `GET
-  /runs/{id}/events.json` serves the raw JSON events for scripting and tests.
-
-LangSmith tracing is optional. Add the standard variables to `.env` to enable it:
-
-```text
-LANGSMITH_TRACING=true
-LANGSMITH_API_KEY=
-LANGSMITH_PROJECT=docshound
-```
-
-Without them nothing is sent to LangSmith and the local inspector keeps working
-unchanged.
 
 ## Run locally
 
-Requires Python 3.11 or newer.
+Requires Python 3.14 and Bun 1.3+. The original root setup commands remain
+supported:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
+test -f .env || cp .env.example .env
+# Add credentials to .env, then start the app:
 ./run.sh
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). `run.sh` builds the React
+frontend and serves it with the API from one backend process. `HOST` and `PORT`
+can override the default bind address and port. Keep an existing `.env` when
+upgrading; replacing it would discard its credentials and settings.
 
-You can also start the server directly:
+For a frozen backend installation, use uv 0.12+ instead of the pip commands:
 
 ```bash
-.venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+cd backend
+uv sync --locked
+cd ..
+./run.sh
 ```
 
-The graph is also registered for LangGraph tooling in `langgraph.json` as
-`docshound` → `./app/langgraph_agent.py:graph`, so it can be run in LangGraph
-Studio with `langgraph dev`.
+Backend dependencies are declared in `backend/pyproject.toml` and reproducibly
+resolved by `backend/uv.lock`. Refresh them deliberately with
+`cd backend && uv lock --upgrade && uv sync`.
 
-## Configuration
+For frontend hot reload, run each development server in its own terminal:
 
-Public repositories work without credentials for small runs. Add these values to
-`.env` as needed:
+```bash
+./backend/run.sh
+bun run --cwd frontend dev
+```
+
+The frontend development server runs at [http://127.0.0.1:5173](http://127.0.0.1:5173)
+and proxies `/api` to the backend at `http://127.0.0.1:8000`.
+
+## OpenCode stage demo
+
+The repeatable stage setup, pinned live GitHub sources, read-only preflight, and
+LangSmith trace configuration live in [`demo/`](demo/README.md). Start the
+complete demo environment with:
+
+```bash
+./demo/run.sh opencode
+```
+
+## Backend configuration
+
+Add credentials to `backend/.env` (or a root `.env` for compatibility with
+existing local installations):
 
 ```text
-APP_ENV=development
-GITHUB_TOKEN=          # optional: higher read limits
-GITHUB_WRITE_TOKEN=    # optional: create documentation branches and PRs
-OPENAI_API_KEY=        # optional: model routing, clustering, coverage grading
+APP_ENV=development   # set to production to disable browser key entry
+GITHUB_TOKEN=          # optional server token for scans and documentation PRs
+MERGE_GATEWAY_API_KEY= # recommended: model-based analysis through Gateway
+MERGE_GATEWAY_PRIMARY_MODEL=google/gemini-3.7-flash
+MERGE_GATEWAY_FALLBACK_MODEL=openai/gpt-5.6-luna
+OPENAI_API_KEY=        # optional legacy direct-provider fallback
 OPENAI_MODEL=gpt-4o-mini
+LANGSMITH_API_KEY=     # default OTLP trace destination
+LANGSMITH_PROJECT=docshound
+ALLOWED_ORIGINS=http://localhost:5173
+DOCSHOUND_DB_PATH=     # optional: explicit shared SQLite path
 ```
 
-What each optional key changes:
+For automatic forks of arbitrary public repositories, use a classic GitHub
+token with the `public_repo` scope. GitHub requires Administration write access
+to create a fork with a fine-grained token, so fine-grained tokens are best for
+direct writes or reusing a fork you already created; give that fork Contents and
+Pull requests read/write access.
 
-| Key | Unset | Set |
-| --- | --- | --- |
-| `GITHUB_TOKEN` | Unauthenticated reads, low rate limit | Higher read limits |
-| `OPENAI_API_KEY` | Deterministic router, keyword clustering, heuristic coverage | LLM routing, clustering, and coverage grading, all guardrailed |
-| `GITHUB_WRITE_TOKEN` | Review, detection, patch preview, and download | Branch, commit, and pull-request creation |
+## Frontend configuration
 
-For pull-request creation, use a fine-grained write token limited to the target
-documentation repositories with:
+`VITE_API_BASE_URL` is the only frontend environment variable. Set it to the
+public backend origin for independent deployments:
 
-- Contents: read and write
-- Pull requests: read and write
+```text
+VITE_API_BASE_URL=https://api.example.com
+```
 
-## HTTP interface
+Values prefixed with `VITE_` are public and embedded in the browser bundle.
+Never place Merge Gateway, model-provider, or GitHub credentials in the
+frontend environment.
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/health` | Liveness check |
-| `GET` | `/` | Landing page and run form |
-| `POST` | `/web/runs` | Start a run, return the inspector panel |
-| `POST` | `/runs` | Start a run, return `{"run_id": ...}` |
-| `GET` | `/runs/{run_id}` | Run snapshot as JSON |
-| `GET` | `/runs/{run_id}/events` | SSE stream of rendered HTML fragments |
-| `GET` | `/runs/{run_id}/events.json` | SSE stream of raw JSON events |
-| `GET` | `/findings` | Every finding across persisted runs |
-| `GET` | `/runs/{run_id}/gaps/{index}` | Finding review page |
-| `POST` | `/runs/{run_id}/gaps/{index}/approve` | Save the edited Markdown |
-| `POST` | `/runs/{run_id}/gaps/{index}/reject` | Mark a finding rejected |
-| `GET` | `/docs/{slug}` | Approved standalone document |
-| `GET` | `/docs/{slug}/download` | Download the document as `.md` |
-| `POST` | `/docs/{slug}/pull-request/preview` | Detect target and build the patch |
-| `GET` | `/docs/{slug}/pull-request` | Prepared change and patch preview |
-| `POST` | `/docs/{slug}/pull-request/create` | Create branch, commit, and PR |
-| `GET` | `/docs/{slug}/pull-request/patch` | Download the `.patch` |
+In local development, a server-managed `GITHUB_TOKEN` is automatically verified
+for the repository entered on the homepage without being sent to or displayed
+in the browser. This is the recommended setup for repeatable demos. When no
+server token is configured, the readiness checklist can accept one GitHub token
+for repository research and documentation pull requests. The model connection
+menu can similarly send a Merge Gateway key to the backend. Browser-provided
+overrides are held only in backend process memory and cleared on restart. DocsHound
+automatically resolves the official documentation repository and folder from
+repository structure, README links, the GitHub homepage, and “Edit this page on
+GitHub” links. The detected source is shown before each run and can be
+overridden.
+
+Pull-request previews always use that upstream documentation repository. Only
+after approval does DocsHound resolve a write destination: it writes directly
+when permitted, otherwise it reuses the connected account's fork or creates one,
+then opens the pull request against upstream. If GitHub permits the fork and
+commit but requires browser confirmation for the cross-fork pull request,
+DocsHound links directly to the prefilled upstream comparison page.
+
+For a confirmed documentation root containing at most 100 Markdown or MDX
+pages, an authenticated run reads the complete corpus before ranking the best
+eight pages per finding. Larger roots use a bounded search of up to 100 pages.
+When documentation lives in a separate repository, its issues and merged pull
+requests can also be included as documentation-specific evidence. Browser
+credential entry is disabled when `APP_ENV` is `production`; production
+deployments should inject `GITHUB_TOKEN` and `MERGE_GATEWAY_API_KEY` through the
+server's secret manager.
+
+### OpenTelemetry and OpenInference tracing
+
+DocsHound produces one vendor-neutral OpenTelemetry trace stream enriched with
+OpenInference semantics. Each run is an OpenInference `AGENT` span, repository
+operations are `TOOL` spans, and the LangChain, LangGraph, and OpenAI-compatible
+Gateway calls beneath them are instrumented automatically. Model spans include
+the requested provider/model, the model returned by Gateway, and whether
+DocsHound used its fallback route.
+
+Set a LangSmith API key to use LangSmith as the default OTLP destination:
+
+```text
+LANGSMITH_API_KEY=lsv2_...
+LANGSMITH_PROJECT=docshound
+OTEL_SERVICE_NAME=docshound
+```
+
+The LangSmith SDK's native tracing switch is intentionally unnecessary: spans
+go directly to LangSmith's OTLP endpoint, avoiding a duplicate trace tree.
+Explicit `OTEL_EXPORTER_OTLP_ENDPOINT` or
+`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` configuration takes precedence, making it
+possible to route the same spans to an OpenTelemetry Collector or a future
+Google exporter without changing agent code. Standard options including
+`OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_RESOURCE_ATTRIBUTES`, and
+`OTEL_SDK_DISABLED` are supported. Set `OPENINFERENCE_HIDE_INPUTS=true` and/or
+`OPENINFERENCE_HIDE_OUTPUTS=true` when model content must not be captured by
+automatic instrumentation. DocsHound's custom spans record repository identity,
+the selected documentation repository and root, source references, and result
+summaries—not credentials or issue, pull-request, and document bodies.
+
+## Docker
+
+Build and run both applications locally:
+
+```bash
+docker compose up --build
+```
+
+Open [http://localhost:8080](http://localhost:8080). The backend is available at
+`http://localhost:8000`, with persistent SQLite data in a named Docker volume.
+
+Each directory also has its own Dockerfile, so the frontend and backend can be
+built, deployed, scaled, and rolled back separately. Configure the backend's
+`ALLOWED_ORIGINS` with the deployed frontend origin.
+
+## API
+
+The versioned backend API is under `/api/v1`. Interactive OpenAPI documentation
+is available at `http://127.0.0.1:8000/docs`.
 
 Start a run:
 
 ```bash
-curl -sS -X POST http://127.0.0.1:8000/runs \
+curl -sS -X POST http://127.0.0.1:8000/api/v1/runs \
   -H 'Content-Type: application/json' \
   -d '{"repo":"GoogleCloudPlatform/knowledge-catalog","limit":50}'
 ```
 
-Then poll the returned run ID:
+Resolve and confirm documentation sources before a run:
 
 ```bash
-curl -sS http://127.0.0.1:8000/runs/<RUN_ID> | jq
+curl -sS -X POST http://127.0.0.1:8000/api/v1/sources/resolve \
+  -H 'Content-Type: application/json' \
+  -d '{"repo":"kubernetes/kubernetes"}'
 ```
 
-Or follow the run as it happens:
+Then fetch its state or subscribe to JSON server-sent events:
 
 ```bash
-curl -N http://127.0.0.1:8000/runs/<RUN_ID>/events.json
+curl -sS http://127.0.0.1:8000/api/v1/runs/<RUN_ID>
+curl -N http://127.0.0.1:8000/api/v1/runs/<RUN_ID>/events
 ```
 
-`limit` accepts 1–100 and bounds issue collection; merged PR collection is capped
-independently at 30. `dry_run` is accepted and recorded as run metadata, but write
-access is gated solely by `GITHUB_WRITE_TOKEN` — nothing is written to a
-repository without it.
+Completed run responses and `run_completed` events include a user-facing
+`outcome` and `summary`. Outcomes distinguish recommendations from
+`no_activity`, `no_recommendations`, `partial_failure`, and `failed`, so clients
+never have to infer an empty result from counters or mistake a recoverable tool
+error for a successful run.
 
-The browser workflow is usually simpler: enter `owner/repository`, watch the
-inspector, open a finding, edit the Markdown, and approve it.
+The API also exposes findings, approval/rejection, approved documents,
+repository patch previews, patch downloads, and pull-request creation.
 
-## Operational limits
-
-Bounded so a run cannot walk a whole documentation site:
-
-| Limit | Value | Location |
-| --- | --- | --- |
-| Issues per run | `limit`, 1–100 | `app/tools/github.py` |
-| Merged PRs per run | `min(limit, 30)` | `app/tools/github.py` |
-| Clusters per run | 8 | `app/tools/cluster.py` |
-| Documentation URLs | 40 | `MAX_DOCUMENT_URLS` |
-| Sitemaps followed | 8 | `MAX_SITEMAPS` |
-| Concurrent page fetches | 8 | `fetch_document_pages` |
-| Page cache TTL | 600 s | `PAGE_CACHE_TTL_SECONDS` |
-| Chunk size / overlap | 1400 / 180 chars | `chunk_document` |
-| Ranked pages per gap | 3 | `rank_chunks_for_gaps` |
-| Returned sources | 24 | `MAX_RETURNED_SOURCES` |
+For compatibility with existing integrations, `POST /runs`,
+`GET /runs/{run_id}`, and `GET /runs/{run_id}/events.json` remain available as
+aliases for the original DocsHound API contract. New integrations should use
+the versioned `/api/v1` routes.
 
 ## Persistence
 
-Local state lives in `data/docshound.db`, which is ignored by Git. Tables are
-created on first connection.
+The backend stores new installations in `backend/data/docshound.db`. If that
+file is absent, an existing root `data/docshound.db` is reused so an upgrade
+keeps saved runs and documents visible. If both exist, the backend database
+takes precedence. Set
+`DOCSHOUND_DB_PATH` when a deployment needs an explicit shared location.
 
-```text
-runs                    run_id, repo, status, state_json, updated_at
-approved_documents      slug, run_id, gap_index, repo, title, summary,
-                        markdown, source_issues_json, timestamps
-                        unique(run_id, gap_index)
-documentation_changes   document_slug, target_repo, base_branch, branch_name,
-                        file_path, file_format, detected_by, content, patch,
-                        existing_sha, status, pr_number, pr_url, error
-```
+The database includes completed runs, findings, approved document revisions,
+prepared patches, and created pull-request metadata.
 
-Completed runs are reloaded into memory on startup, so findings and the review
-workflow survive server restarts.
+SQLite and the in-process event stream are appropriate for a single backend
+replica. A multi-replica deployment should use shared persistence and event
+delivery before scaling horizontally.
 
 ## Tests
 
+Run backend tests:
+
 ```bash
-.venv/bin/python -m unittest discover -s tests -v
+cd backend
+uv lock --check
+uv run ruff check app tests ../demo
+PYTHONWARNINGS='error::ResourceWarning' \
+  uv run --locked python -m unittest discover -s tests -v
 ```
 
-| File | Covers |
-| --- | --- |
-| `tests/test_docs_search.py` | Sitemap parsing, docs scope and locale filtering, navigation fallback, per-gap ranking, cited coverage output |
-| `tests/test_observability.py` | Span start / progress / completion linkage, stage and span rendering, SSE channel targeting |
-| `tests/test_documentation_flow.py` | MDX repository detection, patch generation, branch → commit → PR sequence, run persistence round-trip |
+Run frontend checks:
+
+```bash
+cd frontend
+bun run format:check
+bun run typecheck
+bun run test
+bun run build
+```
+
+GitHub Actions runs the same locked backend and frontend checks, then builds
+both Docker images with `docker compose build`.
 
 ## Project structure
 
 ```text
-app/
-  main.py                  FastAPI routes, SSE endpoints, review actions
-  agent.py                 run coordinator, graph invocation, persistence
-  langgraph_agent.py       graph state, nodes, router, guardrails
-  state.py                 Pydantic models and the in-memory run registry
-  config.py                environment-backed settings
-  tracing.py               stage and span instrumentation, LangSmith spans
-  events.py                per-run async event queue
-  render.py                events to HTMX fragments
-  approved_documents.py    approved Markdown persistence and sanitized render
-  documentation_prs.py     target detection, patches, branch and PR creation
-  run_store.py             persistent run storage
-  tools/
-    github.py              issue and merged pull request collection
-    cluster.py             LLM clustering, validation, heuristic fallback, drafts
-    docs.py                coverage pipeline orchestration and assessment
-    docs_discovery.py      docs root discovery, sitemap crawl, page extraction
-    docs_retrieval.py      chunking, scoring, and per-gap ranking
-  web/
-    templates/             pages and HTMX partials, including the inspector
-    static/                stylesheet and logos
-tests/
-  test_docs_search.py
-  test_observability.py
-  test_documentation_flow.py
+backend/
+  app/                    FastAPI API, agent, persistence, and integrations
+  tests/                  API and workflow tests
+  Dockerfile
+frontend/
+  src/                    React application and typed API client
+  public/                 DocsHound assets
+  Dockerfile
+docker-compose.yml        Local production-style deployment
+run.sh                    Starts both development servers
 ```
-
-## Development
-
-Linting and formatting use [Ruff](https://docs.astral.sh/ruff/):
-
-```bash
-ruff check app tests
-ruff format --check app tests
-```
-
-GitHub Actions runs the test suite on Python 3.11 and 3.12, plus the lint and
-format checks, on every push to `main` and every pull request.
-
-## License
-
-Released under the [MIT License](LICENSE).

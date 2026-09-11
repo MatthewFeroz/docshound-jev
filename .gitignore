@@ -1,8 +1,13 @@
 .env
 .env.*
 !.env.example
-clickhouse_credentials.txt
 .venv/
+clickhouse_credentials.txt
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 __pycache__/
 *.py[cod]
 .DS_Store
@@ -12,13 +17,14 @@ __pycache__/
 data/*.db
 data/*.db-shm
 data/*.db-wal
+backend/data/*.db
+backend/data/*.db-shm
+backend/data/*.db-wal
 .agents/
 .claude/
 .cursor/
 
-# Personal study notes and teaching artifacts (kept local, not published)
-MISSION.md
-RESOURCES.md
-lessons/
-reference/
-assets/
+*.log
+__pycache__/
+.ruff_cache/
+.pytest_cache/

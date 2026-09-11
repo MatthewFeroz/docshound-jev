@@ -1,0 +1,139 @@
+import type {
+  CreateRunResponse,
+  DocumentPayload,
+  Finding,
+  DocumentationSource,
+  Run,
+  RunEvent,
+  RuntimeConfig,
+  SourceResolution,
+  ScanOptions,
+  UsageHistory,
+} from "./types";
+
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() ?? "";
+export const API_BASE_URL = configuredBaseUrl.replace(/\/$/, "");
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    let message = `Request failed (${response.status})`;
+    try {
+      const payload = (await response.json()) as { detail?: string };
+      if (payload.detail) message = payload.detail;
+    } catch {
+      // Preserve the status-based message for non-JSON responses.
+    }
+    throw new ApiError(message, response.status);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export const api = {
+  getUsage: () => request<UsageHistory>("/api/v1/usage"),
+  getRuntimeConfig: () => request<RuntimeConfig>("/api/v1/config"),
+  setMergeGatewayApiKey: (apiKey: string) =>
+    request<RuntimeConfig>("/api/v1/config/llm-credential", {
+      method: "POST",
+      body: JSON.stringify({ api_key: apiKey }),
+    }),
+  setGitHubApiKey: (repo: string, apiKey?: string) =>
+    request<RuntimeConfig>("/api/v1/config/github-credential", {
+      method: "POST",
+      body: JSON.stringify({ repo, api_key: apiKey || null }),
+    }),
+  resolveSources: (repo: string) =>
+    request<SourceResolution>("/api/v1/sources/resolve", {
+      method: "POST",
+      body: JSON.stringify({ repo }),
+    }),
+  createRun: (
+    repo: string,
+    documentationSource: DocumentationSource,
+    includeDocumentationActivity = true,
+    scan?: ScanOptions,
+  ) =>
+    request<CreateRunResponse>("/api/v1/runs", {
+      method: "POST",
+      body: JSON.stringify({
+        repo,
+        documentation_source: documentationSource,
+        include_documentation_activity: includeDocumentationActivity,
+        limit: scan?.limit ?? 50,
+        repo_docs_max_files: scan?.repo_docs_max_files,
+        nvidia_embed_max_passages: scan?.nvidia_embed_max_passages,
+        dry_run: false,
+      }),
+    }),
+  getRun: (runId: string) => request<Run>(`/api/v1/runs/${runId}`),
+  listFindings: () => request<Finding[]>("/api/v1/findings"),
+  getFinding: (runId: string, index: number) =>
+    request<Finding>(`/api/v1/runs/${runId}/findings/${index}`),
+  approveFinding: (runId: string, index: number, markdown: string) =>
+    request<DocumentPayload>(
+      `/api/v1/runs/${runId}/findings/${index}/approval`,
+      {
+        method: "POST",
+        body: JSON.stringify({ markdown }),
+      },
+    ),
+  rejectFinding: (runId: string, index: number) =>
+    request<Finding>(`/api/v1/runs/${runId}/findings/${index}/rejection`, {
+      method: "POST",
+      body: "{}",
+    }),
+  getDocument: (slug: string) =>
+    request<DocumentPayload>(`/api/v1/documents/${slug}`),
+  previewPullRequest: (slug: string, targetRepo: string, filePath: string) =>
+    request<DocumentPayload>(`/api/v1/documents/${slug}/pull-request-preview`, {
+      method: "POST",
+      body: JSON.stringify({
+        target_repo: targetRepo,
+        file_path: filePath || null,
+      }),
+    }),
+  createPullRequest: (slug: string) =>
+    request<DocumentPayload>(`/api/v1/documents/${slug}/pull-request`, {
+      method: "POST",
+      body: "{}",
+    }),
+};
+
+export function assetUrl(path: string): string {
+  return `${API_BASE_URL}${path}`;
+}
+
+export function subscribeToRun(
+  runId: string,
+  onEvent: (event: RunEvent) => void,
+  onError: () => void,
+): () => void {
+  const source = new EventSource(`${API_BASE_URL}/api/v1/runs/${runId}/events`);
+  source.onmessage = (message) => {
+    const event = JSON.parse(message.data) as RunEvent;
+    onEvent(event);
+    if (event.type === "run_completed") source.close();
+  };
+  source.onerror = () => {
+    source.close();
+    onError();
+  };
+  return () => source.close();
+}

@@ -1,0 +1,747 @@
+import asyncio
+import json
+import re
+from urllib.parse import urlparse
+
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from sse_starlette.sse import EventSourceResponse
+
+from app import events
+from app.agent import run_agent
+from app.api_models import (
+    ApproveFindingRequest,
+    CreateRunRequest,
+    CreateRunResponse,
+    DocumentResponse,
+    FindingResponse,
+    GitHubCredentialRequest,
+    LLMCredentialRequest,
+    PreviewDocumentationPullRequestRequest,
+    ResolveSourcesRequest,
+    ResolveSourcesResponse,
+    RuntimeConfigResponse,
+)
+from app.approved_documents import (
+    ApprovedDocument,
+    document_body_markdown,
+    get_approved_document,
+    get_approved_document_for_gap,
+    save_approved_document,
+)
+from app.config import get_settings
+from app.documentation_prs import (
+    DocumentationPullRequestError,
+    create_documentation_pull_request,
+    get_documentation_change,
+    prepare_documentation_change,
+    write_enabled,
+)
+from app.llm import get_llm_route
+from app.run_outcomes import apply_run_outcome
+from app.run_store import load_run, load_runs, save_run
+from app.runtime_credentials import (
+    get_github_api_token,
+    get_github_connection,
+    record_github_verification,
+    set_github_api_token,
+    set_merge_gateway_api_key,
+)
+from app.source_resolver import (
+    enrich_documentation_source,
+    resolve_documentation_sources,
+)
+from app.state import RUNS, AgentState, RunRequest, RunResponse
+from app.tools.docs import (
+    AUTHENTICATED_DOCUMENT_FETCH_LIMIT,
+    AUTHENTICATED_DOCUMENTS_PER_FINDING,
+)
+from app.tools.github import GitHubToolError, validate_github_access
+
+app = FastAPI(
+    title="DocsHound API",
+    version="1.0.0",
+    description="JSON and SSE API for the DocsHound frontend.",
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_settings().allowed_origin_list,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Last-Event-ID"],
+)
+
+REPO_PART_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
+BACKGROUND_TASKS: set[asyncio.Task[AgentState]] = set()
+
+for persisted_run in load_runs():
+    RUNS.setdefault(persisted_run.run_id, persisted_run)
+
+
+def _get_run_state(run_id: str) -> AgentState | None:
+    state = RUNS.get(run_id)
+    if state is None:
+        state = load_run(run_id)
+        if state is not None:
+            RUNS[run_id] = state
+    return state
+
+
+def _require_run(run_id: str) -> AgentState:
+    state = _get_run_state(run_id)
+    if state is None:
+        raise HTTPException(status_code=404, detail="Run not found")
+    return state
+
+
+def _normalize_repo(value: str) -> str:
+    raw = value.strip()
+    if not raw:
+        raise ValueError("Enter a repository such as owner/repository.")
+
+    if "://" in raw:
+        parsed = urlparse(raw)
+        if parsed.hostname not in {"github.com", "www.github.com"}:
+            raise ValueError("Enter a GitHub repository URL or owner/repository.")
+        path = parsed.path
+    elif raw.lower().startswith(("github.com/", "www.github.com/")):
+        path = raw.split("/", 1)[1]
+    else:
+        path = raw
+
+    parts = [part for part in path.strip("/").split("/") if part]
+    if len(parts) < 2:
+        raise ValueError("Enter a repository such as owner/repository.")
+
+    owner = parts[0]
+    repo = parts[1]
+    if repo.endswith(".git"):
+        repo = repo[:-4]
+    if not REPO_PART_PATTERN.fullmatch(owner) or not REPO_PART_PATTERN.fullmatch(repo):
+        raise ValueError(
+            "The repository owner or name contains unsupported characters."
+        )
+    return f"{owner}/{repo}"
+
+
+def _run_response(state: AgentState) -> RunResponse:
+    apply_run_outcome(state)
+    return RunResponse(
+        run_id=state.run_id,
+        status=state.status,
+        scan_limits=state.scan_limits,
+        usage=state.usage.summary() if state.usage else None,
+        operation_events=state.operation_events,
+        outcome=state.outcome,
+        summary=state.summary,
+        repo=state.repo,
+        dry_run=state.dry_run,
+        documentation_source=state.documentation_source,
+        issues_scraped=len(state.issues),
+        pull_requests_scraped=len(state.pull_requests),
+        clusters_found=len(state.clusters),
+        docs_sources=state.docs_sources,
+        docs_candidates_inspected=state.docs_candidates_inspected,
+        documentation_issues_scraped=state.documentation_issues_scraped,
+        documentation_pull_requests_scraped=(state.documentation_pull_requests_scraped),
+        top_gaps=state.clusters,
+        decisions=state.decisions,
+        warnings=state.warnings,
+        errors=state.errors,
+    )
+
+
+def _finding_response(state: AgentState, index: int) -> FindingResponse:
+    if index < 0 or index >= len(state.clusters):
+        raise HTTPException(status_code=404, detail="Finding not found")
+
+    cluster = state.clusters[index]
+    issue_numbers = set(cluster.issue_numbers)
+    pull_request_numbers = set(cluster.pr_numbers)
+    issue_refs = set(cluster.issue_refs)
+    pull_request_refs = set(cluster.pr_refs)
+    approved_document = get_approved_document_for_gap(state.run_id, index)
+    documentation_change = None
+    if approved_document:
+        cluster.approved_document_slug = approved_document.slug
+        documentation_change = get_documentation_change(approved_document.slug)
+
+    return FindingResponse(
+        run_id=state.run_id,
+        repo=state.repo,
+        index=index,
+        cluster=cluster,
+        source_issues=[
+            issue
+            for issue in state.issues
+            if (
+                f"{issue.source_repo or state.repo}#{issue.number}" in issue_refs
+                if issue_refs
+                else issue.number in issue_numbers
+            )
+        ],
+        source_pull_requests=[
+            pull_request
+            for pull_request in state.pull_requests
+            if (
+                f"{pull_request.source_repo or state.repo}#{pull_request.number}"
+                in pull_request_refs
+                if pull_request_refs
+                else pull_request.number in pull_request_numbers
+            )
+        ],
+        approved_document=approved_document,
+        documentation_change=documentation_change,
+    )
+
+
+def _document_response(document: ApprovedDocument) -> DocumentResponse:
+    state = _get_run_state(document.run_id)
+    coverage = None
+    if state and 0 <= document.gap_index < len(state.clusters):
+        coverage = state.clusters[document.gap_index].documentation_coverage
+    return DocumentResponse(
+        document=document,
+        body_markdown=document_body_markdown(document.markdown),
+        documentation_change=get_documentation_change(document.slug),
+        suggested_file_path=coverage.recommended_path if coverage else None,
+        suggested_action=coverage.recommended_action if coverage else None,
+        suggested_target_repo=(
+            state.documentation_source.repo
+            if state and state.documentation_source
+            else document.repo
+        ),
+        write_enabled=write_enabled(),
+    )
+
+
+def _start_run(request: RunRequest) -> AgentState:
+    state = AgentState(
+        repo=request.repo,
+        dry_run=request.dry_run,
+        documentation_source=request.documentation_source,
+        include_documentation_activity=request.include_documentation_activity,
+    )
+    RUNS[state.run_id] = state
+    save_run(state)
+    task = asyncio.create_task(run_agent(request, state=state))
+    BACKGROUND_TASKS.add(task)
+    task.add_done_callback(BACKGROUND_TASKS.discard)
+    return state
+
+
+@app.get("/health")
+@app.get("/api/v1/health")
+async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.get("/api/v1/config", response_model=RuntimeConfigResponse)
+async def runtime_config() -> RuntimeConfigResponse:
+    return _runtime_config_response()
+
+
+def _runtime_config_response() -> RuntimeConfigResponse:
+    route = get_llm_route()
+    settings = get_settings()
+    credential_input_enabled = settings.app_env.lower() not in {
+        "production",
+        "prod",
+    }
+    github_account, github_verified_repo = get_github_connection()
+    github_configured = bool(
+        get_github_api_token() or getattr(settings, "github_token", None)
+    )
+    github_server_configured = bool(getattr(settings, "github_token", None))
+    return RuntimeConfigResponse(
+        nvidia_embed_enabled=getattr(settings, "nvidia_embed_enabled", False),
+        nvidia_rerank_enabled=getattr(settings, "nvidia_rerank_enabled", False),
+        nvidia_configured=bool(getattr(settings, "nvidia_api_key", None)),
+        nvidia_embed_model=getattr(settings, "nvidia_embed_model", None),
+        repo_docs_max_files=getattr(settings, "repo_docs_max_files", 200),
+        nvidia_embed_max_passages=getattr(settings, "nvidia_embed_max_passages", 2048),
+        write_enabled=write_enabled(),
+        llm_gateway=route.gateway if route else None,
+        llm_primary_model=route.models[0] if route and route.models else None,
+        llm_fallback_model=route.models[1] if route and len(route.models) > 1 else None,
+        llm_configured=route is not None,
+        credential_input_enabled=credential_input_enabled,
+        github_configured=github_configured,
+        github_server_configured=github_server_configured,
+        github_account=github_account,
+        github_verified_repo=github_verified_repo,
+        github_document_fetch_limit=AUTHENTICATED_DOCUMENT_FETCH_LIMIT,
+        github_documents_per_finding=AUTHENTICATED_DOCUMENTS_PER_FINDING,
+    )
+
+
+@app.post(
+    "/api/v1/config/llm-credential",
+    response_model=RuntimeConfigResponse,
+)
+async def set_llm_credential(
+    request: LLMCredentialRequest,
+) -> RuntimeConfigResponse:
+    if get_settings().app_env.lower() in {"production", "prod"}:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Browser credential entry is disabled in production. "
+                "Configure MERGE_GATEWAY_API_KEY on the server instead."
+            ),
+        )
+
+    try:
+        set_merge_gateway_api_key(request.api_key.get_secret_value())
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _runtime_config_response()
+
+
+@app.post(
+    "/api/v1/config/github-credential",
+    response_model=RuntimeConfigResponse,
+)
+async def set_github_credential(
+    request: GitHubCredentialRequest,
+) -> RuntimeConfigResponse:
+    try:
+        repo = _normalize_repo(request.repo)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    supplied_token = request.api_key.get_secret_value() if request.api_key else None
+    settings = get_settings()
+    if supplied_token and settings.app_env.lower() in {"production", "prod"}:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Browser credential entry is disabled in production. "
+                "Configure GITHUB_TOKEN on the server instead."
+            ),
+        )
+
+    token = supplied_token or get_github_api_token() or settings.github_token
+    if not token:
+        raise HTTPException(
+            status_code=422,
+            detail="Enter a GitHub access token to enable a deep documentation scan.",
+        )
+
+    try:
+        account, verified_repo = await validate_github_access(repo, token)
+    except GitHubToolError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    if supplied_token:
+        set_github_api_token(
+            supplied_token,
+            account=account,
+            repo=verified_repo,
+        )
+    else:
+        record_github_verification(account=account, repo=verified_repo)
+    return _runtime_config_response()
+
+
+@app.post("/api/v1/runs", response_model=CreateRunResponse, status_code=202)
+async def create_run(request: CreateRunRequest) -> CreateRunResponse:
+    try:
+        repo = _normalize_repo(request.repo)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    documentation_source = request.documentation_source
+    try:
+        if documentation_source is None:
+            resolved = await resolve_documentation_sources(repo)
+            documentation_source = resolved.selected_source
+        else:
+            documentation_source = await enrich_documentation_source(
+                documentation_source,
+                product_repo=repo,
+            )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Could not verify the documentation source: {exc}",
+        ) from exc
+
+    run_request = RunRequest(
+        repo=repo,
+        docs_url=request.docs_url,
+        documentation_source=documentation_source,
+        include_documentation_activity=request.include_documentation_activity,
+        limit=request.limit,
+        repo_docs_max_files=request.repo_docs_max_files,
+        nvidia_embed_max_passages=request.nvidia_embed_max_passages,
+        dry_run=request.dry_run,
+    )
+    state = _start_run(run_request)
+    return CreateRunResponse(
+        run_id=state.run_id,
+        status=state.status,
+        repo=state.repo,
+        documentation_source=state.documentation_source,
+    )
+
+
+@app.post(
+    "/api/v1/sources/resolve",
+    response_model=ResolveSourcesResponse,
+)
+async def resolve_sources(request: ResolveSourcesRequest) -> ResolveSourcesResponse:
+    try:
+        repo = _normalize_repo(request.repo)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    try:
+        resolution = await resolve_documentation_sources(repo)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Could not resolve official documentation for {repo}: {exc}",
+        ) from exc
+    return ResolveSourcesResponse(
+        product_repo=resolution.product_repo,
+        documentation_sources=resolution.documentation_sources,
+        selected_source=resolution.selected_source,
+        documentation_activity_repos=resolution.documentation_activity_repos,
+    )
+
+
+@app.post("/runs", include_in_schema=False)
+async def create_run_legacy(request: RunRequest) -> dict[str, str]:
+    """Compatibility route for API clients built against DocsHound 0.x."""
+    state = _start_run(request)
+    return {"run_id": state.run_id}
+
+
+@app.get("/api/v1/runs", response_model=list[RunResponse])
+async def list_runs() -> list[RunResponse]:
+    return [_run_response(state) for state in load_runs()]
+
+
+@app.get("/runs/{run_id}", response_model=RunResponse, include_in_schema=False)
+@app.get("/api/v1/runs/{run_id}", response_model=RunResponse)
+async def get_run(run_id: str) -> RunResponse:
+    return _run_response(_require_run(run_id))
+
+
+@app.get("/api/v1/findings", response_model=list[FindingResponse])
+async def list_findings() -> list[FindingResponse]:
+    findings = [
+        _finding_response(state, index)
+        for state in load_runs()
+        for index in range(len(state.clusters))
+    ]
+    findings.sort(
+        key=lambda finding: (
+            finding.cluster.approved_document_slug is not None,
+            finding.run_id,
+        ),
+        reverse=True,
+    )
+    return findings
+
+
+@app.get(
+    "/api/v1/runs/{run_id}/findings/{index}",
+    response_model=FindingResponse,
+)
+async def get_finding(run_id: str, index: int) -> FindingResponse:
+    return _finding_response(_require_run(run_id), index)
+
+
+@app.get("/api/v1/runs/{run_id}/events")
+async def stream_events(run_id: str) -> EventSourceResponse:
+    state = _require_run(run_id)
+    apply_run_outcome(state)
+
+    async def event_generator():
+        if state.status != "running":
+            yield {
+                "data": json.dumps(
+                    {
+                        "type": "run_completed",
+                        "run_id": state.run_id,
+                        "status": state.status,
+                        "outcome": state.outcome,
+                        "summary": state.summary,
+                        "warnings": state.warnings,
+                        "errors": state.errors,
+                    }
+                )
+            }
+            return
+
+        async for event in events.subscribe(run_id):
+            yield {"data": json.dumps(event)}
+
+    return EventSourceResponse(event_generator())
+
+
+@app.get("/runs/{run_id}/events.json", include_in_schema=False)
+async def stream_events_json_legacy(run_id: str) -> EventSourceResponse:
+    """Preserve the named JSON event stream exposed by DocsHound 0.x."""
+    state = _require_run(run_id)
+    apply_run_outcome(state)
+
+    async def event_generator():
+        if state.status != "running":
+            event = {
+                "type": "run_completed",
+                "run_id": state.run_id,
+                "status": state.status,
+                "outcome": state.outcome,
+                "summary": state.summary,
+                "warnings": state.warnings,
+                "errors": state.errors,
+            }
+            yield {"event": event["type"], "data": json.dumps(event)}
+            return
+
+        async for event in events.subscribe(run_id):
+            yield {"event": event["type"], "data": json.dumps(event)}
+
+    return EventSourceResponse(event_generator())
+
+
+@app.post(
+    "/api/v1/runs/{run_id}/findings/{index}/approval",
+    response_model=DocumentResponse,
+)
+async def approve_finding(
+    run_id: str,
+    index: int,
+    request: ApproveFindingRequest,
+) -> DocumentResponse:
+    state = _require_run(run_id)
+    finding = _finding_response(state, index)
+    markdown_source = request.markdown.strip()
+    if not markdown_source:
+        raise HTTPException(
+            status_code=422, detail="The approved document cannot be empty"
+        )
+
+    cluster = finding.cluster
+    if cluster.review_status == "no_change_needed":
+        raise HTTPException(
+            status_code=409,
+            detail="Existing documentation already covers this finding.",
+        )
+    document = save_approved_document(
+        run_id=run_id,
+        gap_index=index,
+        repo=state.repo,
+        title=cluster.draft_title or cluster.name,
+        summary=cluster.draft_summary or cluster.summary,
+        markdown_source=markdown_source,
+        source_issues=[
+            {
+                "number": issue.number,
+                "title": issue.title,
+                "url": str(issue.url),
+                "repo": issue.source_repo or state.repo,
+            }
+            for issue in finding.source_issues
+        ]
+        + [
+            {
+                "number": pull_request.number,
+                "title": pull_request.title,
+                "url": str(pull_request.url),
+                "kind": "pull_request",
+                "repo": pull_request.source_repo or state.repo,
+            }
+            for pull_request in finding.source_pull_requests
+        ],
+    )
+    cluster.draft_markdown = document.markdown
+    cluster.review_status = "approved"
+    cluster.approved_document_slug = document.slug
+    save_run(state)
+    events.publish(
+        run_id,
+        {"type": "gap_approved", "index": index, "title": document.title},
+    )
+    return _document_response(document)
+
+
+@app.post(
+    "/api/v1/runs/{run_id}/findings/{index}/rejection",
+    response_model=FindingResponse,
+)
+async def reject_finding(run_id: str, index: int) -> FindingResponse:
+    state = _require_run(run_id)
+    finding = _finding_response(state, index)
+    finding.cluster.review_status = "rejected"
+    save_run(state)
+    events.publish(run_id, {"type": "gap_rejected", "index": index})
+    return _finding_response(state, index)
+
+
+@app.get("/api/v1/documents/{slug}", response_model=DocumentResponse)
+async def get_document(slug: str) -> DocumentResponse:
+    document = get_approved_document(slug)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Approved document not found")
+    return _document_response(document)
+
+
+@app.get("/docs/{slug}/download", include_in_schema=False)
+@app.get("/api/v1/documents/{slug}/download")
+async def download_document(slug: str) -> Response:
+    document = get_approved_document(slug)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Approved document not found")
+    return Response(
+        content=document.markdown,
+        media_type="text/markdown; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{slug}.md"'},
+    )
+
+
+@app.post(
+    "/api/v1/documents/{slug}/pull-request-preview",
+    response_model=DocumentResponse,
+)
+async def preview_documentation_pull_request(
+    slug: str,
+    request: PreviewDocumentationPullRequestRequest,
+) -> DocumentResponse:
+    document = get_approved_document(slug)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Approved document not found")
+    state = _get_run_state(document.run_id)
+    coverage = None
+    if state and 0 <= document.gap_index < len(state.clusters):
+        coverage = state.clusters[document.gap_index].documentation_coverage
+    suggested_path = coverage.recommended_path if coverage else None
+    requested_path = request.file_path or suggested_path
+    edit_action = None
+    if coverage and (not request.file_path or request.file_path == suggested_path):
+        edit_action = coverage.recommended_action
+    try:
+        await prepare_documentation_change(
+            document,
+            target_repo=request.target_repo,
+            requested_path=requested_path,
+            edit_action=edit_action,
+        )
+    except DocumentationPullRequestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _document_response(document)
+
+
+@app.post(
+    "/api/v1/documents/{slug}/pull-request",
+    response_model=DocumentResponse,
+)
+async def create_documentation_pull_request_route(slug: str) -> DocumentResponse:
+    document = get_approved_document(slug)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Approved document not found")
+    change = get_documentation_change(slug)
+    if change is None:
+        raise HTTPException(
+            status_code=409, detail="Preview the documentation change first"
+        )
+    try:
+        await create_documentation_pull_request(document, change)
+    except DocumentationPullRequestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return _document_response(document)
+
+
+@app.get("/docs/{slug}/pull-request/patch", include_in_schema=False)
+@app.get("/api/v1/documents/{slug}/patch")
+async def download_documentation_patch(slug: str) -> Response:
+    change = get_documentation_change(slug)
+    if change is None:
+        raise HTTPException(status_code=404, detail="Documentation change not found")
+    return Response(
+        content=change.patch,
+        media_type="text/x-diff; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{slug}.patch"'},
+    )
+
+
+@app.get("/api/v1/usage")
+async def usage_history() -> dict:
+    from app.usage import RunUsage
+
+    states = load_runs(limit=500)
+    calls = [call for state in states if state.usage for call in state.usage.calls]
+    return {
+        "summary": RunUsage(calls=calls).summary(),
+        "runs": [
+            {
+                "run_id": state.run_id,
+                "repo": state.repo,
+                "status": state.status,
+                "started_at": state.started_at.isoformat(),
+                "scan_limits": state.scan_limits,
+                "usage": state.usage.summary() if state.usage else None,
+            }
+            for state in states
+        ],
+    }
+
+
+@app.get("/runs/{run_id}/usage.json", include_in_schema=False)
+@app.get("/api/v1/runs/{run_id}/usage")
+async def run_usage(run_id: str) -> dict:
+    state = _require_run(run_id)
+    return {
+        "run_id": run_id,
+        "usage": state.usage.summary() if state.usage else None,
+        "calls": [call.model_dump(mode="json") for call in state.usage.calls]
+        if state.usage
+        else [],
+    }
+
+
+@app.get("/runs/{run_id}/gaps/{index}", include_in_schema=False)
+async def legacy_finding(run_id: str, index: int) -> RedirectResponse:
+    return RedirectResponse(f"/runs/{run_id}/findings/{index}", status_code=307)
+
+
+@app.get("/docs/{slug}", include_in_schema=False)
+async def legacy_document(slug: str) -> RedirectResponse:
+    return RedirectResponse(f"/documents/{slug}", status_code=307)
+
+
+@app.get("/docs/{slug}/pull-request", include_in_schema=False)
+async def legacy_documentation_pull_request(slug: str) -> RedirectResponse:
+    return RedirectResponse(f"/documents/{slug}/pull-request", status_code=307)
+
+
+@app.get("/runs/{run_id}/usage", include_in_schema=False)
+async def legacy_run_usage(run_id: str) -> RedirectResponse:
+    return RedirectResponse(f"/?run={run_id}", status_code=307)
+
+
+@app.get("/{path:path}", include_in_schema=False)
+async def frontend(path: str):
+    """Serve the built React application alongside its API for local launches."""
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+
+    dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+    candidate = (dist / path).resolve()
+    if candidate.is_relative_to(dist.resolve()) and candidate.is_file():
+        return FileResponse(candidate)
+    if path and not re.fullmatch(
+        r"(?:usage|findings|showcase|documents/[^/]+(?:/pull-request)?|runs/[^/]+/findings/\d+)",
+        path,
+    ):
+        raise HTTPException(status_code=404, detail="Not found")
+    if not (dist / "index.html").is_file():
+        raise HTTPException(
+            status_code=503,
+            detail="Build the frontend with bun run build from frontend/.",
+        )
+    return FileResponse(dist / "index.html")
