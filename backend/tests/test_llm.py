@@ -59,6 +59,21 @@ class LLMRouteTests(unittest.TestCase):
 
 
 class JSONCompletionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_high_reasoning_is_sent_for_luna(self) -> None:
+        create = AsyncMock(return_value=_response("gpt-5.6-luna", {"items": []}))
+        client = Mock()
+        client.close = AsyncMock()
+        client.chat.completions.create = create
+        with patch("app.llm.AsyncOpenAI", return_value=client):
+            await complete_json(
+                [{"role": "user", "content": "Return JSON."}],
+                settings=SimpleNamespace(
+                    merge_gateway_api_key="test",
+                    llm_reasoning_effort="high",
+                ),
+            )
+        self.assertEqual(create.await_args.kwargs["reasoning_effort"], "high")
+
     async def test_direct_luna_omits_unsupported_sampling_parameters(self) -> None:
         create = AsyncMock(return_value=_response("gpt-5.6-luna", {"items": []}))
         client = Mock()

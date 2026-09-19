@@ -1,5 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,6 +23,9 @@ class Settings(BaseSettings):
     merge_gateway_base_url: str = "https://api-gateway.merge.dev/v1/openai"
     merge_gateway_primary_model: str = "openai/gpt-5.6-luna"
     merge_gateway_fallback_model: str = ""
+    llm_reasoning_effort: Literal["low", "medium", "high", "xhigh"] | None = None
+    jev_shadow_enabled: bool = False
+    jev_model: str = "typesafe/jev-1.13"
 
     # Backwards compatibility for installations that call OpenAI directly.
     openai_api_key: str | None = None

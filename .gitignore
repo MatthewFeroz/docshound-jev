@@ -12,6 +12,7 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .pytest_cache/
+experiments/results/
 .ruff_cache/
 .langgraph_api/
 data/*.db

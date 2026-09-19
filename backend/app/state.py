@@ -122,6 +122,7 @@ class GapCluster(BaseModel):
     ] = "pending_review"
     approved_document_slug: str | None = None
     documentation_coverage: DocumentationCoverage | None = None
+    jev_assessment: dict | None = None
 
     @property
     def is_documentation_proposal(self) -> bool:
