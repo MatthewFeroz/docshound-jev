@@ -7,6 +7,10 @@
 DocsHound turns open issues and merged pull requests into grounded, reviewable
 documentation updates.
 
+This Jev fork adds an advisory check before drafting. See the
+[T3Code experiment](experiments/README.md) for the Luna/high runner and saved
+evidence, verdicts, and drafts.
+
 The project contains two independently deployable applications:
 
 - `frontend/` — React, TypeScript, and Vite static application
