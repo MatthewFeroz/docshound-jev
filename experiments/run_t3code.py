@@ -78,13 +78,18 @@ async def run(
         "jev_model": settings.jev_model,
         "nvidia_embeddings": settings.nvidia_embed_enabled,
         "nvidia_rerank": settings.nvidia_rerank_enabled,
-        "fork_commit": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+        "fork_commit": (
+            await asyncio.to_thread(
+                subprocess.check_output,
+                ["git", "rev-parse", "HEAD"],
+                cwd=ROOT,
+                text=True,
+            )
         ).strip(),
     }
     (directory / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(
-        f"Run {state.run_id}: Luna/high + Jev shadow; {'selected T3Code cases' if demo else f'up to {limit} issues and PRs each'}",
+        f"Run {state.run_id}: Luna/high + Jev; draft gate={request.jev_gate_enabled}; {'selected T3Code cases' if demo else f'up to {limit} issues and PRs each'}",
         flush=True,
     )
     print(f"Artifacts: {directory}", flush=True)
@@ -119,12 +124,16 @@ async def run(
         "",
         f"Run: `{state.run_id}`. Status: **{result.status}**.",
         "",
-        f"{len(result.issues)} issues, {len(result.pull_requests)} PRs, "
-        f"{result.docs_candidates_inspected} documents inspected, "
-        f"{len(result.clusters)} findings.",
+        (
+            f"{len(result.issues)} issues, {len(result.pull_requests)} PRs, "
+            f"{result.docs_candidates_inspected} documents inspected, "
+            f"{len(result.clusters)} findings."
+        ),
         "",
-        f"Jev draft gate enabled: {request.jev_gate_enabled}. Its confidence is not measured "
-        "accuracy. Human labels remain empty; disagreements require review.",
+        (
+            f"Jev draft gate enabled: {request.jev_gate_enabled}. Its confidence is not measured "
+            "accuracy. Human labels remain empty; disagreements require review."
+        ),
         "",
     ]
     for index, cluster in enumerate(result.clusters):
@@ -136,9 +145,11 @@ async def run(
                 "",
                 cluster.recurring_question,
                 "",
-                f"Luna coverage: **{coverage.status if coverage else 'unknown'}**. "
-                f"Jev recommendation: **{assessment.get('recommendation', assessment.get('verdict', 'not_checked'))}** "
-                f"({assessment.get('status', 'not_checked')}).",
+                (
+                    f"Luna coverage: **{coverage.status if coverage else 'unknown'}**. "
+                    f"Jev recommendation: **{assessment.get('recommendation', assessment.get('verdict', 'not_checked'))}** "
+                    f"({assessment.get('status', 'not_checked')})."
+                ),
                 "",
                 coverage.rationale if coverage else "No coverage assessment.",
                 "",

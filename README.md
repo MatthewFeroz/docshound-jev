@@ -7,9 +7,9 @@
 DocsHound turns open issues and merged pull requests into grounded, reviewable
 documentation updates.
 
-This Jev fork adds an advisory check before drafting. See the
-[T3Code experiment](experiments/README.md) for the Luna/high runner and saved
-evidence, verdicts, and drafts.
+This Jev fork adds two LangGraph classification nodes and a live demo at `/jev`.
+See the [T3Code demo](demo/jev/README.md) for launch and replay instructions,
+real results, source-reviewed documentation patches, and the video retrospective.
 
 The project contains two independently deployable applications:
 

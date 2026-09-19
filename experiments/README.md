@@ -1,39 +1,48 @@
-# Jev pre-draft experiment
+# DocsHound Jev experiments
 
-This isolated DocsHound fork checks whether Jev can identify unsupported findings
-before Luna drafts documentation. The original DocsHound checkout is untouched.
+The current runnable demo is documented in [demo/jev](../demo/jev/README.md).
+It includes a saved real run, a video script, a retrospective, and two proposed
+T3Code documentation patches.
+
+From the repository root:
 
 ```powershell
-uv run --project backend --locked python experiments/run_t3code.py
+uv run --project backend --locked python experiments/run_t3code.py --demo --hold-unverified
+uv run --project backend --locked python experiments/serve_demo.py
 ```
 
-The runner uses GPT-5.6 Luna with high reasoning through Merge, checks up to 50
-open issues and 50 merged PRs, and inspects up to 500 documentation files under
-T3Code's `docs/` directory. These limits do not mean all historical GitHub activity
-or all repository code is sent to the models. Repository documentation URLs are
-pinned by the existing retrieval implementation to the commit fetched at run time.
+Open http://127.0.0.1:8017/jev. The live button invokes the same LangGraph agent
+through the API. For a broad scan instead of the selected cases, omit `--demo`.
 
-NVIDIA embeddings and reranking retain their existing retrieval role when enabled.
-Jev sees the same ranked excerpts used by the coverage model, the proposed finding,
-and Luna's coverage hypothesis. It returns `supported_gap`, `already_documented`,
-or `insufficient_evidence`. The hypothesis is explicitly not ground truth.
+The graph uses GPT-5.6 Luna with high reasoning through Merge. Jev's first node
+classifies finding type, implementation readiness, and audience from original
+GitHub activity and any supplied implementation snippets. The second node
+classifies each retrieved passage and the documentation need. Code derives an
+advisory next step. NVIDIA retains its optional embedding and reranking roles.
 
-Jev runs in shadow mode: it records a verdict before drafting but does not change
-coverage, review status, or whether a draft is generated. A timeout, invalid reply,
-or missing evidence remains unavailable, never a successful negative judgment.
-The feature is opt-in with `JEV_SHADOW_ENABLED=true` outside the experiment runner.
+Selected issue and PR numbers are inputs, not fixed model outputs. The manifest
+at `t3code-demo.json` records how cases were chosen and pins source-code excerpts.
+Documentation URLs preserve the revision fetched during each run. All Jev
+classifications are live; the recorded-run importer is an explicitly separate
+replay path.
 
-Credentials are read from environment/ignored `.env` files; the runner can reuse
-OpenCode's saved Merge key and GitHub CLI authentication. It writes a separate
-`backend/data/jev-t3code.db`. No issues, branches, or PRs are published to T3Code.
+The optional `--hold-unverified` gate holds findings whose recommendation is
+`verify_implementation` before drafting. Without it, recommendations are advisory.
+Retrieval recommendations do not automatically trigger another search yet.
+Luna's original coverage assessment remains available for comparison.
+Missing credentials, timeouts, and invalid model responses yield an unavailable
+classification and manual review, not a successful negative verdict.
 
-Each `experiments/results/<run-id>/` directory contains the run, event trace,
-model settings, exact Jev requests, costs, blank human labels, drafts, and a report.
-Results are ignored by Git. Jev's request contains no draft, human review, or later
-outcome fields. Confidence is a model output, not empirical accuracy.
+Credentials are read from environment/ignored `.env` files, with OpenCode's saved
+Merge credential and GitHub CLI authentication as launcher fallbacks. The demo
+uses its own `backend/data/jev-t3code.db`. No upstream GitHub writes occur.
 
-Review disagreements against the actual source documents, then label cases
-independently. Separate `insufficient_evidence` from false findings. Measure false
-gap detection, useful drafts incorrectly flagged, abstentions, latency and cost.
-Do not claim savings from this shadow run: it intentionally drafts as usual.
-Use additional repositories and group repeated topics when constructing holdouts.
+CLI artifacts are stored in ignored `experiments/results/<run-id>/` directories:
+request manifest, event trace, final state, exact Jev request envelopes, model
+usage, draft Markdown, blank human labels, and a report. The portable recording
+omits original issue bodies and request envelopes while retaining classifications
+and displayed evidence. Model confidence is not empirical accuracy.
+
+The first experiment's broad support judgment remains in `assess_finding` for
+backward comparison; the current graph uses the more specific v2 classifiers.
+See the retrospective before making quality or cost-saving claims.

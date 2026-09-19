@@ -126,6 +126,27 @@ it("starts the selected live demo and loads the returned run", async () => {
     expect(mocks.getRun).toHaveBeenCalledWith("new-live-run"),
   );
   expect(mocks.runJevDemo).toHaveBeenCalledTimes(1);
+  expect(mocks.runJevDemo).toHaveBeenCalledWith(true);
+});
+
+it("shows a held finding as a workflow action rather than an approved draft", async () => {
+  mocks.getRun.mockResolvedValue({
+    ...completed,
+    jev_gate_enabled: true,
+    top_gaps: [{ ...finding, jev_draft_hold: "verify_implementation" }],
+  });
+  render(
+    <MemoryRouter initialEntries={["/jev?run=recorded"]}>
+      <JevDemoPage />
+    </MemoryRouter>,
+  );
+  expect(await screen.findByText("Draft held")).toBeInTheDocument();
+  expect(
+    screen.getByText("Draft gate enabled · 1 findings held for verification"),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole("link", { name: "Open the draft & source evidence →" }),
+  ).not.toBeInTheDocument();
 });
 
 it("does not allow starting the demo when Jev is disabled", async () => {

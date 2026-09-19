@@ -1,0 +1,10 @@
+## Change-request templates
+
+In **Settings > Source Control**, enable **Follow change request templates** to
+use a repository template when T3 Code generates a change-request description.
+Automatic template discovery currently works with GitHub repositories only.
+For example, place a GitHub template at `.github/pull_request_template.md` in the
+target branch.
+
+GitLab and Azure DevOps template files are not discovered by this setting.
+Apply those templates manually when editing the generated description.

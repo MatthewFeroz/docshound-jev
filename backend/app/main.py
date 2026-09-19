@@ -567,7 +567,11 @@ async def approve_finding(
     if not cluster.is_documentation_proposal:
         raise HTTPException(
             status_code=409,
-            detail="Existing documentation already covers this finding.",
+            detail=(
+                "This draft is held until implementation evidence is verified."
+                if cluster.jev_draft_hold
+                else "Existing documentation already covers this finding."
+            ),
         )
     document = save_approved_document(
         run_id=run_id,

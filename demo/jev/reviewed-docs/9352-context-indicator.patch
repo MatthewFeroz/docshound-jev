@@ -1,0 +1,19 @@
+--- a/docs/user/composer.md
++++ b/docs/user/composer.md
+@@ -155,6 +155,16 @@
+ Send `/compact` in an existing conversation to reduce context usage when the
+ provider supports it. Web and desktop also offer compaction from the context meter.
+ 
++## Restore the context-window indicator
++
++On web and desktop, the context-window indicator is opt-in. To enable it, open
++**Settings > General > Legacy features** and turn on **Context window indicator
++(legacy)**. The circular indicator appears in the composer when context-window
++usage is available for the active thread.
++
++This setting controls visibility; enabling it does not change the model's context
++limit or enable automatic compaction.
++
+ ## Context in your message
+ 
+ Context you attach lands where your cursor is, as a chip inside your text: a terminal excerpt,

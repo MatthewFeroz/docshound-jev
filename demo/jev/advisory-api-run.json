@@ -1,0 +1,3375 @@
+{
+  "scan_limits": {
+    "issues": 50,
+    "merged_pull_requests": 50,
+    "repository_documents": 500,
+    "semantic_passages": 2048
+  },
+  "usage": {
+    "calls": [
+      {
+        "call_id": "c2eaedd4-a2eb-4cd1-9c8b-3e6aa3016bb5",
+        "started_at": "2026-09-19T02:01:14.109192Z",
+        "provider": "merge",
+        "operation": "routing",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 361,
+        "output_tokens": 57,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 418,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.0001406,
+        "cost_source": "provider_reported",
+        "duration_ms": 1624.6,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "71048f86-0686-4c1f-bbc1-e4c91325b79b",
+        "started_at": "2026-09-19T02:01:16.490301Z",
+        "provider": "merge",
+        "operation": "routing",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 361,
+        "output_tokens": 40,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 401,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.00012020000000000001,
+        "cost_source": "provider_reported",
+        "duration_ms": 1231.5,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "1c21c70c-e3ea-4a2a-b965-614231c72a1c",
+        "started_at": "2026-09-19T02:01:17.735799Z",
+        "provider": "merge",
+        "operation": "clustering",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 2063,
+        "output_tokens": 4136,
+        "cached_input_tokens": 2060,
+        "reasoning_tokens": null,
+        "total_tokens": 6199,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.005005,
+        "cost_source": "provider_reported",
+        "duration_ms": 25011.3,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "185a9990-8760-467a-99d6-311258cdd293",
+        "started_at": "2026-09-19T02:01:42.770979Z",
+        "provider": "merge",
+        "operation": "jev_triage",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 2465,
+        "output_tokens": 172,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 2637,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.00010353,
+        "cost_source": "provider_reported",
+        "duration_ms": 525.2,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "83c94015-49f0-4eab-b530-c5fafcefe614",
+        "started_at": "2026-09-19T02:01:43.320809Z",
+        "provider": "merge",
+        "operation": "jev_triage",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 1863,
+        "output_tokens": 170,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 2033,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 7.824600000000001e-05,
+        "cost_source": "provider_reported",
+        "duration_ms": 428.5,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "613db7f1-2bf0-437d-8fb5-e81b94055259",
+        "started_at": "2026-09-19T02:01:43.771684Z",
+        "provider": "merge",
+        "operation": "jev_triage",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 2853,
+        "output_tokens": 169,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3022,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.000119826,
+        "cost_source": "provider_reported",
+        "duration_ms": 402.2,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "ed46acf9-94e3-420a-95e4-3b0b58effe68",
+        "started_at": "2026-09-19T02:01:44.205386Z",
+        "provider": "merge",
+        "operation": "jev_triage",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 2478,
+        "output_tokens": 168,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 2646,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.00010407600000000001,
+        "cost_source": "provider_reported",
+        "duration_ms": 502.1,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "f88a68ec-6da9-4f53-a286-8c444b3564db",
+        "started_at": "2026-09-19T02:01:44.721203Z",
+        "provider": "merge",
+        "operation": "routing",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 361,
+        "output_tokens": 65,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 426,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.0001502,
+        "cost_source": "provider_reported",
+        "duration_ms": 1212.6,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "44d94bb2-5040-4401-8ddc-059623414e5e",
+        "started_at": "2026-09-19T02:01:49.764739Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4246,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4246,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 815.8,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "d809590d-b0b1-4232-8365-bf39bdb783e7",
+        "started_at": "2026-09-19T02:01:49.776541Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4188,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4188,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 477.9,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "289cf253-368a-46dd-862e-6ffe624c4d90",
+        "started_at": "2026-09-19T02:01:49.788138Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4048,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4048,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 745.0,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "f21ac6d3-b9a1-4b94-81d0-f5b595053657",
+        "started_at": "2026-09-19T02:01:49.799710Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4020,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4020,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 759.8,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "599be89c-09d3-459f-b320-58244835b65c",
+        "started_at": "2026-09-19T02:01:50.591896Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3664,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3664,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 428.1,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "01b95ee8-0b58-46fc-b459-af28468bf376",
+        "started_at": "2026-09-19T02:01:50.603320Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4352,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4352,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 437.9,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "8ac34841-0100-4b21-8be0-5cd678910b05",
+        "started_at": "2026-09-19T02:01:50.615305Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3975,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3975,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 447.4,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "4167ad04-3099-4fc4-b184-150b72275e8c",
+        "started_at": "2026-09-19T02:01:50.628343Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3674,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3674,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 364.1,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "140f9bd6-a1a0-4d63-883e-e100e8c5e4b7",
+        "started_at": "2026-09-19T02:01:51.076306Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4435,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4435,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 402.0,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "2956d55e-da2f-4206-806b-9fc30f8a127f",
+        "started_at": "2026-09-19T02:01:51.088204Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3902,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3902,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 618.4,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "8c469bee-77c9-4045-85fe-dd708d89afa4",
+        "started_at": "2026-09-19T02:01:51.099535Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4012,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4012,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 654.4,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "c65c6753-6727-4930-9758-ec7cb976505a",
+        "started_at": "2026-09-19T02:01:51.110813Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3848,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3848,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 620.4,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "bddb8396-f8aa-4d82-83a1-0015ec68a9e2",
+        "started_at": "2026-09-19T02:01:51.767008Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4678,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4678,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 720.6,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "8659220d-d49d-4f06-97eb-06f9e78c6dd2",
+        "started_at": "2026-09-19T02:01:51.778232Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4129,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4129,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 680.6,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "6342fd7f-1b25-4b22-9325-49a2d145d886",
+        "started_at": "2026-09-19T02:01:51.789887Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4452,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4452,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 412.1,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "f4b5e3f9-cb8d-4a79-818a-827ed5083d87",
+        "started_at": "2026-09-19T02:01:51.801039Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3710,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3710,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 431.2,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "a9288d84-2b48-48a0-8151-a23976c805f8",
+        "started_at": "2026-09-19T02:01:52.501030Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 3848,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3848,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 453.8,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "dbde588c-2c94-44ee-ad12-790a6ac973b0",
+        "started_at": "2026-09-19T02:01:52.512939Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4556,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4556,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 421.1,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "6592f5c5-a67e-46a5-a8db-f518c3513f6d",
+        "started_at": "2026-09-19T02:01:52.524658Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 4226,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 4226,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 389.1,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "28d75c44-25fb-41bc-a94a-eedd6de60578",
+        "started_at": "2026-09-19T02:01:52.536030Z",
+        "provider": "nvidia",
+        "operation": "embed_passage",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 1262,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 1262,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 200.3,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "ae120a2d-c5ee-42b5-a0f1-1e2a446bd745",
+        "started_at": "2026-09-19T02:01:52.966321Z",
+        "provider": "nvidia",
+        "operation": "embed_query",
+        "requested_model": "nvidia/nemotron-3-embed-1b",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "request_status": "succeeded",
+        "input_tokens": 590,
+        "output_tokens": 0,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 590,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 169.6,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "6a7068d3-77dc-4e8d-a598-0b1769700b3a",
+        "started_at": "2026-09-19T02:01:53.272386Z",
+        "provider": "nvidia",
+        "operation": "reranking",
+        "requested_model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "request_status": "succeeded",
+        "input_tokens": 17975,
+        "output_tokens": null,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 17975,
+        "usage_status": "partial",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 741.7,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "4f2d29b0-0f81-442d-a206-cb516c154902",
+        "started_at": "2026-09-19T02:01:54.028114Z",
+        "provider": "nvidia",
+        "operation": "reranking",
+        "requested_model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "request_status": "succeeded",
+        "input_tokens": 14756,
+        "output_tokens": null,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 14756,
+        "usage_status": "partial",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 605.8,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "b4c4642c-f2dd-467e-90f8-e6588656b74b",
+        "started_at": "2026-09-19T02:01:54.646584Z",
+        "provider": "nvidia",
+        "operation": "reranking",
+        "requested_model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "request_status": "succeeded",
+        "input_tokens": 15534,
+        "output_tokens": null,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 15534,
+        "usage_status": "partial",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 637.9,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "361d5f91-480a-4ff9-8b72-e5a49bb2ae9f",
+        "started_at": "2026-09-19T02:01:55.299562Z",
+        "provider": "nvidia",
+        "operation": "reranking",
+        "requested_model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "request_status": "succeeded",
+        "input_tokens": 16524,
+        "output_tokens": null,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 16524,
+        "usage_status": "partial",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": null,
+        "cost_source": null,
+        "duration_ms": 622.7,
+        "pricing_snapshot": null,
+        "service_tier": null
+      },
+      {
+        "call_id": "e9e9cda2-5997-470d-a499-be6fedf7ec87",
+        "started_at": "2026-09-19T02:01:57.697256Z",
+        "provider": "merge",
+        "operation": "coverage",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 5959,
+        "output_tokens": 4318,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 10277,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.0063733999999999996,
+        "cost_source": "provider_reported",
+        "duration_ms": 28100.3,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "b94b49f2-3157-44e2-878f-821965cb577b",
+        "started_at": "2026-09-19T02:02:25.823278Z",
+        "provider": "merge",
+        "operation": "jev_evidence",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 2179,
+        "output_tokens": 244,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 2423,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 9.1518e-05,
+        "cost_source": "provider_reported",
+        "duration_ms": 408.2,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "ba170110-bf5a-40b4-9090-3abd7713184b",
+        "started_at": "2026-09-19T02:02:26.263006Z",
+        "provider": "merge",
+        "operation": "jev_evidence",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 2253,
+        "output_tokens": 243,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 2496,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 9.4626e-05,
+        "cost_source": "provider_reported",
+        "duration_ms": 511.9,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "c279537e-ae29-4c6f-a0b7-83f6295f8085",
+        "started_at": "2026-09-19T02:02:26.797814Z",
+        "provider": "merge",
+        "operation": "jev_evidence",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 3435,
+        "output_tokens": 243,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3678,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.00014427,
+        "cost_source": "provider_reported",
+        "duration_ms": 647.3,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "9db0f316-c06f-4a7e-93b3-e36851d39527",
+        "started_at": "2026-09-19T02:02:27.467728Z",
+        "provider": "merge",
+        "operation": "jev_evidence",
+        "requested_model": "typesafe/jev-1.13",
+        "model": "jev-1.13.0",
+        "request_status": "succeeded",
+        "input_tokens": 3064,
+        "output_tokens": 244,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 3308,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.000128688,
+        "cost_source": "provider_reported",
+        "duration_ms": 468.9,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": null
+      },
+      {
+        "call_id": "b027b408-aa52-47b1-a824-288f6c743511",
+        "started_at": "2026-09-19T02:02:27.952477Z",
+        "provider": "merge",
+        "operation": "routing",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 361,
+        "output_tokens": 65,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 426,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.0001502,
+        "cost_source": "provider_reported",
+        "duration_ms": 1090.4,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      },
+      {
+        "call_id": "6f5437a2-1e31-4bab-b4aa-96dc548b3c1f",
+        "started_at": "2026-09-19T02:02:29.058654Z",
+        "provider": "merge",
+        "operation": "drafting",
+        "requested_model": "openai/gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "request_status": "succeeded",
+        "input_tokens": 7252,
+        "output_tokens": 3121,
+        "cached_input_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": 10373,
+        "usage_status": "reported",
+        "estimated_cost_usd": null,
+        "reported_cost_usd": 0.005195600000000001,
+        "cost_source": "provider_reported",
+        "duration_ms": 20751.9,
+        "pricing_snapshot": {
+          "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+          "basis": "usage.cost",
+          "currency": "USD"
+        },
+        "service_tier": "default"
+      }
+    ]
+  },
+  "operation_events": [
+    {
+      "type": "stage_started",
+      "stage": "research",
+      "label": "Research repository",
+      "status": "running",
+      "detail": "Research repository",
+      "started_at": 1789783275.746502,
+      "ts": 1789783275.7465043
+    },
+    {
+      "span_id": "5f6d3d9b-7044-4cb7-b224-b93d3f6f20f5",
+      "parent_span_id": null,
+      "stage": "research",
+      "category": "tool",
+      "name": "research_pull_requests",
+      "label": "Fetch merged pull requests",
+      "description": "Read recently shipped changes that may need documentation.",
+      "input_summary": "pingdotgg/t3code · limit 50",
+      "input_details": {
+        "repository": "pingdotgg/t3code",
+        "limit": 50
+      },
+      "started_at": 1789783275.746743,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "5f6d3d9b-7044-4cb7-b224-b93d3f6f20f5",
+      "ts": 1789783275.7471952
+    },
+    {
+      "span_id": "e3a2895d-5509-4a4c-a3de-cedbd16ce923",
+      "parent_span_id": null,
+      "stage": "research",
+      "category": "tool",
+      "name": "research_repo",
+      "label": "Fetch GitHub issues",
+      "description": "Read recent issue titles, discussions, labels, and activity.",
+      "input_summary": "pingdotgg/t3code · limit 50",
+      "input_details": {
+        "repository": "pingdotgg/t3code",
+        "limit": 50
+      },
+      "started_at": 1789783275.7466483,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "e3a2895d-5509-4a4c-a3de-cedbd16ce923",
+      "ts": 1789783275.748257
+    },
+    {
+      "span_id": "5f6d3d9b-7044-4cb7-b224-b93d3f6f20f5",
+      "parent_span_id": null,
+      "stage": "research",
+      "category": "tool",
+      "name": "research_pull_requests",
+      "label": "Fetch merged pull requests",
+      "description": "Read recently shipped changes that may need documentation.",
+      "input_summary": "pingdotgg/t3code · limit 50",
+      "input_details": {
+        "repository": "pingdotgg/t3code",
+        "limit": 50
+      },
+      "started_at": 1789783275.746743,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "5f6d3d9b-7044-4cb7-b224-b93d3f6f20f5",
+      "duration_ms": 539.2,
+      "output_summary": "1 merged pull requests fetched",
+      "output_details": {
+        "result_count": 1
+      },
+      "error": null,
+      "ts": 1789783276.286419
+    },
+    {
+      "span_id": "e3a2895d-5509-4a4c-a3de-cedbd16ce923",
+      "parent_span_id": null,
+      "stage": "research",
+      "category": "tool",
+      "name": "research_repo",
+      "label": "Fetch GitHub issues",
+      "description": "Read recent issue titles, discussions, labels, and activity.",
+      "input_summary": "pingdotgg/t3code · limit 50",
+      "input_details": {
+        "repository": "pingdotgg/t3code",
+        "limit": 50
+      },
+      "started_at": 1789783275.7466483,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "e3a2895d-5509-4a4c-a3de-cedbd16ce923",
+      "duration_ms": 740.4,
+      "output_summary": "3 issues fetched",
+      "output_details": {
+        "result_count": 3
+      },
+      "error": null,
+      "ts": 1789783276.4886894
+    },
+    {
+      "type": "stage_completed",
+      "stage": "research",
+      "label": "Research repository",
+      "status": "success",
+      "detail": "Research repository complete",
+      "duration_ms": 742.5,
+      "ts": 1789783276.489046
+    },
+    {
+      "type": "stage_started",
+      "stage": "analyze",
+      "label": "Analyze evidence",
+      "status": "running",
+      "detail": "Analyze evidence",
+      "started_at": 1789783277.73427,
+      "ts": 1789783277.734273
+    },
+    {
+      "span_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "parent_span_id": null,
+      "stage": "analyze",
+      "category": "tool",
+      "name": "cluster_issues",
+      "label": "Cluster recurring questions",
+      "description": "Group repository evidence into distinct documentation gaps.",
+      "input_summary": "0 issues · 0 pull requests",
+      "input_details": {
+        "issue_count": 3,
+        "issue_numbers": [
+          9352,
+          12330,
+          12451
+        ],
+        "issue_refs": [
+          "pingdotgg/t3code#9352",
+          "pingdotgg/t3code#12330",
+          "pingdotgg/t3code#12451"
+        ],
+        "pull_request_count": 1,
+        "pull_request_numbers": [
+          12493
+        ],
+        "pull_request_refs": [
+          "pingdotgg/t3code#12493"
+        ],
+        "input_cluster_count": 0,
+        "input_clusters": []
+      },
+      "started_at": 1789783277.7344193,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "ts": 1789783277.734748
+    },
+    {
+      "span_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "parent_span_id": null,
+      "stage": "analyze",
+      "category": "tool",
+      "name": "cluster_issues",
+      "label": "Cluster recurring questions",
+      "description": "Group repository evidence into distinct documentation gaps.",
+      "input_summary": "0 issues · 0 pull requests",
+      "input_details": {
+        "issue_count": 3,
+        "issue_numbers": [
+          9352,
+          12330,
+          12451
+        ],
+        "issue_refs": [
+          "pingdotgg/t3code#9352",
+          "pingdotgg/t3code#12330",
+          "pingdotgg/t3code#12451"
+        ],
+        "pull_request_count": 1,
+        "pull_request_numbers": [
+          12493
+        ],
+        "pull_request_refs": [
+          "pingdotgg/t3code#12493"
+        ],
+        "input_cluster_count": 0,
+        "input_clusters": []
+      },
+      "started_at": 1789783277.7344193,
+      "depth": 0,
+      "type": "span_progress",
+      "status": "running",
+      "trace_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "ts": 1789783277.734748,
+      "progress_current": 4,
+      "progress_total": 4,
+      "progress_detail": "Analyzing all requested repository activity"
+    },
+    {
+      "span_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "parent_span_id": null,
+      "stage": "analyze",
+      "category": "tool",
+      "name": "cluster_issues",
+      "label": "Cluster recurring questions",
+      "description": "Group repository evidence into distinct documentation gaps.",
+      "input_summary": "0 issues · 0 pull requests",
+      "input_details": {
+        "issue_count": 3,
+        "issue_numbers": [
+          9352,
+          12330,
+          12451
+        ],
+        "issue_refs": [
+          "pingdotgg/t3code#9352",
+          "pingdotgg/t3code#12330",
+          "pingdotgg/t3code#12451"
+        ],
+        "pull_request_count": 1,
+        "pull_request_numbers": [
+          12493
+        ],
+        "pull_request_refs": [
+          "pingdotgg/t3code#12493"
+        ],
+        "input_cluster_count": 0,
+        "input_clusters": []
+      },
+      "started_at": 1789783277.7344193,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "b6ee382a-28e8-425e-a35b-d32474043829",
+      "duration_ms": 25024.8,
+      "output_summary": "4 documentation gaps identified",
+      "output_details": {
+        "result_count": 4
+      },
+      "error": null,
+      "ts": 1789783302.7595408
+    },
+    {
+      "type": "stage_completed",
+      "stage": "analyze",
+      "label": "Analyze evidence",
+      "status": "success",
+      "detail": "Analyze evidence complete",
+      "duration_ms": 25025.5,
+      "ts": 1789783302.7598202
+    },
+    {
+      "type": "stage_started",
+      "stage": "jev_triage",
+      "label": "Jev: classify findings",
+      "status": "running",
+      "detail": "Jev: classify findings",
+      "started_at": 1789783302.7604315,
+      "ts": 1789783302.7604327
+    },
+    {
+      "span_id": "699ce460-2731-4f36-b893-37bab20aea5c",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Cursor project configuration migration guidance",
+        "source_refs": [
+          "pingdotgg/t3code#12451"
+        ]
+      },
+      "started_at": 1789783302.7605731,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "699ce460-2731-4f36-b893-37bab20aea5c",
+      "ts": 1789783302.7609746
+    },
+    {
+      "span_id": "699ce460-2731-4f36-b893-37bab20aea5c",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Cursor project configuration migration guidance",
+        "source_refs": [
+          "pingdotgg/t3code#12451"
+        ]
+      },
+      "started_at": 1789783302.7605731,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "699ce460-2731-4f36-b893-37bab20aea5c",
+      "duration_ms": 549.1,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 11
+      },
+      "error": null,
+      "ts": 1789783303.310063
+    },
+    {
+      "span_id": "90809d90-bc4a-4837-900a-6f9095724a11",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "export log records over OTLP",
+        "source_refs": [
+          "pingdotgg/t3code#12493"
+        ]
+      },
+      "started_at": 1789783303.3105662,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "90809d90-bc4a-4837-900a-6f9095724a11",
+      "ts": 1789783303.3109183
+    },
+    {
+      "span_id": "90809d90-bc4a-4837-900a-6f9095724a11",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "export log records over OTLP",
+        "source_refs": [
+          "pingdotgg/t3code#12493"
+        ]
+      },
+      "started_at": 1789783303.3105662,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "90809d90-bc4a-4837-900a-6f9095724a11",
+      "duration_ms": 449.7,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 11
+      },
+      "error": null,
+      "ts": 1789783303.7606816
+    },
+    {
+      "span_id": "a902d180-5e35-4ab1-93d2-66032f696459",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Context-window indicator discoverability",
+        "source_refs": [
+          "pingdotgg/t3code#9352"
+        ]
+      },
+      "started_at": 1789783303.76111,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "a902d180-5e35-4ab1-93d2-66032f696459",
+      "ts": 1789783303.7614932
+    },
+    {
+      "span_id": "a902d180-5e35-4ab1-93d2-66032f696459",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Context-window indicator discoverability",
+        "source_refs": [
+          "pingdotgg/t3code#9352"
+        ]
+      },
+      "started_at": 1789783303.76111,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "a902d180-5e35-4ab1-93d2-66032f696459",
+      "duration_ms": 433.2,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 11
+      },
+      "error": null,
+      "ts": 1789783304.1946921
+    },
+    {
+      "span_id": "6b7f1cbb-bea0-413e-b1cb-c18db4dca771",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Change-request template provider coverage",
+        "source_refs": [
+          "pingdotgg/t3code#12330"
+        ]
+      },
+      "started_at": 1789783304.1950881,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "6b7f1cbb-bea0-413e-b1cb-c18db4dca771",
+      "ts": 1789783304.195349
+    },
+    {
+      "span_id": "6b7f1cbb-bea0-413e-b1cb-c18db4dca771",
+      "parent_span_id": null,
+      "stage": "jev_triage",
+      "category": "tool",
+      "name": "jev_triage_finding",
+      "label": "Classify finding with Jev",
+      "description": "Classify the request, audience, and whether current behavior is established.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Change-request template provider coverage",
+        "source_refs": [
+          "pingdotgg/t3code#12330"
+        ]
+      },
+      "started_at": 1789783304.1950881,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "6b7f1cbb-bea0-413e-b1cb-c18db4dca771",
+      "duration_ms": 523.7,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 11
+      },
+      "error": null,
+      "ts": 1789783304.7190285
+    },
+    {
+      "type": "stage_completed",
+      "stage": "jev_triage",
+      "label": "Jev: classify findings",
+      "status": "success",
+      "detail": "Jev: classify findings complete",
+      "duration_ms": 1959.3,
+      "ts": 1789783304.7196906
+    },
+    {
+      "type": "stage_started",
+      "stage": "search_docs",
+      "label": "Inspect official docs",
+      "status": "running",
+      "detail": "Inspect official docs",
+      "started_at": 1789783305.9515853,
+      "ts": 1789783305.951587
+    },
+    {
+      "span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "parent_span_id": null,
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "search_official_docs",
+      "label": "Search official documentation",
+      "description": "Discover, retrieve, and assess first-party documentation.",
+      "input_summary": "None · 0 gaps",
+      "input_details": {
+        "product_repo": "pingdotgg/t3code",
+        "documentation_source_kind": "github",
+        "documentation_repo": "pingdotgg/t3code",
+        "documentation_root": "docs",
+        "documentation_url": "https://github.com/pingdotgg/t3code/tree/main/docs",
+        "findings_count": 4
+      },
+      "started_at": 1789783305.9517598,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "ts": 1789783305.9520261
+    },
+    {
+      "span_id": "6bbe3dde-c1a8-4e06-9eea-6911e953da0a",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "retriever",
+      "name": "fetch_repository_docs",
+      "label": "Read repository documentation",
+      "description": "Find documentation files on the default branch and retain revision-specific citations.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {},
+      "started_at": 1789783305.9520788,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "6bbe3dde-c1a8-4e06-9eea-6911e953da0a",
+      "ts": 1789783305.9524558
+    },
+    {
+      "span_id": "6bbe3dde-c1a8-4e06-9eea-6911e953da0a",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "retriever",
+      "name": "fetch_repository_docs",
+      "label": "Read repository documentation",
+      "description": "Find documentation files on the default branch and retain revision-specific citations.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {},
+      "started_at": 1789783305.9520788,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "6bbe3dde-c1a8-4e06-9eea-6911e953da0a",
+      "duration_ms": 2964.1,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "page_count": 57,
+        "warnings": []
+      },
+      "error": null,
+      "ts": 1789783308.9165838
+    },
+    {
+      "span_id": "46a4df81-0087-42d5-9318-c35d6fd494d9",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "discover_docs_root",
+      "label": "Locate documentation site",
+      "description": "Resolve the first-party docs root from configuration and repository metadata.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {},
+      "started_at": 1789783308.9261642,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "46a4df81-0087-42d5-9318-c35d6fd494d9",
+      "ts": 1789783308.9266143
+    },
+    {
+      "span_id": "46a4df81-0087-42d5-9318-c35d6fd494d9",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "discover_docs_root",
+      "label": "Locate documentation site",
+      "description": "Resolve the first-party docs root from configuration and repository metadata.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {},
+      "started_at": 1789783308.9261642,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "46a4df81-0087-42d5-9318-c35d6fd494d9",
+      "duration_ms": 691.4,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "docs_root": null
+      },
+      "error": null,
+      "ts": 1789783309.618016
+    },
+    {
+      "span_id": "e532e787-abf9-461b-91eb-e1be1ea2f10f",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rank_docs_for_gaps",
+      "label": "Rank evidence for each gap",
+      "description": "Chunk and score retrieved documentation against each gap.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "gap_count": 4,
+        "page_count": 57
+      },
+      "started_at": 1789783309.618572,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "e532e787-abf9-461b-91eb-e1be1ea2f10f",
+      "ts": 1789783309.6189866
+    },
+    {
+      "span_id": "e532e787-abf9-461b-91eb-e1be1ea2f10f",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rank_docs_for_gaps",
+      "label": "Rank evidence for each gap",
+      "description": "Chunk and score retrieved documentation against each gap.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "gap_count": 4,
+        "page_count": 57
+      },
+      "started_at": 1789783309.618572,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "e532e787-abf9-461b-91eb-e1be1ea2f10f",
+      "duration_ms": 65.2,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "excerpt_count": 32
+      },
+      "error": null,
+      "ts": 1789783309.6841688
+    },
+    {
+      "span_id": "c0acf65c-e256-4c3d-9500-03b3d8b79bbc",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "retriever",
+      "name": "retrieve_semantic_docs",
+      "label": "Find documentation by meaning",
+      "description": "Combine Nemotron embeddings with keyword search and report fallback use.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "model": "nvidia/nemotron-3-embed-1b",
+        "page_count": 57
+      },
+      "started_at": 1789783309.7580342,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "c0acf65c-e256-4c3d-9500-03b3d8b79bbc",
+      "ts": 1789783309.7583609
+    },
+    {
+      "span_id": "c0acf65c-e256-4c3d-9500-03b3d8b79bbc",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "retriever",
+      "name": "retrieve_semantic_docs",
+      "label": "Find documentation by meaning",
+      "description": "Combine Nemotron embeddings with keyword search and report fallback use.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "model": "nvidia/nemotron-3-embed-1b",
+        "page_count": 57
+      },
+      "started_at": 1789783309.7580342,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "c0acf65c-e256-4c3d-9500-03b3d8b79bbc",
+      "duration_ms": 3513.3,
+      "output_summary": "hybrid: Combined keyword and Nemotron semantic search",
+      "output_details": {
+        "status": "hybrid",
+        "reason": "Combined keyword and Nemotron semantic search",
+        "model": "nvidia/nemotron-3-embed-1b",
+        "passage_count": 309,
+        "omitted_passages": 0,
+        "cache_hits": 0
+      },
+      "error": null,
+      "ts": 1789783313.2717245
+    },
+    {
+      "span_id": "8f15de14-a777-4420-9474-8f425f0cc7f8",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Cursor project configuration migration guidance",
+      "input_details": {},
+      "started_at": 1789783313.2720842,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "8f15de14-a777-4420-9474-8f425f0cc7f8",
+      "ts": 1789783313.2723463
+    },
+    {
+      "span_id": "8f15de14-a777-4420-9474-8f425f0cc7f8",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Cursor project configuration migration guidance",
+      "input_details": {},
+      "started_at": 1789783313.2720842,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "8f15de14-a777-4420-9474-8f425f0cc7f8",
+      "duration_ms": 755.0,
+      "output_summary": "reranked: NVIDIA ranked the candidate passages",
+      "output_details": {
+        "status": "reranked",
+        "reason": "NVIDIA ranked the candidate passages",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "candidate_count": 40,
+        "selected_count": 3
+      },
+      "error": null,
+      "ts": 1789783314.027312
+    },
+    {
+      "span_id": "1ff4e865-eb4e-412c-9e97-2000b87b1c75",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "export log records over OTLP",
+      "input_details": {},
+      "started_at": 1789783314.027686,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "1ff4e865-eb4e-412c-9e97-2000b87b1c75",
+      "ts": 1789783314.028064
+    },
+    {
+      "span_id": "1ff4e865-eb4e-412c-9e97-2000b87b1c75",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "export log records over OTLP",
+      "input_details": {},
+      "started_at": 1789783314.027686,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "1ff4e865-eb4e-412c-9e97-2000b87b1c75",
+      "duration_ms": 618.0,
+      "output_summary": "reranked: NVIDIA ranked the candidate passages",
+      "output_details": {
+        "status": "reranked",
+        "reason": "NVIDIA ranked the candidate passages",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "candidate_count": 40,
+        "selected_count": 3
+      },
+      "error": null,
+      "ts": 1789783314.6460314
+    },
+    {
+      "span_id": "bc78a285-754b-4d17-a08a-e67fce1efbd3",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Context-window indicator discoverability",
+      "input_details": {},
+      "started_at": 1789783314.6462862,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "bc78a285-754b-4d17-a08a-e67fce1efbd3",
+      "ts": 1789783314.6465406
+    },
+    {
+      "span_id": "bc78a285-754b-4d17-a08a-e67fce1efbd3",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Context-window indicator discoverability",
+      "input_details": {},
+      "started_at": 1789783314.6462862,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "bc78a285-754b-4d17-a08a-e67fce1efbd3",
+      "duration_ms": 652.2,
+      "output_summary": "reranked: NVIDIA ranked the candidate passages",
+      "output_details": {
+        "status": "reranked",
+        "reason": "NVIDIA ranked the candidate passages",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "candidate_count": 40,
+        "selected_count": 3
+      },
+      "error": null,
+      "ts": 1789783315.298741
+    },
+    {
+      "span_id": "5299575a-c9ef-4e42-ad5e-275a0b25264c",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Change-request template provider coverage",
+      "input_details": {},
+      "started_at": 1789783315.2991242,
+      "depth": 1,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "5299575a-c9ef-4e42-ad5e-275a0b25264c",
+      "ts": 1789783315.29951
+    },
+    {
+      "span_id": "5299575a-c9ef-4e42-ad5e-275a0b25264c",
+      "parent_span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "rerank_docs_for_gap",
+      "label": "Rerank documentation evidence",
+      "description": "Use NVIDIA to prioritize candidate passages; report any search fallback.",
+      "input_summary": "Change-request template provider coverage",
+      "input_details": {},
+      "started_at": 1789783315.2991242,
+      "depth": 1,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "5299575a-c9ef-4e42-ad5e-275a0b25264c",
+      "duration_ms": 635.8,
+      "output_summary": "reranked: NVIDIA ranked the candidate passages",
+      "output_details": {
+        "status": "reranked",
+        "reason": "NVIDIA ranked the candidate passages",
+        "model": "nvidia/llama-nemotron-rerank-vl-1b-v2",
+        "candidate_count": 40,
+        "selected_count": 3
+      },
+      "error": null,
+      "ts": 1789783315.9353745
+    },
+    {
+      "span_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "parent_span_id": null,
+      "stage": "search_docs",
+      "category": "tool",
+      "name": "search_official_docs",
+      "label": "Search official documentation",
+      "description": "Discover, retrieve, and assess first-party documentation.",
+      "input_summary": "None · 0 gaps",
+      "input_details": {
+        "product_repo": "pingdotgg/t3code",
+        "documentation_source_kind": "github",
+        "documentation_repo": "pingdotgg/t3code",
+        "documentation_root": "docs",
+        "documentation_url": "https://github.com/pingdotgg/t3code/tree/main/docs",
+        "findings_count": 4
+      },
+      "started_at": 1789783305.9517598,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "236ba536-f6e6-4cf5-a8a5-90d8bc093eaf",
+      "duration_ms": 39860.2,
+      "output_summary": "3 cited documentation sources returned",
+      "output_details": {
+        "result_count": 3
+      },
+      "error": null,
+      "ts": 1789783345.8122053
+    },
+    {
+      "type": "stage_completed",
+      "stage": "search_docs",
+      "label": "Inspect official docs",
+      "status": "success",
+      "detail": "Inspect official docs complete",
+      "duration_ms": 39861.0,
+      "ts": 1789783345.8126032
+    },
+    {
+      "type": "stage_started",
+      "stage": "jev_review",
+      "label": "Jev: assess evidence",
+      "status": "running",
+      "detail": "Jev: assess evidence",
+      "started_at": 1789783345.813226,
+      "ts": 1789783345.8132274
+    },
+    {
+      "span_id": "a2de942f-a129-40c2-8075-cb6e78d18ad6",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Cursor project configuration migration guidance",
+        "documents": 3
+      },
+      "started_at": 1789783345.8133647,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "a2de942f-a129-40c2-8075-cb6e78d18ad6",
+      "ts": 1789783345.8136175
+    },
+    {
+      "span_id": "a2de942f-a129-40c2-8075-cb6e78d18ad6",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Cursor project configuration migration guidance",
+        "documents": 3
+      },
+      "started_at": 1789783345.8133647,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "a2de942f-a129-40c2-8075-cb6e78d18ad6",
+      "duration_ms": 439.4,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 13
+      },
+      "error": null,
+      "ts": 1789783346.252983
+    },
+    {
+      "span_id": "7dfe25d3-45f3-46e0-b844-47c7ee96f8d0",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "export log records over OTLP",
+        "documents": 3
+      },
+      "started_at": 1789783346.2532952,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "7dfe25d3-45f3-46e0-b844-47c7ee96f8d0",
+      "ts": 1789783346.2535229
+    },
+    {
+      "span_id": "7dfe25d3-45f3-46e0-b844-47c7ee96f8d0",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "export log records over OTLP",
+        "documents": 3
+      },
+      "started_at": 1789783346.2532952,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "7dfe25d3-45f3-46e0-b844-47c7ee96f8d0",
+      "duration_ms": 533.6,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 13
+      },
+      "error": null,
+      "ts": 1789783346.787099
+    },
+    {
+      "span_id": "427d2cda-6b93-425a-a8b0-c8d0b6ac9a07",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Context-window indicator discoverability",
+        "documents": 3
+      },
+      "started_at": 1789783346.7875063,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "427d2cda-6b93-425a-a8b0-c8d0b6ac9a07",
+      "ts": 1789783346.78789
+    },
+    {
+      "span_id": "427d2cda-6b93-425a-a8b0-c8d0b6ac9a07",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Context-window indicator discoverability",
+        "documents": 3
+      },
+      "started_at": 1789783346.7875063,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "427d2cda-6b93-425a-a8b0-c8d0b6ac9a07",
+      "duration_ms": 670.2,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 13
+      },
+      "error": null,
+      "ts": 1789783347.4581041
+    },
+    {
+      "span_id": "f62e875f-e0aa-48c5-8599-ab073dd3b8ff",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Change-request template provider coverage",
+        "documents": 3
+      },
+      "started_at": 1789783347.458371,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "f62e875f-e0aa-48c5-8599-ab073dd3b8ff",
+      "ts": 1789783347.4585953
+    },
+    {
+      "span_id": "f62e875f-e0aa-48c5-8599-ab073dd3b8ff",
+      "parent_span_id": null,
+      "stage": "jev_review",
+      "category": "tool",
+      "name": "jev_review_evidence",
+      "label": "Check documentation evidence with Jev",
+      "description": "Classify each passage's relevance and recommend the next review step.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "finding": "Change-request template provider coverage",
+        "documents": 3
+      },
+      "started_at": 1789783347.458371,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "f62e875f-e0aa-48c5-8599-ab073dd3b8ff",
+      "duration_ms": 492.2,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 13
+      },
+      "error": null,
+      "ts": 1789783347.9507954
+    },
+    {
+      "type": "stage_completed",
+      "stage": "jev_review",
+      "label": "Jev: assess evidence",
+      "status": "success",
+      "detail": "Jev: assess evidence complete",
+      "duration_ms": 2138.0,
+      "ts": 1789783347.9512432
+    },
+    {
+      "type": "stage_started",
+      "stage": "draft",
+      "label": "Draft documentation",
+      "status": "running",
+      "detail": "Draft documentation",
+      "started_at": 1789783349.0573163,
+      "ts": 1789783349.057318
+    },
+    {
+      "span_id": "b61ac801-162c-4778-b727-e0f1cf5fadc9",
+      "parent_span_id": null,
+      "stage": "analyze",
+      "category": "tool",
+      "name": "draft_review_documents",
+      "label": "Draft Review Documents",
+      "description": "Run an agent operation.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "issue_count": 3,
+        "issue_numbers": [
+          9352,
+          12330,
+          12451
+        ],
+        "issue_refs": [
+          "pingdotgg/t3code#9352",
+          "pingdotgg/t3code#12330",
+          "pingdotgg/t3code#12451"
+        ],
+        "pull_request_count": 1,
+        "pull_request_numbers": [
+          12493
+        ],
+        "pull_request_refs": [
+          "pingdotgg/t3code#12493"
+        ],
+        "input_cluster_count": 4,
+        "input_clusters": [
+          {
+            "name": "Cursor project configuration migration guidance",
+            "issue_numbers": [
+              12451
+            ],
+            "pr_numbers": []
+          },
+          {
+            "name": "export log records over OTLP",
+            "issue_numbers": [],
+            "pr_numbers": [
+              12493
+            ]
+          },
+          {
+            "name": "Context-window indicator discoverability",
+            "issue_numbers": [
+              9352
+            ],
+            "pr_numbers": []
+          },
+          {
+            "name": "Change-request template provider coverage",
+            "issue_numbers": [
+              12330
+            ],
+            "pr_numbers": []
+          }
+        ]
+      },
+      "started_at": 1789783349.0575142,
+      "depth": 0,
+      "type": "span_started",
+      "status": "running",
+      "trace_id": "b61ac801-162c-4778-b727-e0f1cf5fadc9",
+      "ts": 1789783349.057742
+    },
+    {
+      "span_id": "b61ac801-162c-4778-b727-e0f1cf5fadc9",
+      "parent_span_id": null,
+      "stage": "analyze",
+      "category": "tool",
+      "name": "draft_review_documents",
+      "label": "Draft Review Documents",
+      "description": "Run an agent operation.",
+      "input_summary": "Prepared operation inputs",
+      "input_details": {
+        "issue_count": 3,
+        "issue_numbers": [
+          9352,
+          12330,
+          12451
+        ],
+        "issue_refs": [
+          "pingdotgg/t3code#9352",
+          "pingdotgg/t3code#12330",
+          "pingdotgg/t3code#12451"
+        ],
+        "pull_request_count": 1,
+        "pull_request_numbers": [
+          12493
+        ],
+        "pull_request_refs": [
+          "pingdotgg/t3code#12493"
+        ],
+        "input_cluster_count": 4,
+        "input_clusters": [
+          {
+            "name": "Cursor project configuration migration guidance",
+            "issue_numbers": [
+              12451
+            ],
+            "pr_numbers": []
+          },
+          {
+            "name": "export log records over OTLP",
+            "issue_numbers": [],
+            "pr_numbers": [
+              12493
+            ]
+          },
+          {
+            "name": "Context-window indicator discoverability",
+            "issue_numbers": [
+              9352
+            ],
+            "pr_numbers": []
+          },
+          {
+            "name": "Change-request template provider coverage",
+            "issue_numbers": [
+              12330
+            ],
+            "pr_numbers": []
+          }
+        ]
+      },
+      "started_at": 1789783349.0575142,
+      "depth": 0,
+      "type": "span_completed",
+      "status": "success",
+      "trace_id": "b61ac801-162c-4778-b727-e0f1cf5fadc9",
+      "duration_ms": 20766.2,
+      "output_summary": "Operation completed",
+      "output_details": {
+        "result_count": 4
+      },
+      "error": null,
+      "ts": 1789783369.823913
+    },
+    {
+      "type": "stage_completed",
+      "stage": "draft",
+      "label": "Draft documentation",
+      "status": "success",
+      "detail": "Draft documentation complete",
+      "duration_ms": 20767.0,
+      "ts": 1789783369.824362
+    },
+    {
+      "type": "stage_started",
+      "stage": "store",
+      "label": "Finalize run",
+      "status": "running",
+      "detail": "Finalize run",
+      "started_at": 1789783369.8253627,
+      "ts": 1789783369.8253636
+    },
+    {
+      "type": "stage_completed",
+      "stage": "store",
+      "label": "Finalize run",
+      "status": "success",
+      "detail": "Finalize run complete",
+      "duration_ms": 0.0,
+      "ts": 1789783369.8253727
+    }
+  ],
+  "run_id": "3bf84bb0-e785-43e9-bd27-ecc383495373",
+  "repo": "pingdotgg/t3code",
+  "dry_run": true,
+  "documentation_source": {
+    "kind": "github",
+    "repo": "pingdotgg/t3code",
+    "root": "docs",
+    "url": "https://github.com/pingdotgg/t3code/tree/main/docs",
+    "confidence": 0.5,
+    "discovered_by": "user_override",
+    "page_count": null
+  },
+  "include_documentation_activity": true,
+  "started_at": "2026-09-19T02:01:14.021760Z",
+  "issues": [
+    {
+      "number": 9352,
+      "title": "[Bug]: Context window indicator is hidden by default without an in-app notice",
+      "body": null,
+      "url": "https://github.com/pingdotgg/t3code/issues/9352",
+      "state": "open",
+      "labels": [
+        "bug",
+        "needs-triage"
+      ],
+      "comments_count": 12,
+      "created_at": "2026-09-03T05:24:18Z",
+      "updated_at": "2026-09-18T17:19:23Z",
+      "source_repo": "pingdotgg/t3code"
+    },
+    {
+      "number": 12330,
+      "title": "[Bug]: Follow change request templates ignores GitLab and Azure DevOps templates",
+      "body": null,
+      "url": "https://github.com/pingdotgg/t3code/issues/12330",
+      "state": "open",
+      "labels": [
+        "bug",
+        "good first issue",
+        "accepted",
+        "via-triage"
+      ],
+      "comments_count": 2,
+      "created_at": "2026-09-17T23:20:04Z",
+      "updated_at": "2026-09-18T04:42:19Z",
+      "source_repo": "pingdotgg/t3code"
+    },
+    {
+      "number": 12451,
+      "title": "[Bug]: Cursor thread fails to start with ProviderAdapterSessionClosedError when project .cursor/cli.json contains deprecated keys — detect and offer auto-migration",
+      "body": null,
+      "url": "https://github.com/pingdotgg/t3code/issues/12451",
+      "state": "open",
+      "labels": [
+        "bug",
+        "accepted",
+        "via-triage"
+      ],
+      "comments_count": 1,
+      "created_at": "2026-09-18T12:58:31Z",
+      "updated_at": "2026-09-18T14:19:25Z",
+      "source_repo": "pingdotgg/t3code"
+    }
+  ],
+  "pull_requests": [
+    {
+      "number": 12493,
+      "title": "feat(server): export log records over OTLP",
+      "body": null,
+      "url": "https://github.com/pingdotgg/t3code/pull/12493",
+      "state": "merged",
+      "merged_at": "2026-09-18T22:55:16Z",
+      "labels": [
+        "vouch:unvouched",
+        "size:L"
+      ],
+      "created_at": "2026-09-18T18:36:20Z",
+      "updated_at": "2026-09-18T22:55:16Z",
+      "source_repo": "pingdotgg/t3code"
+    }
+  ],
+  "clusters": [
+    {
+      "name": "Cursor project configuration migration guidance",
+      "summary": "Gap: A project with deprecated Cursor configuration keys fails to start a thread with `ProviderAdapterSessionClosedError`, while users see only a generic `ACP process exited with code 1` message instead of actionable migration guidance. Resolution: No confirmed fix is supplied, so the final migration steps still need verification. The issue requests two possible layers: surface cursor-agent stderr, including `Invalid project config at .../.cursor/cli.json: Unrecognized key(s): 'approvalMode', 'sandbox'`, and detect or auto-migrate the deprecated keys. The affected configuration includes `approvalMode: \"unrestricted\"`, `sandbox.mode: \"disabled\"`, `sandbox.networkAccess: \"allow_all\"`, and `permissions.allow: [\"Shell(**)\"]`; documentation should not prescribe replacements until the supported migration behavior is confirmed.",
+      "recurring_question": "How do I migrate a project's deprecated `.cursor/cli.json` keys when a Cursor thread fails to start?",
+      "issue_numbers": [
+        12451
+      ],
+      "pr_numbers": [],
+      "issue_refs": [
+        "pingdotgg/t3code#12451"
+      ],
+      "pr_refs": [],
+      "finding_type": "open_gap",
+      "severity": "high",
+      "confidence": 0.98,
+      "draft_title": "Troubleshooting rejected Cursor project configuration",
+      "draft_summary": "Adds troubleshooting guidance for Cursor threads that fail when .cursor/cli.json contains deprecated keys, while explicitly withholding unverified migration instructions.",
+      "draft_markdown": "## Troubleshooting rejected Cursor project configuration\n\nA Cursor thread can fail before the first prompt when the project contains a `.cursor/cli.json` with keys rejected by the current `cursor-agent`. The reported failure includes `ProviderAdapterSessionClosedError` and a generic `ACP process exited with code 1` message. The underlying Cursor error may identify the invalid keys, for example:\n\n```text\nInvalid project config at .../.cursor/cli.json: Unrecognized key(s): 'approvalMode', 'sandbox'\n```\n\nThe affected configuration reported to T3 Code included `approvalMode`, `sandbox.mode`, `sandbox.networkAccess`, and `permissions.allow`.\n\n### Migration status\n\nNo supported migration procedure or automatic migration behavior is confirmed in this documentation. Do not assume that moving these keys to another file or replacing them with similarly named keys is supported. Maintainers still need to verify:\n\n- which replacement keys and files are supported by the current Cursor CLI;\n- whether T3 Code surfaces the provider's detailed stderr instead of only the generic process-exit message; and\n- whether T3 Code detects and offers an automatic migration.\n\nUntil that behavior is verified, compare the project's configuration with the current Cursor CLI schema and consult the provider's migration guidance before changing it.\n\n## Resolution\n\nFrom [issue #12451](https://github.com/pingdotgg/t3code/issues/12451):\n\nManually remove the rejected keys from the project's .cursor/cli.json; move approval/sandbox settings into .cursor/permissions.json and .cursor/sandbox.json respectively. Cursor turns start working immediately. (This manual fix is exactly what the proposed auto-migration prompt should do for the user.)\n\n## Sources\n\n- [Issue #12451: [Bug]: Cursor thread fails to start with ProviderAdapterSessionClosedError when project .cursor/cli.json contains deprecated keys — detect and offer auto-migration](https://github.com/pingdotgg/t3code/issues/12451)\n- [Existing docs: Install T3 Code (docs/user/install.md)](https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/install.md)\n- [Existing docs: Settings and project overrides (docs/user/project-settings.md)](https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md)",
+      "review_status": "pending_review",
+      "approved_document_slug": null,
+      "documentation_coverage": {
+        "status": "partial",
+        "rationale": "The install documentation explains that Cursor uses the cursor-agent executable, that its login command is agent login, and that provider binaries must be available on PATH or configured with a binary path. The project-settings documentation explains generic project overrides and inheritance. Neither page explains how deprecated .cursor/cli.json keys such as approvalMode or sandbox are handled, whether stderr is surfaced, which replacement keys are supported, or whether automatic migration occurs. The supplied finding also does not confirm the supported migration behavior, so replacement guidance cannot yet be stated authoritatively.",
+        "recommended_action": "update_page",
+        "recommended_path": "docs/user/install.md",
+        "relevant_sources": [
+          {
+            "title": "Install T3 Code (docs/user/install.md)",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/install.md",
+            "snippet": "ogin`. | | OpenCode | Install [OpenCode](https://opencode.ai), then run `opencode auth login`. | | Antigravity | Install and sign in with Google from T3 Code's provider settings. | Provider CLIs must be on the server's `PATH`. If T3 Code cannot find one, set its **Binary path** in provider settings, especially when using a version manager. Cursor's executable is `cursor-agent`, although its login command is `agent login`. Antigravity can use its managed runtime without a `PATH` entry. When a provider CLI is behind its latest release, its provider card shows the available version. **Update now** appears only when T3 Code can tell which installer owns the CLI (its own update command, Homebrew, or a global npm, pnpm, bun, or Vite+ install) and runs that installer. Otherwise update the CLI the same way you installed it. Homebrew installs compare against the version Homebrew offers, which can",
+            "source_type": "repository_docs_page",
+            "confidence": 0.9,
+            "repository_path": "docs/user/install.md",
+            "gap_name": "Cursor project configuration migration guidance",
+            "coverage": "partially_covered",
+            "assessment": "The install documentation explains that Cursor uses the cursor-agent executable, that its login command is agent login, and that provider binaries must be available on PATH or configured with a binary path. The project-settings documentation explains generic project overrides and inheritance. Neither page explains how deprecated .cursor/cli.json keys such as approvalMode or sandbox are handled, whether stderr is surfaced, which replacement keys are supported, or whether automatic migration occurs. The supplied finding also does not confirm the supported migration behavior, so replacement guidance cannot yet be stated authoritatively."
+          },
+          {
+            "title": "Settings and project overrides (docs/user/project-settings.md)",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+            "snippet": "nment again. Providers and diagnostics are per machine: they show one environment at a time, the primary one until you pick another. Every other setting fans out to the selection. On mobile, open **Settings** and use the filter in its header to choose connected environments and a project. The filter stays available in server-setting pages. With **All projects** selected, the **Server settings** categories and auto-settle controls in **Thread behavior** edit the selected environments' defaults. Choosing a project edits its overrides on the selected environments. Use **Use defaults** in a page to remove that page's project overrides. Open **Settings → Projects & threads → Overview** to rename the project across its selected connected checkouts and see where those checkouts live. Settings that are environment-wide stay read-only while a project is selected. When selected targets disagree, a",
+            "source_type": "repository_docs_page",
+            "confidence": 0.9,
+            "repository_path": "docs/user/project-settings.md",
+            "gap_name": "Cursor project configuration migration guidance",
+            "coverage": "partially_covered",
+            "assessment": "The install documentation explains that Cursor uses the cursor-agent executable, that its login command is agent login, and that provider binaries must be available on PATH or configured with a binary path. The project-settings documentation explains generic project overrides and inheritance. Neither page explains how deprecated .cursor/cli.json keys such as approvalMode or sandbox are handled, whether stderr is surfaced, which replacement keys are supported, or whether automatic migration occurs. The supplied finding also does not confirm the supported migration behavior, so replacement guidance cannot yet be stated authoritatively."
+          }
+        ]
+      },
+      "jev_assessment": {
+        "mode": "shadow",
+        "prompt_version": "docshound-evidence-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "16703c708e51ff1ef7c33e352ff48c205acc2ceb53b37ee7b631957ead95619e",
+        "status": "succeeded",
+        "answers": {
+          "gap_kind": {
+            "type": "choice",
+            "choice": "missing_procedure",
+            "confidence": 0.95,
+            "probabilities": {
+              "outdated_or_conflicting": 0.0,
+              "missing_procedure": 0.96,
+              "unclear_configuration": 0.01,
+              "insufficient_evidence": 0.02,
+              "already_answered": 0.0,
+              "missing_limitation": 0.01
+            }
+          },
+          "document_0": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.46,
+            "probabilities": {
+              "uncertain": 0.0,
+              "useful_background": 0.4,
+              "unrelated": 0.6,
+              "direct_answer": 0.0
+            }
+          },
+          "document_1": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.58,
+            "probabilities": {
+              "uncertain": 0.0,
+              "useful_background": 0.31,
+              "unrelated": 0.6900000000000001,
+              "direct_answer": 0.0
+            }
+          },
+          "document_2": {
+            "type": "choice",
+            "choice": "useful_background",
+            "confidence": 0.46,
+            "probabilities": {
+              "uncertain": 0.0,
+              "useful_background": 0.6,
+              "unrelated": 0.4,
+              "direct_answer": 0.0
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 2179,
+          "output_tokens": 244,
+          "total_tokens": 2423,
+          "cost": 9.1518e-05
+        },
+        "duration_ms": 439.2,
+        "documents": [
+          {
+            "path": "docs/user/install.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/install.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.46,
+              "probabilities": {
+                "uncertain": 0.0,
+                "useful_background": 0.4,
+                "unrelated": 0.6,
+                "direct_answer": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/user/project-settings.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.58,
+              "probabilities": {
+                "uncertain": 0.0,
+                "useful_background": 0.31,
+                "unrelated": 0.6900000000000001,
+                "direct_answer": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/user/permission-modes.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/permission-modes.md",
+            "answer": {
+              "type": "choice",
+              "choice": "useful_background",
+              "confidence": 0.46,
+              "probabilities": {
+                "uncertain": 0.0,
+                "useful_background": 0.6,
+                "unrelated": 0.4,
+                "direct_answer": 0.0
+              }
+            }
+          }
+        ],
+        "recommendation": "verify_implementation"
+      },
+      "jev_triage": {
+        "mode": "shadow",
+        "prompt_version": "docshound-triage-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "e52a73cc1177f3ae5a7da219529455887e8db149196df5a7534c9fda1b518290",
+        "status": "succeeded",
+        "answers": {
+          "finding_kind": {
+            "type": "choice",
+            "choice": "product_bug",
+            "confidence": 0.58,
+            "probabilities": {
+              "documentation": 0.05,
+              "mixed": 0.16,
+              "feature_request": 0.13,
+              "shipped_change": 0.0,
+              "product_bug": 0.66,
+              "unclear": 0.0
+            }
+          },
+          "readiness": {
+            "type": "choice",
+            "choice": "needs_verification",
+            "confidence": 0.86,
+            "probabilities": {
+              "needs_verification": 0.89,
+              "unclear": 0.0,
+              "conflicting": 0.0,
+              "confirmed": 0.11
+            }
+          },
+          "audience": {
+            "type": "choice",
+            "choice": "user",
+            "confidence": 0.57,
+            "probabilities": {
+              "user": 0.66,
+              "mixed": 0.13,
+              "unclear": 0.0,
+              "operator": 0.0,
+              "contributor": 0.21
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 2465,
+          "output_tokens": 172,
+          "total_tokens": 2637,
+          "cost": 0.00010353
+        },
+        "duration_ms": 548.9
+      },
+      "documentation_evidence": [
+        {
+          "path": "docs/user/install.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/install.md",
+          "title": "Install T3 Code (docs/user/install.md)",
+          "content": "ogin`. | | OpenCode | Install [OpenCode](https://opencode.ai), then run `opencode auth login`. | | Antigravity | Install and sign in with Google from T3 Code's provider settings. | Provider CLIs must be on the server's `PATH`. If T3 Code cannot find one, set its **Binary path** in provider settings, especially when using a version manager. Cursor's executable is `cursor-agent`, although its login command is `agent login`. Antigravity can use its managed runtime without a `PATH` entry.\n\nWhen a provider CLI is behind its latest release, its provider card shows the available version. **Update now** appears only when T3 Code can tell which installer owns the CLI (its own update command, Homebrew, or a global npm, pnpm, bun, or Vite+ install) and runs that installer. Otherwise update the CLI the same way you installed it. Homebrew installs compare against the version Homebrew offers, which can trail the npm release by a few hours.\n\nAdd another provider instance for a separate account or configuration. Each instance can have its own environment variables, such as API keys or a custom base URL. Mark secret values as sensitive; after saving, T3 Code does not display their original values.\n\nFor provider-specific setup and accounts, see [Codex](./providers-codex.md), [Claude](./providers-claude.md), [OpenCode](./providers-opencode.md), and [Antigravity](./providers-antigravity.md).",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/user/project-settings.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+          "title": "Settings and project overrides (docs/user/project-settings.md)",
+          "content": "nment again.\n\nProviders and diagnostics are per machine: they show one environment at a time, the primary one until you pick another. Every other setting fans out to the selection. On mobile, open **Settings** and use the filter in its header to choose connected environments and a project. The filter stays available in server-setting pages. With **All projects** selected, the **Server settings** categories and auto-settle controls in **Thread behavior** edit the selected environments' defaults. Choosing a project edits its overrides on the selected environments. Use **Use defaults** in a page to remove that page's project overrides. Open **Settings → Projects & threads → Overview** to rename the project across its selected connected checkouts and see where those checkouts live. Settings that are environment-wide stay read-only while a project is selected. When selected targets disagree, a control shows **Mixed** until you choose one value. Appearance, keyboard, and other phone-only settings ignore the filter.\n\n## Defaults and inheritance\n\nGeneral contains the model and workspace for new threads. Integrations controls agent browser access. Source Control contains automatic pull, the default pull request merge method and text generation. The same rows edit environment defaults or project overrides depending on the project crumb.",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/user/permission-modes.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/permission-modes.md",
+          "title": "Permission modes (docs/user/permission-modes.md)",
+          "content": "an proceed in **Supervised**. **Auto** uses automatic review on Codex, Claude, and Cursor; providers without an equivalent, including OpenCode and Antigravity, fall back to asking. For Grok, **Always allow this session** remembers the matching command or tool input. Other actions still require approval.\n\nAntigravity can still send native approval requests in **Full access**. It only offers remembered approvals for actions that support them.\n\nSee the [provider guides](./install.md#providers) for setup and provider-specific limits.",
+          "excerpt_only": true
+        }
+      ],
+      "implementation_evidence": []
+    },
+    {
+      "name": "export log records over OTLP",
+      "summary": "Log records can now be exported over OTLP, configured the way traces and metrics already are: T3CODEOTLPLOGSURL, the desktop bootstrap envelope, or Settings, in that order of precedence. Logs share T3CODEOTLPHEADERS, T3CODEOTLPPROTOCOL, and the export interval with the other two ",
+      "recurring_question": "What changed, and what should users know about the shipped behavior?",
+      "issue_numbers": [],
+      "pr_numbers": [
+        12493
+      ],
+      "issue_refs": [],
+      "pr_refs": [
+        "pingdotgg/t3code#12493"
+      ],
+      "finding_type": "shipped_change",
+      "severity": "medium",
+      "confidence": 0.99,
+      "draft_title": "Configure OTLP log export",
+      "draft_summary": "Documents the shipped precedence order for OTLP log-export configuration and explains the logger behavior when an endpoint is configured.",
+      "draft_markdown": "## OTLP log-export configuration flow\n\nOTLP log export can be configured from any of the same deployment surfaces used for the other telemetry signals:\n\n1. `T3CODE_OTLP_LOGS_URL`\n2. The desktop bootstrap envelope\n3. Settings\n\nThese sources are evaluated in that order of precedence. Log export also uses the shared OTLP headers, protocol, and export interval configuration already described above.\n\nWhen a log endpoint is configured, the OTLP logger replaces `Logger.tracerLogger`. A message logged inside a recorded span is therefore emitted once as a log record rather than once as a log and again as a span-associated trace event. In this mode, the local trace file no longer carries those log messages.\n\n## Sources\n\n- [Merged PR #12493: feat(server): export log records over OTLP](https://github.com/pingdotgg/t3code/pull/12493)\n- [Existing docs: Observability (docs/operations/observability.md)](https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/observability.md)",
+      "review_status": "pending_review",
+      "approved_document_slug": null,
+      "documentation_coverage": {
+        "status": "partial",
+        "rationale": "The observability page documents an OTLP logs endpoint, the shared headers and protocol settings, the export interval and default, and the behavior that logs remain on stdout when OTLP URLs are unset. It does not explain the desktop bootstrap envelope or Settings as additional configuration sources, their precedence order, or the complete shipped configuration flow described by the finding. It also documents the underscored variable form T3CODE_OTLP_LOGS_URL, without clarifying whether the reported T3CODEOTLPLOGSURL spelling is an alias or shorthand.",
+        "recommended_action": "update_page",
+        "recommended_path": "docs/operations/observability.md",
+        "relevant_sources": [
+          {
+            "title": "Observability (docs/operations/observability.md)",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/observability.md",
+            "snippet": "`: flush window, default `200` - `T3CODE_TRACE_MIN_LEVEL`: minimum trace level, default `Info` - `T3CODE_TRACE_TIMING_ENABLED`: enable timing metadata, default `true` OTLP export: - `T3CODE_OTLP_TRACES_URL`: OTLP trace endpoint - `T3CODE_OTLP_METRICS_URL`: OTLP metric endpoint - `T3CODE_OTLP_LOGS_URL`: OTLP log endpoint - `T3CODE_OTLP_EXPORT_INTERVAL_MS`: export interval, default `10000` - `T3CODE_OTLP_SERVICE_NAME`: service name, default `t3-server` - `T3CODE_OTLP_HEADERS`: extra headers for all three exporters, same format as `OTEL_EXPORTER_OTLP_HEADERS`: comma-separated `key=value` pairs with percent-encoded values. - `T3CODE_OTLP_PROTOCOL`: `http/json` (default) or `http/protobuf` If the OTLP URLs are unset, local tracing still works, metrics stay in-process only, and logs stay on stdout only. ### What Is Instrumented Today Current high-value span and metric boundaries include: - Eff",
+            "source_type": "repository_docs_page",
+            "confidence": 0.9,
+            "repository_path": "docs/operations/observability.md",
+            "gap_name": "export log records over OTLP",
+            "coverage": "partially_covered",
+            "assessment": "The observability page documents an OTLP logs endpoint, the shared headers and protocol settings, the export interval and default, and the behavior that logs remain on stdout when OTLP URLs are unset. It does not explain the desktop bootstrap envelope or Settings as additional configuration sources, their precedence order, or the complete shipped configuration flow described by the finding. It also documents the underscored variable form T3CODE_OTLP_LOGS_URL, without clarifying whether the reported T3CODEOTLPLOGSURL spelling is an alias or shorthand."
+          }
+        ]
+      },
+      "jev_assessment": {
+        "mode": "shadow",
+        "prompt_version": "docshound-evidence-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "789d8d0ef58aeb793c87d3fa9dbe2e2244eca5609e155f752897a743fef77189",
+        "status": "succeeded",
+        "answers": {
+          "gap_kind": {
+            "type": "choice",
+            "choice": "unclear_configuration",
+            "confidence": 0.33,
+            "probabilities": {
+              "outdated_or_conflicting": 0.08,
+              "missing_procedure": 0.1,
+              "insufficient_evidence": 0.06,
+              "unclear_configuration": 0.45,
+              "already_answered": 0.27,
+              "missing_limitation": 0.04
+            }
+          },
+          "document_0": {
+            "type": "choice",
+            "choice": "useful_background",
+            "confidence": 0.78,
+            "probabilities": {
+              "uncertain": 0.0,
+              "unrelated": 0.0,
+              "useful_background": 0.84,
+              "direct_answer": 0.16
+            }
+          },
+          "document_1": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.99,
+            "probabilities": {
+              "uncertain": 0.0,
+              "unrelated": 1.0,
+              "useful_background": 0.0,
+              "direct_answer": 0.0
+            }
+          },
+          "document_2": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.99,
+            "probabilities": {
+              "uncertain": 0.0,
+              "unrelated": 0.99,
+              "useful_background": 0.01,
+              "direct_answer": 0.0
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 2253,
+          "output_tokens": 243,
+          "total_tokens": 2496,
+          "cost": 9.4626e-05
+        },
+        "duration_ms": 533.4,
+        "documents": [
+          {
+            "path": "docs/operations/observability.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/observability.md",
+            "answer": {
+              "type": "choice",
+              "choice": "useful_background",
+              "confidence": 0.78,
+              "probabilities": {
+                "uncertain": 0.0,
+                "unrelated": 0.0,
+                "useful_background": 0.84,
+                "direct_answer": 0.16
+              }
+            }
+          },
+          {
+            "path": "docs/user/project-settings.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.99,
+              "probabilities": {
+                "uncertain": 0.0,
+                "unrelated": 1.0,
+                "useful_background": 0.0,
+                "direct_answer": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/operations/development.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/development.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.99,
+              "probabilities": {
+                "uncertain": 0.0,
+                "unrelated": 0.99,
+                "useful_background": 0.01,
+                "direct_answer": 0.0
+              }
+            }
+          }
+        ],
+        "recommendation": "review_draft"
+      },
+      "jev_triage": {
+        "mode": "shadow",
+        "prompt_version": "docshound-triage-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "ea2b3182664e4248979058e2e62dd3e78f51d19f1237302f1c7a04857465fe53",
+        "status": "succeeded",
+        "answers": {
+          "finding_kind": {
+            "type": "choice",
+            "choice": "shipped_change",
+            "confidence": 0.98,
+            "probabilities": {
+              "documentation": 0.0,
+              "mixed": 0.01,
+              "feature_request": 0.0,
+              "shipped_change": 0.99,
+              "product_bug": 0.0,
+              "unclear": 0.0
+            }
+          },
+          "readiness": {
+            "type": "choice",
+            "choice": "confirmed",
+            "confidence": 0.96,
+            "probabilities": {
+              "needs_verification": 0.03,
+              "unclear": 0.0,
+              "conflicting": 0.0,
+              "confirmed": 0.97
+            }
+          },
+          "audience": {
+            "type": "choice",
+            "choice": "operator",
+            "confidence": 0.54,
+            "probabilities": {
+              "user": 0.19,
+              "mixed": 0.17,
+              "unclear": 0.0,
+              "operator": 0.63,
+              "contributor": 0.01
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 1863,
+          "output_tokens": 170,
+          "total_tokens": 2033,
+          "cost": 7.824600000000001e-05
+        },
+        "duration_ms": 449.6
+      },
+      "documentation_evidence": [
+        {
+          "path": "docs/operations/observability.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/observability.md",
+          "title": "Observability (docs/operations/observability.md)",
+          "content": "`: flush window, default `200` - `T3CODE_TRACE_MIN_LEVEL`: minimum trace level, default `Info` - `T3CODE_TRACE_TIMING_ENABLED`: enable timing metadata, default `true`\n\nOTLP export: - `T3CODE_OTLP_TRACES_URL`: OTLP trace endpoint - `T3CODE_OTLP_METRICS_URL`: OTLP metric endpoint - `T3CODE_OTLP_LOGS_URL`: OTLP log endpoint - `T3CODE_OTLP_EXPORT_INTERVAL_MS`: export interval, default `10000` - `T3CODE_OTLP_SERVICE_NAME`: service name, default `t3-server` - `T3CODE_OTLP_HEADERS`: extra headers for all three exporters, same format as `OTEL_EXPORTER_OTLP_HEADERS`: comma-separated `key=value` pairs with percent-encoded values. - `T3CODE_OTLP_PROTOCOL`: `http/json` (default) or `http/protobuf`\n\nIf the OTLP URLs are unset, local tracing still works, metrics stay in-process only, and logs stay on stdout only.\n\n### What Is Instrumented Today\n\nCurrent high-value span and metric boundaries include:\n\n- Effect RPC websocket request spans from `effect/rpc` - RPC request metrics in `apps/server/src/observability/RpcInstrumentation.ts` - startup phases - orchestration command processing - orchestration command acknowledgment latency - provider session and turn operations - git command execution and git hook events - terminal session lifecycle - sqlite query execution\n\n### Current Constraints",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/user/project-settings.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+          "title": "Settings and project overrides (docs/user/project-settings.md)",
+          "content": "r captures and rotated logs have separate retention periods. Expired capture links stop working. Current logs, message attachments, and browser profiles are kept.\n\n## Project icons Select the project and open Project to choose an icon, emoji, monogram, or image. The choice applies to every checkout in the project group and appears on connected clients. Choose **Automatic** to let T3 Code detect an icon again.\n\nChoose **Monogram** in the icon picker to set one or two letters or numbers and a color.\n\nWhen no image is found, web and desktop show a two-character monogram with a color from the icon palette, derived from the saved project name. For example, `Nebula` becomes `NA`, `Silver Orchard` becomes `SO`, and `M7 Forge` becomes `M7`.\n\n## Keep the default branch current\n\nIn Source Control, enable **Automatically pull** to keep the default-branch checkout up to date with its configured upstream. Choose an environment to set the default or a project to override it. On mobile, use **Settings → Source control** to change selected environment defaults or project overrides.\n\nT3 Code only pulls when it can fast-forward and the checkout has no changed files, untracked files, or local commits. It skips checkouts on another branch or without an upstream. If a checkout has local work, resolve it yourself before automatic pulls can resume.",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/operations/development.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/development.md",
+          "title": "Development (docs/operations/development.md)",
+          "content": "needed after setup.\n\nFor a manual worktree or launcher without that link, export the same fixed value instead:\n\n```sh export T3CODE_DEV_AUTH_TOKEN=\"<the value generated above>\" ``` Do not generate a new value at startup. Start or restart `vp run dev --share` after configuration, then open its printed startup pairing URL once per browser profile on that hostname. Later web dev servers on the same hostname accept the shared cookie across ports. The cookie expires after 30 days. Reload an old tab if its URL now serves a replacement environment.\n\nThe token and startup pairing URLs are reusable administrative secrets. Never put them in a commit, pull request, or public output. Every server still seeds its own auth database record at startup and keeps its own SQLite data, signing key, and revocation state. Desktop and non-dev servers ignore the value. See [environment authentication](../internals/environment-auth.md#reusable-dev-credential) for the security model.\n\n## Checks\n\nRun checks for the files and packages you changed:\n\n```sh vp test run <files> vp lint <files> vp run --filter <package> typecheck ```",
+          "excerpt_only": true
+        }
+      ],
+      "implementation_evidence": []
+    },
+    {
+      "name": "Context-window indicator discoverability",
+      "summary": "Gap: Users cannot passively monitor context consumption because the indicator is absent in both main and branch/worktree threads, with no notice or affordance explaining its state. Resolution: No confirmed fix is supplied. Investigate the issue's identified cause—PR #9190 introduced `contextWindowMeterEnabled` with a default of `false`, and `ChatComposer` passes `null` instead of the available context data—then verify the intended default and the supported way to restore visibility before documenting or announcing it in-app.",
+      "recurring_question": "Where is the context-window indicator, and how can I restore it for main or branch/worktree threads?",
+      "issue_numbers": [
+        9352
+      ],
+      "pr_numbers": [],
+      "issue_refs": [
+        "pingdotgg/t3code#9352"
+      ],
+      "pr_refs": [],
+      "finding_type": "open_gap",
+      "severity": "medium",
+      "confidence": 0.97,
+      "draft_title": "Restore the legacy context-window indicator",
+      "draft_summary": "Adds the confirmed Settings location and default state for the legacy context-window indicator, with maintainer verification called out for behavior across thread types.",
+      "draft_markdown": "## Context-window indicator (legacy)\n\nThe context-window indicator is a legacy composer feature and is disabled by default. To enable the setting, open **Settings → General → Legacy features** and turn on **Context window indicator (legacy)**. Its description is: “Shows context window usage as a circular indicator in the composer.”\n\nThe reported issue found the indicator absent in both main-branch threads and branch/worktree threads. Maintainers still need to verify that enabling this setting restores the indicator consistently in both thread types and to confirm whether the disabled-by-default behavior is intentional. No change to the default or in-app notice is confirmed here.\n\n## Resolution\n\nFrom [issue #9352](https://github.com/pingdotgg/t3code/issues/9352):\n\nProposed fix\n\nRestore contextWindowMeterEnabled to true by default. If the indicator must remain opt-in, preserve it for existing users during migration and display an in-app notice showing where it can be re-enabled.\n\n## Sources\n\n- [Issue #9352: [Bug]: Context window indicator is hidden by default without an in-app notice](https://github.com/pingdotgg/t3code/issues/9352)\n- [Existing docs: Working with threads (docs/user/thread-sidebar.md)](https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/thread-sidebar.md)",
+      "review_status": "pending_review",
+      "approved_document_slug": null,
+      "documentation_coverage": {
+        "status": "partial",
+        "rationale": "The project-settings documentation explains environment and project setting scope, while the thread-sidebar documentation explains that branch selections create separate threads and worktrees. The supplied implementation evidence shows that the context-window indicator is a legacy setting, disabled by default, and restorable from Settings. The retrieved user documentation does not identify the setting, its default, where to enable it, or whether enabling it restores the indicator for both main and branch/worktree threads.",
+        "recommended_action": "update_page",
+        "recommended_path": "docs/internals/composer-context-references.md",
+        "relevant_sources": [
+          {
+            "title": "Working with threads (docs/user/thread-sidebar.md)",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/thread-sidebar.md",
+            "snippet": "ose a base branch and send. Each selection starts a separate thread and worktree while you stay in the new thread composer. This requires a Git project. ## Pin and reorder threads Pin a thread from its menu to keep it above your active work. On web and desktop, you can also drag files from your computer onto any thread row: the thread opens and the files are attached in its composer, ready for your next message. The same per-message file limits apply as when attaching files directly; see [Attach files](./composer.md#attach-files). On web and desktop, pinning or unpinning a thread keeps the sidebar at your current scroll position instead of following the thread to its new place in the list. Pinning does not prevent automatic settlement. Settling a thread removes its pin.",
+            "source_type": "repository_docs_page",
+            "confidence": 0.9,
+            "repository_path": "docs/user/thread-sidebar.md",
+            "gap_name": "Context-window indicator discoverability",
+            "coverage": "partially_covered",
+            "assessment": "The project-settings documentation explains environment and project setting scope, while the thread-sidebar documentation explains that branch selections create separate threads and worktrees. The supplied implementation evidence shows that the context-window indicator is a legacy setting, disabled by default, and restorable from Settings. The retrieved user documentation does not identify the setting, its default, where to enable it, or whether enabling it restores the indicator for both main and branch/worktree threads."
+          }
+        ]
+      },
+      "jev_assessment": {
+        "mode": "shadow",
+        "prompt_version": "docshound-evidence-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "33be7671101ab432d249108285364a6f4e4eb7b39a1cc34e323e2ca63ed08929",
+        "status": "succeeded",
+        "answers": {
+          "gap_kind": {
+            "type": "choice",
+            "choice": "unclear_configuration",
+            "confidence": 0.61,
+            "probabilities": {
+              "unclear_configuration": 0.67,
+              "insufficient_evidence": 0.03,
+              "outdated_or_conflicting": 0.02,
+              "missing_procedure": 0.19,
+              "missing_limitation": 0.03,
+              "already_answered": 0.06
+            }
+          },
+          "document_0": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.96,
+            "probabilities": {
+              "direct_answer": 0.0,
+              "unrelated": 0.97,
+              "useful_background": 0.03,
+              "uncertain": 0.0
+            }
+          },
+          "document_1": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.96,
+            "probabilities": {
+              "direct_answer": 0.0,
+              "unrelated": 0.97,
+              "useful_background": 0.03,
+              "uncertain": 0.0
+            }
+          },
+          "document_2": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.65,
+            "probabilities": {
+              "direct_answer": 0.0,
+              "unrelated": 0.74,
+              "useful_background": 0.26,
+              "uncertain": 0.0
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 3435,
+          "output_tokens": 243,
+          "total_tokens": 3678,
+          "cost": 0.00014427
+        },
+        "duration_ms": 670.0,
+        "documents": [
+          {
+            "path": "docs/internals/composer-context-references.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/composer-context-references.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.96,
+              "probabilities": {
+                "direct_answer": 0.0,
+                "unrelated": 0.97,
+                "useful_background": 0.03,
+                "uncertain": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/user/composer.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/composer.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.96,
+              "probabilities": {
+                "direct_answer": 0.0,
+                "unrelated": 0.97,
+                "useful_background": 0.03,
+                "uncertain": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/user/thread-sidebar.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/thread-sidebar.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.65,
+              "probabilities": {
+                "direct_answer": 0.0,
+                "unrelated": 0.74,
+                "useful_background": 0.26,
+                "uncertain": 0.0
+              }
+            }
+          }
+        ],
+        "recommendation": "retrieve_more"
+      },
+      "jev_triage": {
+        "mode": "shadow",
+        "prompt_version": "docshound-triage-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "e0b0c2952c27d12f0b2299a298b8fd36506ef5211e1e27c2ed2adbd906550cc8",
+        "status": "succeeded",
+        "answers": {
+          "finding_kind": {
+            "type": "choice",
+            "choice": "product_bug",
+            "confidence": 0.52,
+            "probabilities": {
+              "feature_request": 0.0,
+              "documentation": 0.12,
+              "mixed": 0.26,
+              "product_bug": 0.61,
+              "unclear": 0.0,
+              "shipped_change": 0.01
+            }
+          },
+          "readiness": {
+            "type": "choice",
+            "choice": "confirmed",
+            "confidence": 0.44,
+            "probabilities": {
+              "confirmed": 0.59,
+              "conflicting": 0.01,
+              "needs_verification": 0.4,
+              "unclear": 0.0
+            }
+          },
+          "audience": {
+            "type": "choice",
+            "choice": "user",
+            "confidence": 0.65,
+            "probabilities": {
+              "contributor": 0.12,
+              "operator": 0.0,
+              "unclear": 0.0,
+              "mixed": 0.15,
+              "user": 0.73
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 2853,
+          "output_tokens": 169,
+          "total_tokens": 3022,
+          "cost": 0.000119826
+        },
+        "duration_ms": 433.0
+      },
+      "documentation_evidence": [
+        {
+          "path": "docs/internals/composer-context-references.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/composer-context-references.md",
+          "title": "Composer context references (docs/internals/composer-context-references.md)",
+          "content": "ts, elements, review comments, and preview annotations open structured details popovers; images and videos use the shared media modal. Mobile renders context links as their labels. Pull-request summaries currently travel as review-comment records with optional typed `pullRequest` metadata. The metadata is a snapshot of the number, title, URL, branches, state, and draft flag at attachment time. Web and desktop render the compact `#number` label and derive its status tone from that snapshot. Hover shows the snapshot details; activation resolves the URL against the current environment and opens the pull request in the thread's right panel. Records written before the metadata was added retain their legacy details and neutral pull-request tone.\n\n## Attachments\n\nImage and file records use the draft attachment's local id as `contextId` and carry an `attachmentId` binding. The composer sends the upload's pending id (or the local id on the data-URL path, via the optional `id` on `UploadChatImageAttachment`); the server's `Normalizer` rewrites every image and file record to the persisted id it assigns, so the stored message binds records to real resources. Optimistic rows bind to local ids and are replaced by the server copy.",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/user/composer.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/composer.md",
+          "title": "Messages and context (docs/user/composer.md)",
+          "content": "he thumbnail asks first when the image is still mentioned in your text, then removes both. Files exist only as chips: deleting a file's last chip removes the file from the message. Copy text that holds chips and paste it into another draft, in the same thread or another one, and the chips come along with what they point to. Images and files are fetched again from the environment they came from; while that happens the chip shows a dashed outline, and if it cannot complete T3 Code tells you and leaves the chip for you to remove or replace. A chip whose context is no longer available shows the same dashed outline; hover it for what to do.\n\nCopying a message with the copy button, or copying text out of it, gives other apps readable Markdown with a link in place of each chip. Older messages that were sent before chips still show their context. Stashing a prompt keeps its chips and what they point to; restoring brings them back.\n\nOn mobile, tap a chip to inspect its content. File references open the current file; attached files show the copy that was attached to the message.\n\n## Attached files\n\nSelect a file chip in your draft or a sent message to preview it. Code and JSON use syntax highlighting; Markdown, HTML, CSV, and TSV offer rendered and raw views. Audio files have playback controls. Large text files show a limited preview; save the file to read it in full.",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/user/thread-sidebar.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/thread-sidebar.md",
+          "title": "Working with threads (docs/user/thread-sidebar.md)",
+          "content": "ose a base branch and send. Each selection starts a separate thread and worktree while you stay in the new thread composer. This requires a Git project.\n\n## Pin and reorder threads Pin a thread from its menu to keep it above your active work.\n\nOn web and desktop, you can also drag files from your computer onto any thread row: the thread opens and the files are attached in its composer, ready for your next message. The same per-message file limits apply as when attaching files directly; see [Attach files](./composer.md#attach-files).\n\nOn web and desktop, pinning or unpinning a thread keeps the sidebar at your current scroll position instead of following the thread to its new place in the list.\n\nPinning does not prevent automatic settlement. Settling a thread removes its pin.",
+          "excerpt_only": true
+        }
+      ],
+      "implementation_evidence": [
+        {
+          "path": "apps/web/src/components/settings/SettingsPanels.tsx",
+          "start_line": 2039,
+          "end_line": 2082,
+          "source_refs": [
+            "pingdotgg/t3code#9352"
+          ],
+          "revision": "9cb586acd0494c4f47f60045ee42ef25edb5a07c",
+          "content": "  }, [searchTargetId]);\n\n  return (\n    <section id=\"legacy-features\" ref={targetRef} tabIndex={-1} className=\"space-y-2.5\">\n      <Collapsible open={open} onOpenChange={setOpen}>\n        <CollapsibleTrigger className=\"group flex min-h-8 w-full items-center gap-2 px-3 sm:px-4\">\n          <h2 className=\"text-sm font-normal tracking-[-0.005em] text-foreground/70 transition-colors group-hover:text-foreground\">\n            Legacy features\n          </h2>\n          <ChevronRightIcon className=\"size-4 text-muted-foreground transition-transform duration-200 group-data-panel-open:rotate-90\" />\n        </CollapsibleTrigger>\n        <CollapsiblePanel>\n          <SettingsGroup>\n            <SettingsRow\n              {...searchableSetting(\"legacy-plan-mode\")}\n              description=\"Restore Build/Plan, /plan, /default, and Shift+Tab. Off uses build mode.\"\n              control={\n                <Switch\n                  checked={settings.planModeEnabled}\n                  onCheckedChange={(checked) => {\n                    updateSettings({ planModeEnabled: Boolean(checked) });\n                  }}\n                  aria-label=\"Plan mode (legacy)\"\n                />\n              }\n            />\n            <SettingsRow\n              {...searchableSetting(\"legacy-context-window-indicator\")}\n              description=\"Shows context window usage as a circular indicator in the composer.\"\n              control={\n                <Switch\n                  checked={settings.contextWindowMeterEnabled}\n                  onCheckedChange={(checked) =>\n                    updateSettings({ contextWindowMeterEnabled: Boolean(checked) })\n                  }\n                  aria-label=\"Context window indicator (legacy)\"\n                />\n              }\n            />\n            <SettingsRow\n              {...searchableSetting(\"legacy-sidebar\")}\n              description=\"Restore per-project thread trees instead of the default flat sidebar.\"\n              control={\n                <Switch",
+          "sha256": "4ac362f59314709853db075e305f1e577155d732aad408029d7928ea6e3b2142",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/apps/web/src/components/settings/SettingsPanels.tsx#L2039-L2082"
+        },
+        {
+          "path": "packages/contracts/src/settings.ts",
+          "start_line": 420,
+          "end_line": 435,
+          "source_refs": [
+            "pingdotgg/t3code#9352"
+          ],
+          "revision": "9cb586acd0494c4f47f60045ee42ef25edb5a07c",
+          "content": "    TrimmedNonEmptyString,\n    PullRequestMergeMethod,\n  ).pipe(Schema.withDecodingDefault(Effect.succeed({}))),\n  // Legacy plan mode. The composer's Build/Plan toggle was removed from the\n  // default UI; this beta flag restores it (plus the /plan and /default slash\n  // commands) for users who still rely on the old workflow.\n  planModeEnabled: Schema.Boolean.pipe(Schema.withDecodingDefault(Effect.succeed(false))),\n  // Legacy context window meter. The composer hides it by default; users who\n  // still want the old usage indicator can restore it from Settings.\n  contextWindowMeterEnabled: Schema.Boolean.pipe(Schema.withDecodingDefault(Effect.succeed(false))),\n  // Desktop resting composer: scrolling an existing thread's conversation\n  // settles the composer into its single-line layout. Losing focus never does.\n  composerCollapseOnScroll: Schema.Boolean.pipe(Schema.withDecodingDefault(Effect.succeed(true))),\n  // Rich text is the default; users can opt out for literal Markdown editing.\n  composerRichTextEnabled: Schema.Boolean.pipe(Schema.withDecodingDefault(Effect.succeed(true))),\n  sendShortcut: Schema.Literals([\"enter\", \"mod-enter-multiline\", \"mod-enter\"]).pipe(",
+          "sha256": "e61dd568570fd0ec5e243b266901c96d7a3ea49819b8efec4e95ead305456ae8",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/packages/contracts/src/settings.ts#L420-L435"
+        }
+      ]
+    },
+    {
+      "name": "Change-request template provider coverage",
+      "summary": "Gap: The user-facing scope of Follow change request templates is unclear: the setting is expected to discover repository templates, but the supplied issue reports that discovery is restricted to GitHub and does not explain the GitLab or Azure DevOps limitation. Resolution: No confirmed implementation is supplied. The reported root cause is `GitManager.ts:2023` checking `provider.kind === \"github\"`, while `PrTemplateDetection.ts` only includes GitHub-compatible paths. Documentation should state the currently supported provider scope and, after support is verified, document the requested paths `.gitlab/merge_request_templates/Default.md` and `.azuredevops/pull_request_template.md`.",
+      "recurring_question": "Which hosting providers and repository template paths does Follow change request templates support?",
+      "issue_numbers": [
+        12330
+      ],
+      "pr_numbers": [],
+      "issue_refs": [
+        "pingdotgg/t3code#12330"
+      ],
+      "pr_refs": [],
+      "finding_type": "open_gap",
+      "severity": "medium",
+      "confidence": 0.94,
+      "draft_title": "Follow change request templates: current provider scope",
+      "draft_summary": "Documents that template following currently runs only for GitHub providers and lists the GitHub-compatible paths configured by the detector, while identifying GitLab and Azure DevOps support as unconfirmed.",
+      "draft_markdown": "## Follow change request templates: provider scope\n\nWhen **Follow change request templates** is enabled, the current implementation attempts repository template detection only when the connected provider is identified as GitHub. GitLab and Azure DevOps templates are not currently passed to the change-request description generator.\n\nThe detector currently includes these GitHub-compatible file paths:\n\n- `.github/pull_request_template.md`\n- `.github/PULL_REQUEST_TEMPLATE.md`\n- `pull_request_template.md`\n- `PULL_REQUEST_TEMPLATE.md`\n- `docs/pull_request_template.md`\n- `docs/PULL_REQUEST_TEMPLATE.md`\n\nIt also checks these template directories:\n\n- `.github/PULL_REQUEST_TEMPLATE`\n- `PULL_REQUEST_TEMPLATE`\n- `docs/PULL_REQUEST_TEMPLATE`\n\nThe reported GitLab path, `.gitlab/merge_request_templates/Default.md`, and Azure DevOps path, `.azuredevops/pull_request_template.md`, are not among the currently configured paths. Maintainers must verify any future expansion to those providers before their support is documented.\n\n## Resolution\n\nFrom [issue #12330](https://github.com/pingdotgg/t3code/issues/12330):\n\nManually apply the template when editing the generated request description.\n\n## Sources\n\n- [Issue #12330: [Bug]: Follow change request templates ignores GitLab and Azure DevOps templates](https://github.com/pingdotgg/t3code/issues/12330)\n- [Existing docs: Provider constraints (docs/internals/providers.md)](https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/providers.md)",
+      "review_status": "pending_review",
+      "approved_document_slug": null,
+      "documentation_coverage": {
+        "status": "partial",
+        "rationale": "The project-settings documentation establishes that source-control behavior and project overrides are user-configurable, and the provider documentation provides general provider constraints. Neither explains the Follow change request templates setting, which hosting providers are supported, or the repository paths searched. In particular, the retrieved docs do not state that discovery is currently GitHub-only, do not list the supported GitHub template paths, and do not explain whether .gitlab/merge_request_templates/Default.md or .azuredevops/pull_request_template.md is supported.",
+        "recommended_action": "update_page",
+        "recommended_path": "docs/internals/providers.md",
+        "relevant_sources": [
+          {
+            "title": "Provider constraints (docs/internals/providers.md)",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/providers.md",
+            "snippet": "e-only server can fail the entire environment's startup when replaying one such event. Rollouts and downgrades must account for persisted history as well as current client support. Model classification has its own [manifest constraints](./model-manifest.md). Assistant-reference handling is documented under [citations](./assistant-citations.md).",
+            "source_type": "repository_docs_page",
+            "confidence": 0.9,
+            "repository_path": "docs/internals/providers.md",
+            "gap_name": "Change-request template provider coverage",
+            "coverage": "partially_covered",
+            "assessment": "The project-settings documentation establishes that source-control behavior and project overrides are user-configurable, and the provider documentation provides general provider constraints. Neither explains the Follow change request templates setting, which hosting providers are supported, or the repository paths searched. In particular, the retrieved docs do not state that discovery is currently GitHub-only, do not list the supported GitHub template paths, and do not explain whether .gitlab/merge_request_templates/Default.md or .azuredevops/pull_request_template.md is supported."
+          }
+        ]
+      },
+      "jev_assessment": {
+        "mode": "shadow",
+        "prompt_version": "docshound-evidence-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "2a533e5b6a941117935d2d8b0c4af08c28be15ce5606a836fa3b056539ccaf6d",
+        "status": "succeeded",
+        "answers": {
+          "gap_kind": {
+            "type": "choice",
+            "choice": "missing_limitation",
+            "confidence": 0.99,
+            "probabilities": {
+              "missing_procedure": 0.0,
+              "already_answered": 0.0,
+              "missing_limitation": 1.0,
+              "insufficient_evidence": 0.0,
+              "outdated_or_conflicting": 0.0,
+              "unclear_configuration": 0.0
+            }
+          },
+          "document_0": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.73,
+            "probabilities": {
+              "unrelated": 0.8,
+              "useful_background": 0.19,
+              "uncertain": 0.01,
+              "direct_answer": 0.0
+            }
+          },
+          "document_1": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.74,
+            "probabilities": {
+              "unrelated": 0.81,
+              "useful_background": 0.19,
+              "uncertain": 0.0,
+              "direct_answer": 0.0
+            }
+          },
+          "document_2": {
+            "type": "choice",
+            "choice": "unrelated",
+            "confidence": 0.61,
+            "probabilities": {
+              "unrelated": 0.7,
+              "useful_background": 0.29,
+              "uncertain": 0.01,
+              "direct_answer": 0.0
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 3064,
+          "output_tokens": 244,
+          "total_tokens": 3308,
+          "cost": 0.000128688
+        },
+        "duration_ms": 492.1,
+        "documents": [
+          {
+            "path": "docs/internals/providers.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/providers.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.73,
+              "probabilities": {
+                "unrelated": 0.8,
+                "useful_background": 0.19,
+                "uncertain": 0.01,
+                "direct_answer": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/internals/pull-request-file-revisions.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/pull-request-file-revisions.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.74,
+              "probabilities": {
+                "unrelated": 0.81,
+                "useful_background": 0.19,
+                "uncertain": 0.0,
+                "direct_answer": 0.0
+              }
+            }
+          },
+          {
+            "path": "docs/README.md",
+            "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/README.md",
+            "answer": {
+              "type": "choice",
+              "choice": "unrelated",
+              "confidence": 0.61,
+              "probabilities": {
+                "unrelated": 0.7,
+                "useful_background": 0.29,
+                "uncertain": 0.01,
+                "direct_answer": 0.0
+              }
+            }
+          }
+        ],
+        "recommendation": "retrieve_more"
+      },
+      "jev_triage": {
+        "mode": "shadow",
+        "prompt_version": "docshound-triage-v2",
+        "requested_model": "typesafe/jev-1.13",
+        "input_sha256": "2ce0abf7d64bbf0cf59ba98c298cb02ef7776d7e2dabb3924bc8828840307179",
+        "status": "succeeded",
+        "answers": {
+          "finding_kind": {
+            "type": "choice",
+            "choice": "mixed",
+            "confidence": 0.21,
+            "probabilities": {
+              "feature_request": 0.1,
+              "shipped_change": 0.0,
+              "mixed": 0.34,
+              "unclear": 0.0,
+              "product_bug": 0.29,
+              "documentation": 0.27
+            }
+          },
+          "readiness": {
+            "type": "choice",
+            "choice": "confirmed",
+            "confidence": 0.98,
+            "probabilities": {
+              "needs_verification": 0.02,
+              "conflicting": 0.0,
+              "unclear": 0.0,
+              "confirmed": 0.98
+            }
+          },
+          "audience": {
+            "type": "choice",
+            "choice": "user",
+            "confidence": 0.56,
+            "probabilities": {
+              "contributor": 0.23,
+              "mixed": 0.09,
+              "user": 0.65,
+              "unclear": 0.01,
+              "operator": 0.02
+            }
+          }
+        },
+        "human_label": null,
+        "served_model": "jev-1.13.0",
+        "usage": {
+          "input_tokens": 2478,
+          "output_tokens": 168,
+          "total_tokens": 2646,
+          "cost": 0.00010407600000000001
+        },
+        "duration_ms": 523.5
+      },
+      "documentation_evidence": [
+        {
+          "path": "docs/internals/providers.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/providers.md",
+          "title": "Provider constraints (docs/internals/providers.md)",
+          "content": "e-only server can fail the entire environment's startup when replaying one such event. Rollouts and downgrades must account for persisted history as well as current client support. Model classification has its own [manifest constraints](./model-manifest.md). Assistant-reference handling is documented under [citations](./assistant-citations.md).",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/internals/pull-request-file-revisions.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/pull-request-file-revisions.md",
+          "title": "Pull request file revisions (docs/internals/pull-request-file-revisions.md)",
+          "content": "eaves the paths past the cut out. - [GitLab](../../apps/server/src/pullRequest/GitLabPullRequestCli.ts) asks in batches, so a batch it could not read leaves that batch's paths out. Those three facts stay with their providers. The contract states only that absence means the read could not say, which is the half a provider must convert to.\n\n## Three nulls, and the empty string is not one of them\n\nThe empty string is an answer: the host looked, and the head has no version, which is where a deleted file sits. It compares equal to a mark stamped with it, so a mark taken against a deletion is cleared once and stays cleared. Everything below is the absence of an answer, and the three forms are not interchangeable.\n\nA null map, from the service's read of the whole scope, costs those marks their staleness. They still report as cleared; they stop noticing pushes. It happens when the provider offers no `getFileRevisions` at all, and, on either path, when the call failed and was logged. A press that gets no answer does not refuse the reader's tick: it stores the mark with no baseline, which is the third form below.",
+          "excerpt_only": true
+        },
+        {
+          "path": "docs/README.md",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/README.md",
+          "title": "T3 Code docs (docs/README.md)",
+          "content": "t the source alone does not explain. Most code changes do not need an internal documentation update. Follow the [documentation rules](../AGENTS.md#documentation) before adding one. - [Architecture overview](./internals/overview.md) - [Glossary](./internals/glossary.md) - [Connection runtime](./internals/connection-runtime.md) - [Providers](./internals/providers.md) - [Pull request file revisions](./internals/pull-request-file-revisions.md) - [Model classification](./internals/model-manifest.md) - [Remote environments](./internals/remote.md) - [Server updates](./internals/server-updates.md) - [Resource telemetry](./internals/resource-telemetry.md) - [Product analytics](./internals/product-analytics.md) - [Environment auth](./internals/environment-auth.md) - [T3 Connect](./internals/t3-connect.md) - [Assistant citations](./internals/assistant-citations.md) - [Mobile navigation](./internals/mobile-navigation.md) - [Mobile development lifecycle](./internals/mobile-development.md) - [Terminal runtime](./internals/terminal-runtime.md) - [Devices](./internals/devices.md) - [Voice input](./internals/voice-input.md)\n\n### Runbooks",
+          "excerpt_only": true
+        }
+      ],
+      "implementation_evidence": [
+        {
+          "path": "apps/server/src/git/GitManager.ts",
+          "start_line": 2018,
+          "end_line": 2039,
+          "source_refs": [
+            "pingdotgg/t3code#12330"
+          ],
+          "revision": "9cb586acd0494c4f47f60045ee42ef25edb5a07c",
+          "content": "      label: `Generating ${terms.shortLabel} content...`,\n    });\n    const baseRangeRef = yield* resolveBaseRangeRef(cwd, baseBranch);\n    const rangeContext = yield* gitCore.readRangeContext(cwd, baseRangeRef);\n    const policy = yield* resolveStylePolicy(cwd, settings);\n    const changeRequestTemplate =\n      settings.style.followChangeRequestTemplates && provider.kind === \"github\"\n        ? Option.getOrUndefined(yield* detectPrTemplate(cwd, baseRangeRef, gitCore.execute))\n        : undefined;\n\n    const generated = yield* textGeneration.generatePrContent({\n      cwd,\n      baseBranch,\n      headBranch: headContext.headBranch,\n      commitSummary: limitContext(rangeContext.commitSummary, 20_000),\n      diffSummary: limitContext(rangeContext.diffSummary, 20_000),\n      diffPatch: limitContext(rangeContext.diffPatch, 60_000),\n      ...(changeRequestTemplate ? { changeRequestTemplate } : {}),\n      ...(policy ? { policy } : {}),\n      modelSelection: settings.modelSelection,\n    });\n",
+          "sha256": "54cfcdbe353c86dd0cffba859c133e45ed42de7c123341e015979b61b32296b3",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/apps/server/src/git/GitManager.ts#L2018-L2039"
+        },
+        {
+          "path": "apps/server/src/sourceControl/PrTemplateDetection.ts",
+          "start_line": 7,
+          "end_line": 26,
+          "source_refs": [
+            "pingdotgg/t3code#12330"
+          ],
+          "revision": "9cb586acd0494c4f47f60045ee42ef25edb5a07c",
+          "content": "const TEMPLATE_MAX_BYTES = 8_000;\nconst TREE_LIST_MAX_BYTES = 100_000;\nconst TRUNCATION_MARKER = \"[truncated]\";\n\nconst TEMPLATE_PATHS = [\n  \".github/pull_request_template.md\",\n  \".github/PULL_REQUEST_TEMPLATE.md\",\n  \"pull_request_template.md\",\n  \"PULL_REQUEST_TEMPLATE.md\",\n  \"docs/pull_request_template.md\",\n  \"docs/PULL_REQUEST_TEMPLATE.md\",\n] as const;\n\nconst TEMPLATE_DIRECTORIES = [\n  \".github/PULL_REQUEST_TEMPLATE\",\n  \"PULL_REQUEST_TEMPLATE\",\n  \"docs/PULL_REQUEST_TEMPLATE\",\n] as const;\n\nconst TREE_PATHS = [...TEMPLATE_PATHS, ...TEMPLATE_DIRECTORIES] as const;",
+          "sha256": "e5fcbf26607e8510e9179c9807ac58ae1c1dd73dad198243acc9a40bcc55e17e",
+          "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/apps/server/src/sourceControl/PrTemplateDetection.ts#L7-L26"
+        }
+      ]
+    }
+  ],
+  "docs_sources": [
+    {
+      "title": "pingdotgg/t3code official documentation",
+      "url": "https://github.com/pingdotgg/t3code/tree/main/docs",
+      "snippet": "Resolved documentation source at docs.",
+      "source_type": "resolved_docs_root",
+      "confidence": 0.5,
+      "repository_path": "docs",
+      "gap_name": null,
+      "coverage": null,
+      "assessment": null
+    },
+    {
+      "title": "Install T3 Code (docs/user/install.md)",
+      "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/install.md",
+      "snippet": "ogin`. | | OpenCode | Install [OpenCode](https://opencode.ai), then run `opencode auth login`. | | Antigravity | Install and sign in with Google from T3 Code's provider settings. | Provider CLIs must be on the server's `PATH`. If T3 Code cannot find one, set its **Binary path** in provider settings, especially when using a version manager. Cursor's executable is `cursor-agent`, although its login command is `agent login`. Antigravity can use its managed runtime without a `PATH` entry. When a provider CLI is behind its latest release, its provider card shows the available version. **Update now** appears only when T3 Code can tell which installer owns the CLI (its own update command, Homebrew, or a global npm, pnpm, bun, or Vite+ install) and runs that installer. Otherwise update the CLI the same way you installed it. Homebrew installs compare against the version Homebrew offers, which can",
+      "source_type": "repository_docs_page",
+      "confidence": 0.9,
+      "repository_path": "docs/user/install.md",
+      "gap_name": "Cursor project configuration migration guidance",
+      "coverage": "partially_covered",
+      "assessment": "The install documentation explains that Cursor uses the cursor-agent executable, that its login command is agent login, and that provider binaries must be available on PATH or configured with a binary path. The project-settings documentation explains generic project overrides and inheritance. Neither page explains how deprecated .cursor/cli.json keys such as approvalMode or sandbox are handled, whether stderr is surfaced, which replacement keys are supported, or whether automatic migration occurs. The supplied finding also does not confirm the supported migration behavior, so replacement guidance cannot yet be stated authoritatively."
+    },
+    {
+      "title": "Settings and project overrides (docs/user/project-settings.md)",
+      "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/project-settings.md",
+      "snippet": "nment again. Providers and diagnostics are per machine: they show one environment at a time, the primary one until you pick another. Every other setting fans out to the selection. On mobile, open **Settings** and use the filter in its header to choose connected environments and a project. The filter stays available in server-setting pages. With **All projects** selected, the **Server settings** categories and auto-settle controls in **Thread behavior** edit the selected environments' defaults. Choosing a project edits its overrides on the selected environments. Use **Use defaults** in a page to remove that page's project overrides. Open **Settings → Projects & threads → Overview** to rename the project across its selected connected checkouts and see where those checkouts live. Settings that are environment-wide stay read-only while a project is selected. When selected targets disagree, a",
+      "source_type": "repository_docs_page",
+      "confidence": 0.9,
+      "repository_path": "docs/user/project-settings.md",
+      "gap_name": "Cursor project configuration migration guidance",
+      "coverage": "partially_covered",
+      "assessment": "The install documentation explains that Cursor uses the cursor-agent executable, that its login command is agent login, and that provider binaries must be available on PATH or configured with a binary path. The project-settings documentation explains generic project overrides and inheritance. Neither page explains how deprecated .cursor/cli.json keys such as approvalMode or sandbox are handled, whether stderr is surfaced, which replacement keys are supported, or whether automatic migration occurs. The supplied finding also does not confirm the supported migration behavior, so replacement guidance cannot yet be stated authoritatively."
+    },
+    {
+      "title": "Observability (docs/operations/observability.md)",
+      "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/operations/observability.md",
+      "snippet": "`: flush window, default `200` - `T3CODE_TRACE_MIN_LEVEL`: minimum trace level, default `Info` - `T3CODE_TRACE_TIMING_ENABLED`: enable timing metadata, default `true` OTLP export: - `T3CODE_OTLP_TRACES_URL`: OTLP trace endpoint - `T3CODE_OTLP_METRICS_URL`: OTLP metric endpoint - `T3CODE_OTLP_LOGS_URL`: OTLP log endpoint - `T3CODE_OTLP_EXPORT_INTERVAL_MS`: export interval, default `10000` - `T3CODE_OTLP_SERVICE_NAME`: service name, default `t3-server` - `T3CODE_OTLP_HEADERS`: extra headers for all three exporters, same format as `OTEL_EXPORTER_OTLP_HEADERS`: comma-separated `key=value` pairs with percent-encoded values. - `T3CODE_OTLP_PROTOCOL`: `http/json` (default) or `http/protobuf` If the OTLP URLs are unset, local tracing still works, metrics stay in-process only, and logs stay on stdout only. ### What Is Instrumented Today Current high-value span and metric boundaries include: - Eff",
+      "source_type": "repository_docs_page",
+      "confidence": 0.9,
+      "repository_path": "docs/operations/observability.md",
+      "gap_name": "export log records over OTLP",
+      "coverage": "partially_covered",
+      "assessment": "The observability page documents an OTLP logs endpoint, the shared headers and protocol settings, the export interval and default, and the behavior that logs remain on stdout when OTLP URLs are unset. It does not explain the desktop bootstrap envelope or Settings as additional configuration sources, their precedence order, or the complete shipped configuration flow described by the finding. It also documents the underscored variable form T3CODE_OTLP_LOGS_URL, without clarifying whether the reported T3CODEOTLPLOGSURL spelling is an alias or shorthand."
+    },
+    {
+      "title": "Working with threads (docs/user/thread-sidebar.md)",
+      "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/user/thread-sidebar.md",
+      "snippet": "ose a base branch and send. Each selection starts a separate thread and worktree while you stay in the new thread composer. This requires a Git project. ## Pin and reorder threads Pin a thread from its menu to keep it above your active work. On web and desktop, you can also drag files from your computer onto any thread row: the thread opens and the files are attached in its composer, ready for your next message. The same per-message file limits apply as when attaching files directly; see [Attach files](./composer.md#attach-files). On web and desktop, pinning or unpinning a thread keeps the sidebar at your current scroll position instead of following the thread to its new place in the list. Pinning does not prevent automatic settlement. Settling a thread removes its pin.",
+      "source_type": "repository_docs_page",
+      "confidence": 0.9,
+      "repository_path": "docs/user/thread-sidebar.md",
+      "gap_name": "Context-window indicator discoverability",
+      "coverage": "partially_covered",
+      "assessment": "The project-settings documentation explains environment and project setting scope, while the thread-sidebar documentation explains that branch selections create separate threads and worktrees. The supplied implementation evidence shows that the context-window indicator is a legacy setting, disabled by default, and restorable from Settings. The retrieved user documentation does not identify the setting, its default, where to enable it, or whether enabling it restores the indicator for both main and branch/worktree threads."
+    },
+    {
+      "title": "Provider constraints (docs/internals/providers.md)",
+      "url": "https://github.com/pingdotgg/t3code/blob/9cb586acd0494c4f47f60045ee42ef25edb5a07c/docs/internals/providers.md",
+      "snippet": "e-only server can fail the entire environment's startup when replaying one such event. Rollouts and downgrades must account for persisted history as well as current client support. Model classification has its own [manifest constraints](./model-manifest.md). Assistant-reference handling is documented under [citations](./assistant-citations.md).",
+      "source_type": "repository_docs_page",
+      "confidence": 0.9,
+      "repository_path": "docs/internals/providers.md",
+      "gap_name": "Change-request template provider coverage",
+      "coverage": "partially_covered",
+      "assessment": "The project-settings documentation establishes that source-control behavior and project overrides are user-configurable, and the provider documentation provides general provider constraints. Neither explains the Follow change request templates setting, which hosting providers are supported, or the repository paths searched. In particular, the retrieved docs do not state that discovery is currently GitHub-only, do not list the supported GitHub template paths, and do not explain whether .gitlab/merge_request_templates/Default.md or .azuredevops/pull_request_template.md is supported."
+    }
+  ],
+  "docs_candidates_inspected": 57,
+  "documentation_issues_scraped": 0,
+  "documentation_pull_requests_scraped": 0,
+  "next_action": null,
+  "decisions": [
+    {
+      "action": "research",
+      "reason": "Research has not been completed; fetch recent GitHub issues and merged pull requests before analysis.",
+      "issues_count": 0,
+      "pull_requests_count": 0,
+      "clusters_count": 0,
+      "docs_sources_count": 0,
+      "errors_count": 0
+    },
+    {
+      "action": "analyze",
+      "reason": "Research is complete and issues are available; analyze them and the merged pull request to identify recurring documentation gaps before searching the docs.",
+      "issues_count": 3,
+      "pull_requests_count": 1,
+      "clusters_count": 0,
+      "docs_sources_count": 0,
+      "errors_count": 0
+    },
+    {
+      "action": "search_docs",
+      "reason": "Research and analysis are complete, and documentation coverage has not yet been assessed. Search the repository’s docs source before drafting.",
+      "issues_count": 3,
+      "pull_requests_count": 1,
+      "clusters_count": 4,
+      "docs_sources_count": 0,
+      "errors_count": 0
+    },
+    {
+      "action": "draft",
+      "reason": "Research, analysis, and documentation search are complete; draft the missing or partial documentation identified from the coverage review.",
+      "issues_count": 3,
+      "pull_requests_count": 1,
+      "clusters_count": 4,
+      "docs_sources_count": 6,
+      "errors_count": 0
+    },
+    {
+      "action": "store",
+      "reason": "The workflow reached a terminal state, so the run can be finalized without another model request.",
+      "issues_count": 3,
+      "pull_requests_count": 1,
+      "clusters_count": 4,
+      "docs_sources_count": 6,
+      "errors_count": 0
+    }
+  ],
+  "warnings": [],
+  "errors": [],
+  "status": "completed",
+  "outcome": "recommendations_found",
+  "summary": "4 documentation recommendations are ready."
+}

@@ -158,7 +158,9 @@ async def create_documentation_pull_request(
     if change.status == "created" and change.pr_url:
         return change
 
-    write_token = token or get_settings().github_write_token or configured_github_token()
+    write_token = (
+        token or get_settings().github_write_token or configured_github_token()
+    )
     if not write_token:
         raise DocumentationPullRequestError(
             "Connect GitHub from the homepage before creating the pull request. "

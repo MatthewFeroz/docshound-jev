@@ -34,11 +34,13 @@ STAGE_LABELS = {
 
 OPERATION_SPECS = {
     "jev_triage_finding": OperationSpec(
-        stage="jev_triage", label="Classify finding with Jev",
+        stage="jev_triage",
+        label="Classify finding with Jev",
         description="Classify the request, audience, and whether current behavior is established.",
     ),
     "jev_review_evidence": OperationSpec(
-        stage="jev_review", label="Check documentation evidence with Jev",
+        stage="jev_review",
+        label="Check documentation evidence with Jev",
         description="Classify each passage's relevance and recommend the next review step.",
     ),
     "retrieve_semantic_docs": OperationSpec(

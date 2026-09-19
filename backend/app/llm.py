@@ -126,7 +126,9 @@ async def complete_json(
                     "response_format": {"type": "json_object"},
                     "messages": list(messages),
                 }
-                effort = getattr(settings or get_settings(), "llm_reasoning_effort", None)
+                effort = getattr(
+                    settings or get_settings(), "llm_reasoning_effort", None
+                )
                 if effort and model.rsplit("/", 1)[-1].startswith("gpt-5"):
                     request["reasoning_effort"] = effort
                 # Keep legacy sampling settings only for non-reasoning models.
