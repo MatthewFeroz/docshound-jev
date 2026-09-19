@@ -1,0 +1,352 @@
+{
+  "generated_at": "2026-09-19T02:32:46.424081+00:00",
+  "totals": {
+    "unique_issues": 200,
+    "unique_merged_prs": 200,
+    "findings": 71,
+    "drafts_held": 44,
+    "drafts_generated": 19,
+    "holds_on_luna_draftable": 33,
+    "jev_requests": 142,
+    "jev_answered_questions": 497,
+    "jev_reported_cost_usd": 0.012280926000000001,
+    "merge_reported_cost_usd": 0.226707926,
+    "failed_model_calls": 0,
+    "unpriced_model_calls": 182,
+    "human_labeled_findings": 0
+  },
+  "repositories": [
+    {
+      "repo": "anomalyco/opencode",
+      "runs": [
+        {
+          "run_id": "4a50fa89-b168-4dda-a369-6dfd1b3c6e30",
+          "started_at": "2026-09-19T02:23:32.453054+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 72,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "anomalyco/opencode",
+            "root": "packages/web/src/content/docs",
+            "url": "https://github.com/anomalyco/opencode/tree/dev/packages/web/src/content/docs",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 7,
+          "held": 5,
+          "drafts": 2,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "599c2a8c-9825-4515-bf1c-2dfe54e7ab8d",
+          "started_at": "2026-09-19T02:21:30.176839+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 72,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "anomalyco/opencode",
+            "root": "packages/web/src/content/docs",
+            "url": "https://github.com/anomalyco/opencode/tree/dev/packages/web/src/content/docs",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 7,
+          "held": 4,
+          "drafts": 3,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "80949f17-a8ad-4572-ba67-04ed84bfcdf5",
+          "started_at": "2026-09-19T02:25:35.590970+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 72,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "anomalyco/opencode",
+            "root": "packages/web/src/content/docs",
+            "url": "https://github.com/anomalyco/opencode/tree/dev/packages/web/src/content/docs",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 7,
+          "held": 3,
+          "drafts": 4,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "a9f14797-1929-439b-b69e-193e32c40e37",
+          "started_at": "2026-09-19T02:29:21.060791+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 72,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "anomalyco/opencode",
+            "root": "packages/web/src/content/docs",
+            "url": "https://github.com/anomalyco/opencode/tree/dev/packages/web/src/content/docs",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 8,
+          "held": 6,
+          "drafts": 2,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "b446159d-13d2-4adc-95d6-8c30ca75d2e1",
+          "started_at": "2026-09-19T02:27:29.176981+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 72,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "anomalyco/opencode",
+            "root": "packages/web/src/content/docs",
+            "url": "https://github.com/anomalyco/opencode/tree/dev/packages/web/src/content/docs",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 8,
+          "held": 4,
+          "drafts": 3,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        }
+      ],
+      "unique_issues": 100,
+      "unique_merged_prs": 100,
+      "findings": 37,
+      "drafts_held": 22,
+      "drafts_generated": 14,
+      "holds_on_luna_draftable": 21,
+      "readiness": {
+        "needs_verification": 22,
+        "confirmed": 15
+      },
+      "recommendations": {
+        "verify_implementation": 22,
+        "review_draft": 7,
+        "retrieve_more": 8
+      },
+      "documentation_need": {
+        "unclear_configuration": 7,
+        "missing_limitation": 10,
+        "outdated_or_conflicting": 3,
+        "insufficient_evidence": 4,
+        "missing_procedure": 13
+      },
+      "passage_relevance": {
+        "useful_background": 63,
+        "unrelated": 46,
+        "direct_answer": 2
+      },
+      "luna_coverage": {
+        "partial": 29,
+        "missing": 6,
+        "documented": 1,
+        "unable_to_verify": 1
+      },
+      "unique_cited_document_urls": 44,
+      "jev_requests": 74,
+      "jev_statuses": {
+        "succeeded": 74
+      },
+      "jev_answered_questions": 259,
+      "jev_reported_cost_usd": 0.006676656,
+      "jev_median_duration_ms": 460.5,
+      "merge_reported_cost_usd": 0.126977656,
+      "failed_model_calls": 0,
+      "unpriced_model_calls": 81,
+      "human_labeled_findings": 0
+    },
+    {
+      "repo": "earendil-works/pi",
+      "runs": [
+        {
+          "run_id": "2bbbcd20-85ad-4aaf-bd65-2a6c90d39ff6",
+          "started_at": "2026-09-19T02:21:32.961519+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 97,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "earendil-works/pi",
+            "root": "packages/coding-agent",
+            "url": "https://github.com/earendil-works/pi/tree/main/packages/coding-agent",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 8,
+          "held": 6,
+          "drafts": 0,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "3c823f3f-3af8-4eee-ae43-051fdb4d5808",
+          "started_at": "2026-09-19T02:25:04.405350+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 97,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "earendil-works/pi",
+            "root": "packages/coding-agent",
+            "url": "https://github.com/earendil-works/pi/tree/main/packages/coding-agent",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 5,
+          "held": 2,
+          "drafts": 3,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "b2afba88-a810-40bd-96df-b67a903efe18",
+          "started_at": "2026-09-19T02:27:56.695746+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 97,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "earendil-works/pi",
+            "root": "packages/coding-agent",
+            "url": "https://github.com/earendil-works/pi/tree/main/packages/coding-agent",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 8,
+          "held": 5,
+          "drafts": 2,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "b5795582-8225-4b45-87f1-daf5fdd46854",
+          "started_at": "2026-09-19T02:23:27.500300+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 97,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "earendil-works/pi",
+            "root": "packages/coding-agent",
+            "url": "https://github.com/earendil-works/pi/tree/main/packages/coding-agent",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 7,
+          "held": 5,
+          "drafts": 0,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        },
+        {
+          "run_id": "f02cd4c6-cbba-479f-8084-597cc9a98eca",
+          "started_at": "2026-09-19T02:26:40.601751+00:00",
+          "status": "completed",
+          "issues": 20,
+          "merged_prs": 20,
+          "documents_inspected": 97,
+          "documentation_source": {
+            "kind": "github",
+            "repo": "earendil-works/pi",
+            "root": "packages/coding-agent",
+            "url": "https://github.com/earendil-works/pi/tree/main/packages/coding-agent",
+            "confidence": 0.5,
+            "discovered_by": "user_override",
+            "page_count": null
+          },
+          "findings": 6,
+          "held": 4,
+          "drafts": 0,
+          "errors": [],
+          "warnings": [],
+          "fork_commit": "2c351ef783074c00c37ddc79c601023ad51bb448"
+        }
+      ],
+      "unique_issues": 100,
+      "unique_merged_prs": 100,
+      "findings": 34,
+      "drafts_held": 22,
+      "drafts_generated": 5,
+      "holds_on_luna_draftable": 12,
+      "readiness": {
+        "needs_verification": 22,
+        "confirmed": 12
+      },
+      "recommendations": {
+        "verify_implementation": 22,
+        "no_change": 4,
+        "retrieve_more": 5,
+        "review_draft": 3
+      },
+      "documentation_need": {
+        "missing_limitation": 7,
+        "already_answered": 8,
+        "insufficient_evidence": 6,
+        "missing_procedure": 9,
+        "outdated_or_conflicting": 2,
+        "unclear_configuration": 2
+      },
+      "passage_relevance": {
+        "useful_background": 86,
+        "unrelated": 8,
+        "direct_answer": 8
+      },
+      "luna_coverage": {
+        "partial": 16,
+        "documented": 12,
+        "unable_to_verify": 5,
+        "missing": 1
+      },
+      "unique_cited_document_urls": 40,
+      "jev_requests": 68,
+      "jev_statuses": {
+        "succeeded": 68
+      },
+      "jev_answered_questions": 238,
+      "jev_reported_cost_usd": 0.005604270000000001,
+      "jev_median_duration_ms": 443.5,
+      "merge_reported_cost_usd": 0.09973027,
+      "failed_model_calls": 0,
+      "unpriced_model_calls": 101,
+      "human_labeled_findings": 0
+    }
+  ]
+}

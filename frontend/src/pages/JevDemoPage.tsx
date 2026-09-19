@@ -37,7 +37,9 @@ export function JevDemoPage() {
       .then(([items, demo]) => {
         if (!active) return;
         const available = items.filter(
-          (item) => item.repo === "pingdotgg/t3code",
+          (item) =>
+            item.jev_gate_enabled ||
+            item.top_gaps.some((gap) => gap.jev_triage || gap.jev_assessment),
         );
         setRuns(available);
         setEnabled(demo.enabled);
@@ -101,7 +103,7 @@ export function JevDemoPage() {
     <>
       <BrandHeader
         suffix="Jev Lab"
-        tagline="A live experiment on T3Code's documentation"
+        tagline="Jev decisions across real documentation runs"
       >
         <nav className="topnav">
           <Link className="published-link" to="/">
@@ -115,7 +117,9 @@ export function JevDemoPage() {
       <main className="jev-demo">
         <section className="jev-hero">
           <div>
-            <div className="jev-eyebrow">DOCSHOUND × TYPESAFE · T3CODE</div>
+            <div className="jev-eyebrow">
+              DOCSHOUND × TYPESAFE · {run?.repo || "REPOSITORY EXPERIMENTS"}
+            </div>
             <h1>
               Documentation gap.
               <br />
@@ -158,8 +162,8 @@ export function JevDemoPage() {
                 </option>
                 {runs.map((item) => (
                   <option key={item.run_id} value={item.run_id}>
-                    {item.run_id.slice(0, 8)} · {item.clusters_found} findings ·{" "}
-                    {item.status}
+                    {item.repo} · {item.run_id.slice(0, 8)} ·{" "}
+                    {item.clusters_found} findings · {item.status}
                   </option>
                 ))}
               </select>

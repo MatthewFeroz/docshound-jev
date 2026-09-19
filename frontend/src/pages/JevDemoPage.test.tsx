@@ -163,3 +163,26 @@ it("does not allow starting the demo when Jev is disabled", async () => {
     screen.getByRole("button", { name: "Run live T3Code demo →" }),
   ).toBeDisabled();
 });
+
+it("allows inspecting Jev runs from other repositories", async () => {
+  const pi = { ...completed, run_id: "pi-run", repo: "earendil-works/pi" };
+  mocks.listRuns.mockResolvedValue([completed, pi]);
+  mocks.getRun.mockImplementation(async (id: string) =>
+    id === "pi-run" ? pi : completed,
+  );
+  render(
+    <MemoryRouter initialEntries={["/jev?run=recorded"]}>
+      <JevDemoPage />
+    </MemoryRouter>,
+  );
+  expect(
+    await screen.findByRole("option", { name: /earendil-works\/pi/ }),
+  ).toBeInTheDocument();
+  fireEvent.change(screen.getByRole("combobox"), {
+    target: { value: "pi-run" },
+  });
+  await waitFor(() => expect(mocks.getRun).toHaveBeenCalledWith("pi-run"));
+  expect(
+    await screen.findByText(/DOCSHOUND.*earendil-works\/pi/),
+  ).toBeInTheDocument();
+});

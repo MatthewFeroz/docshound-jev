@@ -67,6 +67,7 @@ async def run(
 
         request = await demo_request(hold_unverified=hold_unverified)
     request.jev_gate_enabled = hold_unverified
+    request.dry_run = True
     state = AgentState(
         repo=request.repo,
         dry_run=True,

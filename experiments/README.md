@@ -46,3 +46,28 @@ and displayed evidence. Model confidence is not empirical accuracy.
 The first experiment's broad support judgment remains in `assess_finding` for
 backward comparison; the current graph uses the more specific v2 classifiers.
 See the retrospective before making quality or cost-saving claims.
+
+## Larger repository samples
+
+`run_repositories.py` scans OpenCode (`anomalyco/opencode`) and Pi from pi.dev
+(`earendil-works/pi`). It records up to 100 issues and 100 merged PRs for each,
+then runs disjoint batches of 20 issues and 20 PRs through the same agent with
+the Jev verification gate enabled. It saves the input selection and skips
+completed batches on restart.
+
+```powershell
+uv run --project backend --locked python experiments/run_repositories.py opencode
+uv run --project backend --locked python experiments/run_repositories.py pi
+uv run --project backend --locked python experiments/summarize_repositories.py
+```
+
+The [results and review dataset](../demo/jev/cross-repository/README.md) count
+source items, findings, passages and model requests separately. These runs use
+recent activity without handpicked implementation snippets. Human labels are
+blank; the dataset does not establish classification accuracy. Completed runs
+are available in the Jev Lab selector on the same local instance.
+
+For another repository, write a `RunRequest` JSON and pass it to
+`run_t3code.py --request path/to/request.json --hold-unverified`. Omit
+`--hold-unverified` for an advisory run. All runner invocations stay in dry-run
+mode and publish no upstream changes.
