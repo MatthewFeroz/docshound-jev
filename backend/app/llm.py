@@ -37,7 +37,7 @@ def get_llm_route(settings: Settings | Any | None = None) -> LLMRoute | None:
 
     OPENAI_API_KEY remains a backwards-compatible direct-provider fallback for
     existing installations. When Gateway is configured, both models are called
-    through its OpenAI-compatible endpoint with Gemini first.
+    through its OpenAI-compatible endpoint with GPT-5.6 Luna by default.
     """
     settings = settings or get_settings()
     gateway_key = get_merge_gateway_api_key() or getattr(
@@ -50,12 +50,12 @@ def get_llm_route(settings: Settings | Any | None = None) -> LLMRoute | None:
                 getattr(
                     settings,
                     "merge_gateway_primary_model",
-                    "google/gemini-3.7-flash",
+                    "openai/gpt-5.6-luna",
                 ),
                 getattr(
                     settings,
                     "merge_gateway_fallback_model",
-                    "openai/gpt-5.6-luna",
+                    "",
                 ),
             )
             if model
@@ -67,7 +67,7 @@ def get_llm_route(settings: Settings | Any | None = None) -> LLMRoute | None:
                 "merge_gateway_base_url",
                 "https://api-gateway.merge.dev/v1/openai",
             ),
-            models=models,
+            models=tuple(dict.fromkeys(models)),
             gateway="merge",
         )
 
@@ -75,7 +75,7 @@ def get_llm_route(settings: Settings | Any | None = None) -> LLMRoute | None:
     if openai_key:
         return LLMRoute(
             api_key=openai_key,
-            models=(getattr(settings, "openai_model", "gpt-4o-mini"),),
+            models=(getattr(settings, "openai_model", "gpt-5.6-luna"),),
         )
     return None
 
@@ -126,9 +126,10 @@ async def complete_json(
                     "response_format": {"type": "json_object"},
                     "messages": list(messages),
                 }
-                # Preserve the legacy direct-OpenAI behavior. Gateway requests omit
-                # sampling controls because Gemini 3.7 rejects temperature.
-                if route.gateway == "openai":
+                # Keep legacy sampling settings only for non-reasoning models.
+                if route.gateway == "openai" and not model.startswith(
+                    ("gpt-5", "gpt-6", "o1", "o3", "o4")
+                ):
                     request["temperature"] = 0
                 with track_model_call(route.gateway, model, operation) as usage:
                     response = await client.chat.completions.create(**request)

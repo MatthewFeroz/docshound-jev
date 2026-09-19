@@ -19,6 +19,12 @@ def _response(model: str, content: dict, total_tokens: int = 10) -> SimpleNamesp
 
 
 class LLMRouteTests(unittest.TestCase):
+    def test_default_routes_use_luna_without_google_fallback(self) -> None:
+        route = get_llm_route(SimpleNamespace(merge_gateway_api_key="test"))
+        self.assertEqual(route.models, ("openai/gpt-5.6-luna",))
+        route = get_llm_route(SimpleNamespace(openai_api_key="test"))
+        self.assertEqual(route.models, ("gpt-5.6-luna",))
+
     def test_merge_gateway_is_preferred_over_direct_openai(self) -> None:
         route = get_llm_route(
             SimpleNamespace(
@@ -53,6 +59,19 @@ class LLMRouteTests(unittest.TestCase):
 
 
 class JSONCompletionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_direct_luna_omits_unsupported_sampling_parameters(self) -> None:
+        create = AsyncMock(return_value=_response("gpt-5.6-luna", {"items": []}))
+        client = Mock()
+        client.close = AsyncMock()
+        client.chat.completions.create = create
+        with patch("app.llm.AsyncOpenAI", return_value=client):
+            await complete_json(
+                [{"role": "user", "content": "Return JSON."}],
+                settings=SimpleNamespace(openai_api_key="test"),
+            )
+        self.assertEqual(create.await_args.kwargs["model"], "gpt-5.6-luna")
+        self.assertNotIn("temperature", create.await_args.kwargs)
+
     def setUp(self) -> None:
         self.settings = SimpleNamespace(
             merge_gateway_api_key="gateway-key",

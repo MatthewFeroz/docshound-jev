@@ -198,8 +198,9 @@ async def _cluster_with_llm(
                     "signals. Documentation-activity PRs indicate coverage that was "
                     "planned or added; never turn those PRs into shipped_change findings. "
                     "Prefer product changes that would help a user operate, "
-                    "configure, migrate, or understand the project. Include two to four "
-                    "shipped_change findings when suitable merged PRs are supplied. "
+                    "configure, migrate, or understand the project. Consider up to four "
+                    "shipped_change candidates only when they imply a concrete documentation need. "
+                    "Do not treat internal refactors or every merged feature as documentation gaps. "
                     "Represent every supplied issue that describes a documentation gap "
                     "in at least one finding. A documentation request may belong with "
                     "an earlier merged implementation PR even when that PR does not "
@@ -639,17 +640,10 @@ async def draft_review_documents(
     pull_requests: list[PullRequest] | None = None,
 ) -> list[GapCluster]:
     """Draft only after documentation coverage has been attached to findings."""
-    draftable = [
-        cluster
-        for cluster in clusters
-        if not (
-            cluster.documentation_coverage
-            and cluster.documentation_coverage.recommended_action == "no_change"
-        )
-    ]
+    draftable = [cluster for cluster in clusters if cluster.is_documentation_proposal]
     for cluster in clusters:
         coverage = cluster.documentation_coverage
-        if coverage and coverage.recommended_action == "no_change":
+        if coverage and not cluster.is_documentation_proposal:
             cluster.review_status = "no_change_needed"
             cluster.draft_title = None
             cluster.draft_summary = None
@@ -759,7 +753,7 @@ def attach_review_drafts(
     pull_requests: list[PullRequest] | None = None,
 ) -> list[GapCluster]:
     for cluster in clusters:
-        if cluster.review_status == "no_change_needed":
+        if not cluster.is_documentation_proposal:
             continue
         related = _related_issues(cluster, issues)
         related_pull_requests = _related_pull_requests(cluster, pull_requests or [])

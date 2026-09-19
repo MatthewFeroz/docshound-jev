@@ -918,7 +918,12 @@ async def _assess_coverage_with_model(
                         "recommended_path or null, and relevant_paths. Use documented/no_change "
                         "only when the supplied page clearly and completely answers the finding. "
                         "Use partial/update_page when a related page exists but needs material "
-                        "clarification. Never recommend a path that was not supplied."
+                        "clarification. For every partial or missing verdict, state the specific "
+                        "unanswered question or absent behavior, and distinguish it from what "
+                        "the retrieved docs already explain. A shipped feature is not itself a "
+                        "documentation gap. If the supplied docs explain the reported behavior, "
+                        "choose documented/no_change even if wording or organization could differ. "
+                        "Never recommend a path that was not supplied."
                     ),
                 },
                 {"role": "user", "content": json.dumps({"findings": payload})},

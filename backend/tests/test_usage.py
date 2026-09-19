@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import httpx
 from langchain_core.messages import AIMessage
+from openai.types import CompletionUsage
 
 from app.config import Settings
 from app.run_store import load_run, save_run
@@ -35,6 +36,62 @@ def report():
 
 
 class UsageTests(unittest.IsolatedAsyncioTestCase):
+    def test_gateway_sdk_extra_cost_and_mixed_totals(self):
+        gateway = ModelCallUsage(
+            provider="merge",
+            model="openai/gpt-5.6-luna",
+            requested_model="openai/gpt-5.6-luna",
+            operation="coverage",
+        )
+        gateway.report(CompletionUsage.model_validate({**report(), "cost": 0.00219}))
+        direct = ModelCallUsage(
+            provider="openai",
+            model="gpt-5.6-luna",
+            requested_model="gpt-5.6-luna",
+            operation="coverage",
+        )
+        direct.report(report())
+        unknown = ModelCallUsage(
+            provider="nvidia",
+            model="embed",
+            requested_model="embed",
+            operation="embed_passage",
+        )
+        summary = RunUsage(calls=[gateway, direct, unknown]).summary()
+        self.assertAlmostEqual(summary["cost_usd"], 0.00219 + 0.000368)
+        self.assertEqual(summary["reported_cost_calls"], 1)
+        self.assertEqual(summary["estimated_cost_calls"], 1)
+        self.assertEqual(summary["unpriced_calls"], 1)
+        self.assertEqual(summary["calls"][0]["cost_source"], "provider_reported")
+        self.assertIsNone(gateway.estimated_cost_usd)
+
+    def test_gateway_reported_cost_is_preserved_including_true_zero(self):
+        for amount in (0, 0.00219):
+            call = ModelCallUsage(
+                provider="merge",
+                model="openai/gpt-5.6-luna",
+                requested_model="openai/gpt-5.6-luna",
+                operation="coverage",
+            )
+            call.report({**report(), "cost": amount}, service_tier="flex")
+            self.assertEqual(call.reported_cost_usd, amount)
+            self.assertEqual(call.cost_source, "provider_reported")
+            self.assertEqual(
+                RunUsage(calls=[call]).summary()["reported_cost_usd"], amount
+            )
+
+    def test_gateway_unknown_or_invalid_cost_is_not_guessed(self):
+        for amount in (None, -1, True, "0.01", float("nan"), float("inf")):
+            call = ModelCallUsage(
+                provider="merge",
+                model="openai/gpt-5.6-luna",
+                requested_model="openai/gpt-5.6-luna",
+                operation="coverage",
+            )
+            call.report({**report(), "cost": amount})
+            self.assertIsNone(call.reported_cost_usd)
+            self.assertIsNone(call.estimated_cost_usd)
+
     def test_cached_input_discount_and_reasoning_not_double_counted(self):
         usage = RunUsage()
         with track_run_usage(usage, lambda: None):
@@ -45,6 +102,7 @@ class UsageTests(unittest.IsolatedAsyncioTestCase):
         self.assertAlmostEqual(call.estimated_cost_usd, 0.000368)
         self.assertEqual(usage.summary()["total_tokens"], 1200)
         self.assertEqual(call.request_status, "succeeded")
+        self.assertGreaterEqual(call.duration_ms, 0)
 
     def test_unknown_models_tiers_and_missing_usage_are_not_free(self):
         for provider, model, tier in (

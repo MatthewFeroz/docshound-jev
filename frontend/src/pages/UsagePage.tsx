@@ -22,8 +22,9 @@ export function UsagePage() {
       <main className="usage-history">
         <h2>Usage and scan history</h2>
         <p>
-          Most recent 500 runs. Estimates cover priced calls only; unavailable
-          usage and unknown prices are shown explicitly.
+          Most recent 500 runs. Costs cover provider-reported or estimated
+          priced calls only; unavailable usage and unknown prices are shown
+          explicitly.
         </p>
         {error && <p role="alert">{error}</p>}
         {history ? (
@@ -36,7 +37,7 @@ export function UsagePage() {
                     <th>Run</th>
                     <th>Status</th>
                     <th>Tokens</th>
-                    <th>Estimate</th>
+                    <th>Known cost</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -55,9 +56,10 @@ export function UsagePage() {
                           "Not recorded"}
                       </td>
                       <td>
-                        {run.usage?.estimated_cost_usd == null
+                        {(run.usage?.cost_usd ??
+                          run.usage?.estimated_cost_usd) == null
                           ? "Unpriced"
-                          : `$${run.usage.estimated_cost_usd.toFixed(6)}`}
+                          : `$${(run.usage?.cost_usd ?? run.usage?.estimated_cost_usd)?.toFixed(6)}`}
                       </td>
                     </tr>
                   ))}

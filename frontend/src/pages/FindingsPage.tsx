@@ -5,6 +5,7 @@ import { api } from "../api";
 import { BrandHeader } from "../components/BrandHeader";
 import { ErrorMessage, Loading } from "../components/Status";
 import type { Finding } from "../types";
+import { isDocumentationProposal } from "../lib/findings";
 
 export function FindingsPage() {
   const [findings, setFindings] = useState<Finding[] | null>(null);
@@ -13,7 +14,11 @@ export function FindingsPage() {
   useEffect(() => {
     api
       .listFindings()
-      .then(setFindings)
+      .then((items) =>
+        setFindings(
+          items.filter((finding) => isDocumentationProposal(finding.cluster)),
+        ),
+      )
       .catch((requestError: unknown) => {
         setError(
           requestError instanceof Error

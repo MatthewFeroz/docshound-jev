@@ -13,22 +13,35 @@ def resolve_run_outcome(state: AgentState) -> tuple[RunOutcome, str]:
     if state.status == "failed":
         return "failed", "The run could not be completed."
 
-    if state.errors:
+    if (
+        state.errors
+        or state.status == "completed_with_errors"
+        or any(
+            source.source_type in {"repository_docs_error", "official_docs_error"}
+            for source in state.docs_sources
+        )
+    ):
         return (
             "partial_failure",
             "The run completed with errors, so its recommendations may be incomplete.",
         )
 
-    coverage_unverified = any(
+    coverage_unverified = sum(
         cluster.documentation_coverage is not None
         and cluster.documentation_coverage.status == "unable_to_verify"
         for cluster in state.clusters
     )
     if coverage_unverified:
+        proposals = sum(cluster.is_documentation_proposal for cluster in state.clusters)
+        ready = (
+            f"{proposals} documentation proposal{' is' if proposals == 1 else 's are'} ready"
+            if proposals
+            else "No documentation proposals are ready"
+        )
+        pending = f"{coverage_unverified} candidate{' needs' if coverage_unverified == 1 else 's need'} verification"
         return (
-            "partial_failure",
-            "The run could not verify official documentation coverage, so its "
-            "recommendations may be incomplete.",
+            "completed_with_warnings",
+            f"{ready}; {pending}.",
         )
 
     if not state.issues and not state.pull_requests:
@@ -44,13 +57,7 @@ def resolve_run_outcome(state: AgentState) -> tuple[RunOutcome, str]:
         )
 
     actionable_clusters = [
-        cluster
-        for cluster in state.clusters
-        if cluster.review_status != "no_change_needed"
-        and (
-            cluster.documentation_coverage is None
-            or cluster.documentation_coverage.recommended_action != "no_change"
-        )
+        cluster for cluster in state.clusters if cluster.is_documentation_proposal
     ]
     if not actionable_clusters:
         return (

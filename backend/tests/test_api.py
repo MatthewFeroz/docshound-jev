@@ -23,6 +23,33 @@ from app.tools.github import GitHubToolError
 
 
 class ApiTests(unittest.TestCase):
+    def test_documented_findings_are_audit_only_and_keep_original_indices(self):
+        state = self._seed_run()
+        documented = state.clusters[0].model_copy(deep=True)
+        documented.name = "GitHub stacks already explained"
+        documented.documentation_coverage = DocumentationCoverage(
+            status="documented",
+            rationale="docs/user/source-control.md explains stack badges, merge and rebase.",
+            recommended_action="update_page",
+            relevant_sources=[],
+        )
+        state.clusters.insert(0, documented)
+        run_store.save_run(state)
+        response = self.client.get("/api/v1/findings")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([f["index"] for f in response.json()], [1])
+        self.assertEqual(
+            self.client.post(
+                f"/api/v1/runs/{state.run_id}/findings/0/approval",
+                json={"markdown": "# Duplicate documentation"},
+            ).status_code,
+            409,
+        )
+        self.assertEqual(
+            self.client.get(f"/api/v1/runs/{state.run_id}/findings/0").status_code,
+            200,
+        )
+
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.db_path = Path(self.temp_dir.name) / "docshound.db"

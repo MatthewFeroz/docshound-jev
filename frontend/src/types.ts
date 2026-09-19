@@ -138,6 +138,7 @@ export interface Finding {
 export type RunOutcome =
   | "in_progress"
   | "recommendations_found"
+  | "completed_with_warnings"
   | "no_activity"
   | "no_recommendations"
   | "partial_failure"
@@ -242,6 +243,10 @@ export interface RunEvent {
 }
 
 export interface UsageTotals {
+  cost_usd?: number | null;
+  reported_cost_usd?: number | null;
+  reported_cost_calls?: number;
+  estimated_cost_calls?: number;
   call_count: number;
   pending_calls: number;
   failed_calls: number;
@@ -256,9 +261,27 @@ export interface UsageTotals {
   estimated_cost_usd: number | null;
 }
 export interface UsageSummary extends UsageTotals {
+  calls?: ModelCallUsage[];
   groups: Array<
     UsageTotals & { provider: string; model: string; operation: string }
   >;
+}
+export interface ModelCallUsage {
+  call_id: string;
+  started_at: string;
+  provider: string;
+  model: string;
+  operation: string;
+  request_status: "pending" | "succeeded" | "failed";
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  cached_input_tokens: number | null;
+  reasoning_tokens: number | null;
+  reported_cost_usd: number | null;
+  estimated_cost_usd: number | null;
+  cost_source: "provider_reported" | "rate_card_estimate" | null;
+  duration_ms: number | null;
 }
 export interface UsageHistory {
   summary: UsageSummary;

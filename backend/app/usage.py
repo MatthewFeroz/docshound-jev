@@ -1,5 +1,6 @@
 """Provider-reported usage, isolated per run and persisted independently of model output."""
 
+import math
 import re
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
@@ -17,7 +18,7 @@ PRICING = {
         "input": "0.20",
         "cached_input": "0.02",
         "output": "1.20",
-        "verified_on": "2026-09-10",
+        "verified_on": "2026-09-11",
         "source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
     },
 }
@@ -50,6 +51,9 @@ class ModelCallUsage(BaseModel):
     total_tokens: int | None = None
     usage_status: Literal["unavailable", "partial", "reported"] = "unavailable"
     estimated_cost_usd: float | None = None
+    reported_cost_usd: float | None = None
+    cost_source: Literal["provider_reported", "rate_card_estimate"] | None = None
+    duration_ms: float | None = None
     pricing_snapshot: dict[str, str] | None = None
     service_tier: str | None = None
 
@@ -106,6 +110,26 @@ class ModelCallUsage(BaseModel):
             self.reasoning_tokens = None
             self.usage_status = "partial"
         self._price()
+        # Merge's OpenAI-compatible responses expose provider cost, not invoice total.
+        cost = data.get("cost")
+        self.reported_cost_usd = None
+        self.cost_source = (
+            "rate_card_estimate" if self.estimated_cost_usd is not None else None
+        )
+        if (
+            self.provider == "merge"
+            and type(cost) in (int, float)
+            and math.isfinite(cost)
+            and cost >= 0
+        ):
+            self.reported_cost_usd = float(cost)
+            self.estimated_cost_usd = None
+            self.pricing_snapshot = {
+                "source": "https://docs.merge.dev/merge-gateway/cost/cost-governance-and-savings",
+                "basis": "usage.cost",
+                "currency": "USD",
+            }
+            self.cost_source = "provider_reported"
 
     def _price(self) -> None:
         self.estimated_cost_usd = None
@@ -142,6 +166,7 @@ class RunUsage(BaseModel):
             )
         return {
             **_totals(self.calls),
+            "calls": [call.model_dump(mode="json") for call in self.calls],
             "groups": [
                 {
                     "provider": provider,
@@ -156,13 +181,29 @@ class RunUsage(BaseModel):
 
 def _totals(calls: list[ModelCallUsage]) -> dict:
     priced = [call for call in calls if call.estimated_cost_usd is not None]
+    reported = [call for call in calls if call.reported_cost_usd is not None]
+    known_costs = [
+        c.reported_cost_usd if c.reported_cost_usd is not None else c.estimated_cost_usd
+        for c in calls
+        if c.reported_cost_usd is not None or c.estimated_cost_usd is not None
+    ]
     return {
         "call_count": len(calls),
         "pending_calls": sum(c.request_status == "pending" for c in calls),
         "failed_calls": sum(c.request_status == "failed" for c in calls),
         "calls_with_usage": sum(c.usage_status == "reported" for c in calls),
         "calls_without_full_usage": sum(c.usage_status != "reported" for c in calls),
-        "unpriced_calls": len(calls) - len(priced),
+        "unpriced_calls": len(calls) - len(known_costs),
+        "reported_cost_calls": len(reported),
+        "estimated_cost_calls": len(priced),
+        "reported_cost_usd": (
+            float(sum(Decimal(str(c.reported_cost_usd)) for c in reported))
+            if reported
+            else None
+        ),
+        "cost_usd": float(sum(Decimal(str(cost)) for cost in known_costs))
+        if known_costs
+        else None,
         "input_tokens": sum(c.input_tokens or 0 for c in calls),
         "output_tokens": sum(c.output_tokens or 0 for c in calls),
         "cached_input_tokens": sum(c.cached_input_tokens or 0 for c in calls),
@@ -211,6 +252,9 @@ def track_model_call(
     else:
         call.request_status = "succeeded"
     finally:
+        call.duration_ms = round(
+            (datetime.now(UTC) - call.started_at).total_seconds() * 1000, 1
+        )
         if context:
             on_change()
 

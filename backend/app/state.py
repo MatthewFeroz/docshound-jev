@@ -9,6 +9,7 @@ from app.usage import RunUsage
 RunOutcome = Literal[
     "in_progress",
     "recommendations_found",
+    "completed_with_warnings",
     "no_activity",
     "no_recommendations",
     "partial_failure",
@@ -121,6 +122,17 @@ class GapCluster(BaseModel):
     ] = "pending_review"
     approved_document_slug: str | None = None
     documentation_coverage: DocumentationCoverage | None = None
+
+    @property
+    def is_documentation_proposal(self) -> bool:
+        coverage = self.documentation_coverage
+        return self.review_status != "no_change_needed" and (
+            coverage is None
+            or (
+                coverage.status in {"missing", "partial"}
+                and coverage.recommended_action != "no_change"
+            )
+        )
 
 
 class AgentState(BaseModel):

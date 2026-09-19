@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import type { GapCluster } from "../types";
+import { isDocumentationProposal } from "../lib/findings";
 
 interface GapCardProps {
   cluster: GapCluster;
@@ -17,6 +18,7 @@ export function GapCard({
   onReject,
   rejecting,
 }: GapCardProps) {
+  if (!isDocumentationProposal(cluster)) return null;
   const sourceCount =
     (cluster.issue_refs.length || cluster.issue_numbers.length) +
     (cluster.pr_refs.length || cluster.pr_numbers.length);

@@ -35,6 +35,28 @@ def cluster(
 
 
 class RunOutcomeTests(unittest.TestCase):
+    def test_only_missing_or_partial_coverage_can_be_proposed(self) -> None:
+        for status in (
+            "documented",
+            "in_progress",
+            "unable_to_verify",
+            "missing",
+            "partial",
+        ):
+            for action in ("no_change", "update_page", "create_page"):
+                with self.subTest(status=status, action=action):
+                    candidate = cluster(
+                        coverage=DocumentationCoverage(
+                            status=status,
+                            recommended_action=action,
+                            rationale="Coverage evidence",
+                        )
+                    )
+                    self.assertEqual(
+                        candidate.is_documentation_proposal,
+                        status in {"missing", "partial"} and action != "no_change",
+                    )
+
     def test_running_state_stays_in_progress(self) -> None:
         state = AgentState(repo="acme/product")
 
@@ -135,10 +157,10 @@ class RunOutcomeTests(unittest.TestCase):
             "The run completed with errors, so its recommendations may be incomplete.",
         )
 
-    def test_unverified_documentation_coverage_is_a_partial_failure(self) -> None:
+    def test_unverified_candidate_is_a_warning_not_a_failed_run(self) -> None:
         coverage = DocumentationCoverage(
             status="unable_to_verify",
-            rationale="GitHub returned 404 while reading the docs repository.",
+            rationale="The supported external API still needs implementation verification.",
             recommended_action="create_page",
         )
         state = AgentState(
@@ -150,6 +172,54 @@ class RunOutcomeTests(unittest.TestCase):
 
         apply_run_outcome(state)
 
+        self.assertEqual(state.outcome, "completed_with_warnings")
+        self.assertEqual(
+            state.summary,
+            "No documentation proposals are ready; 1 candidate needs verification.",
+        )
+        self.assertFalse(state.clusters[0].is_documentation_proposal)
+
+    def test_verified_proposals_survive_an_unverified_candidate(self) -> None:
+        state = AgentState(
+            repo="acme/product",
+            status="completed",
+            issues=[issue()],
+            clusters=[
+                cluster(),
+                cluster(
+                    coverage=DocumentationCoverage(
+                        status="unable_to_verify",
+                        rationale="Unconfirmed API",
+                        recommended_action="create_page",
+                    )
+                ),
+            ],
+        )
+        apply_run_outcome(state)
+        self.assertEqual(state.outcome, "completed_with_warnings")
+        self.assertEqual(
+            state.summary,
+            "1 documentation proposal is ready; 1 candidate needs verification.",
+        )
+
+    def test_documentation_fetch_errors_remain_failures(self) -> None:
+        from app.state import DocSource
+
+        state = AgentState(
+            repo="acme/product",
+            status="completed",
+            issues=[issue()],
+            docs_sources=[
+                DocSource(
+                    title="Docs fetch failed",
+                    url="https://github.com/acme/product",
+                    snippet="GitHub returned 404",
+                    source_type="repository_docs_error",
+                    confidence=0.2,
+                )
+            ],
+        )
+        apply_run_outcome(state)
         self.assertEqual(state.outcome, "partial_failure")
 
     def test_fatal_errors_report_a_failed_outcome(self) -> None:

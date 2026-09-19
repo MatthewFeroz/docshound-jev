@@ -55,7 +55,11 @@ class RecoveryIntegrationTests(unittest.IsolatedAsyncioTestCase):
             close=AsyncMock(),
         )
         settings = Settings(
-            _env_file=None, merge_gateway_api_key="test", openai_api_key="unused"
+            _env_file=None,
+            merge_gateway_api_key="test",
+            openai_api_key="unused",
+            merge_gateway_primary_model="google/gemini-3.7-flash",
+            merge_gateway_fallback_model="openai/gpt-5.6-luna",
         )
         usage = RunUsage()
         with (

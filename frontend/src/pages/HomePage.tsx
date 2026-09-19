@@ -13,6 +13,8 @@ import { BrandHeader } from "../components/BrandHeader";
 import { UsagePanel } from "../components/UsagePanel";
 import { OperationInspector } from "../components/OperationInspector";
 import { GapCard } from "../components/GapCard";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { isDocumentationProposal } from "../lib/findings";
 import {
   Accordion,
   AccordionContent,
@@ -59,7 +61,7 @@ interface TerminalRunPresentation {
   title: string;
   summary: string;
   details: string[];
-  tone: "error" | "neutral" | "success";
+  tone: "error" | "neutral" | "success" | "warning";
 }
 
 type ReadinessSection = "github" | "documentation" | "model";
@@ -73,6 +75,15 @@ const MAX_SCAN_DEPTH: ScanOptions = {
 function presentEvent(event: RunEvent, sequence: number): TimelineItem {
   const base = { id: `${event.type}-${sequence}`, icon: "●", kind: "system" };
   switch (event.type) {
+    case "stage_started":
+    case "stage_completed":
+      return {
+        ...base,
+        icon: event.type === "stage_started" ? "▸" : "✓",
+        kind: event.type === "stage_started" ? "tool-start" : "tool-end",
+        label: `${event.label || event.stage?.replaceAll("_", " ") || "Stage"} ${event.type === "stage_started" ? "started" : "complete"}`,
+        detail: event.output_summary || event.input_summary,
+      };
     case "agent_decision":
       return {
         ...base,
@@ -158,6 +169,15 @@ function presentEvent(event: RunEvent, sequence: number): TimelineItem {
           detail: event.summary || event.errors?.[0],
         };
       }
+      if (event.outcome === "completed_with_warnings") {
+        return {
+          ...base,
+          icon: "!",
+          kind: "warning",
+          label: "Run completed — verification needed",
+          detail: event.summary,
+        };
+      }
       if (event.outcome === "no_activity") {
         return {
           ...base,
@@ -214,6 +234,12 @@ function terminalRunPresentation(
         "The run completed with errors, so its recommendations may be incomplete.",
       tone: "error",
     },
+    completed_with_warnings: {
+      title: "Run completed — verification needed",
+      summary:
+        "Some candidates need verification before documentation can be proposed.",
+      tone: "warning",
+    },
     no_activity: {
       title: "No repository activity found",
       summary: "No relevant issues or merged pull requests were found.",
@@ -233,10 +259,15 @@ function terminalRunPresentation(
   };
   const presentation = defaults[outcome];
   const details = [...(source.errors ?? []), ...(source.warnings ?? [])];
-  if (outcome === "partial_failure" && details.length === 0) {
+  if (
+    outcome === "completed_with_warnings" ||
+    (outcome === "partial_failure" && details.length === 0)
+  ) {
     for (const cluster of source.top_gaps ?? []) {
       if (cluster.documentation_coverage?.status === "unable_to_verify") {
-        details.push(cluster.documentation_coverage.rationale);
+        details.push(
+          `${cluster.name}: ${cluster.documentation_coverage.rationale}`,
+        );
       }
     }
   }
@@ -311,7 +342,12 @@ function documentationSourceLabel(source: DocumentationSource): string {
 export function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const timelineRef = useRef<HTMLOListElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const eventSequence = useRef(0);
+  const followTimeline = useRef(true);
+  const [inspectorView, setInspectorView] = useState<"activity" | "operations">(
+    "activity",
+  );
   const [repo, setRepo] = useState("");
   const [runId, setRunId] = useState<string | null>(() =>
     new URLSearchParams(location.search).get("run"),
@@ -448,10 +484,21 @@ export function HomePage() {
         if (event.type.startsWith("span_") || event.type.startsWith("stage_")) {
           setOperationEvents((current) => [...current.slice(-1999), event]);
         }
-        setEvents((current) => [
-          ...current,
-          presentEvent(event, current.length),
-        ]);
+        if (
+          !event.type.startsWith("span_") &&
+          event.type !== "usage_updated" &&
+          event.type !== "usage_update" &&
+          event.type !== "tool_start" &&
+          event.type !== "tool_end" &&
+          !(
+            event.type === "gap_found" &&
+            event.cluster &&
+            !isDocumentationProposal(event.cluster)
+          )
+        ) {
+          const item = presentEvent(event, eventSequence.current++);
+          setEvents((current) => [...current.slice(-199), item]);
+        }
         if (
           event.type === "gap_found" &&
           event.cluster &&
@@ -491,14 +538,14 @@ export function HomePage() {
   useEffect(() => {
     if (events.length === 0) return;
     const frame = window.requestAnimationFrame(() => {
-      const latestEvent = timelineRef.current?.lastElementChild;
-      if (!(latestEvent instanceof HTMLElement)) return;
+      const viewport = timelineRef.current;
+      if (!viewport || !followTimeline.current) return;
       const reduceMotion =
         typeof window.matchMedia === "function" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      latestEvent.scrollIntoView({
+      viewport.scrollTo?.({
+        top: viewport.scrollHeight,
         behavior: reduceMotion ? "auto" : "smooth",
-        block: "nearest",
       });
     });
     return () => window.cancelAnimationFrame(frame);
@@ -578,8 +625,18 @@ export function HomePage() {
 
   const persistedGaps =
     run?.top_gaps.map((cluster, index) => ({ cluster, index })) ?? [];
-  const displayedGaps =
-    persistedGaps.length >= liveGaps.length ? persistedGaps : liveGaps;
+  const allGaps =
+    run && run.status !== "running"
+      ? persistedGaps
+      : [
+          ...new Map(
+            [...persistedGaps, ...liveGaps].map((item) => [item.index, item]),
+          ).values(),
+        ];
+  const displayedGaps = allGaps.filter(({ cluster }) =>
+    isDocumentationProposal(cluster),
+  );
+  const excludedGaps = allGaps.length - displayedGaps.length;
   const terminalSource: TerminalRunSource | null =
     run && run.status !== "running" ? run : terminalEvent;
   const terminalPresentation = terminalRunPresentation(terminalSource);
@@ -1178,7 +1235,7 @@ export function HomePage() {
                         <strong>Model &amp; search depth</strong>
                         <small>
                           {modelReady
-                            ? `${runtimeConfig?.llm_primary_model ? modelLabel(runtimeConfig.llm_primary_model) : "Gemini 3.7 Flash"} connected`
+                            ? `${runtimeConfig?.llm_primary_model ? modelLabel(runtimeConfig.llm_primary_model) : "GPT-5.6 Luna"} connected`
                             : "Merge Gateway key required"}
                         </small>
                       </span>
@@ -1456,29 +1513,61 @@ export function HomePage() {
                 </div>
               ) : null}
               <UsagePanel usage={liveUsage ?? run?.usage} />
-              <OperationInspector
-                events={
-                  operationEvents.length
-                    ? operationEvents
-                    : (run?.operation_events ?? [])
-                }
-              />
-              <ol className="timeline" ref={timelineRef} aria-live="polite">
-                {events.map((item) => (
-                  <li key={item.id} className={`event kind-${item.kind}`}>
-                    <span className="event-icon">{item.icon}</span>
-                    <div className="event-body">
-                      <div className="event-label">{item.label}</div>
-                      {item.detail ? (
-                        <div className="event-detail">{item.detail}</div>
-                      ) : null}
-                    </div>
-                    {item.meta ? (
-                      <span className="event-meta">{item.meta}</span>
-                    ) : null}
-                  </li>
-                ))}
-              </ol>
+              <div className="inspector-tabs" aria-label="Timeline view">
+                <button
+                  type="button"
+                  aria-pressed={inspectorView === "activity"}
+                  onClick={() => setInspectorView("activity")}
+                >
+                  Activity
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={inspectorView === "operations"}
+                  onClick={() => setInspectorView("operations")}
+                >
+                  Operations
+                </button>
+              </div>
+              {inspectorView === "operations" ? (
+                <OperationInspector
+                  events={
+                    operationEvents.length
+                      ? operationEvents
+                      : (run?.operation_events ?? [])
+                  }
+                />
+              ) : (
+                <ScrollArea
+                  className="timeline-scroll"
+                  viewportRef={timelineRef}
+                  viewportProps={{
+                    "aria-label": "Agent activity",
+                    onScroll: (event) => {
+                      const el = event.currentTarget;
+                      followTimeline.current =
+                        el.scrollHeight - el.scrollTop - el.clientHeight < 48;
+                    },
+                  }}
+                >
+                  <ol className="timeline" aria-live="polite">
+                    {events.map((item) => (
+                      <li key={item.id} className={`event kind-${item.kind}`}>
+                        <span className="event-icon">{item.icon}</span>
+                        <div className="event-body">
+                          <div className="event-label">{item.label}</div>
+                          {item.detail ? (
+                            <div className="event-detail">{item.detail}</div>
+                          ) : null}
+                        </div>
+                        {item.meta ? (
+                          <span className="event-meta">{item.meta}</span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ol>
+                </ScrollArea>
+              )}
               {error ? (
                 <div className="run-error compact-error" role="alert">
                   <p>{error}</p>
@@ -1491,6 +1580,13 @@ export function HomePage() {
                 <span className="panel-sub">{displayedGaps.length} found</span>
               </header>
               <div className="gaps">
+                {excludedGaps > 0 && (
+                  <p className="excluded-findings-note" role="status">
+                    {excludedGaps} candidate{excludedGaps === 1 ? "" : "s"}{" "}
+                    excluded after coverage review. Only documentation changes
+                    are shown below.
+                  </p>
+                )}
                 {showTerminalNotice && terminalPresentation ? (
                   <div
                     className={`run-outcome run-outcome-${terminalPresentation.tone}`}
@@ -1599,7 +1695,7 @@ function ProductPreview() {
             </ol>
             <div className="home-preview-route">
               <span>MODEL ROUTE</span>
-              <strong>Gemini 3.7 Flash</strong>
+              <strong>GPT-5.6 Luna</strong>
               <small>via Merge Gateway</small>
             </div>
           </aside>

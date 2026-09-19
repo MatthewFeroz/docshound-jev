@@ -124,7 +124,7 @@ describe("HomePage live analysis", () => {
     mocks.setGitHubApiKey.mockReset();
     mocks.setMergeGatewayApiKey.mockReset();
     mocks.scrollIntoView.mockReset();
-    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+    Object.defineProperty(HTMLElement.prototype, "scrollTo", {
       configurable: true,
       value: mocks.scrollIntoView,
     });
@@ -475,9 +475,141 @@ describe("HomePage live analysis", () => {
     await waitFor(() =>
       expect(mocks.scrollIntoView).toHaveBeenCalledWith({
         behavior: "smooth",
-        block: "nearest",
+        top: 0,
       }),
     );
+  });
+
+  it("excludes documented candidates and removes stale live gaps after final review", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
+    await startConnectedRun(container);
+    const documented: GapCluster = {
+      ...progressiveGap,
+      name: "GitHub stacks",
+      documentation_coverage: {
+        status: "documented",
+        recommended_action: "update_page",
+        rationale:
+          "Source control docs already explain stack badges, merge and rebase.",
+        recommended_path: "docs/user/source-control.md",
+        relevant_sources: [],
+      },
+    };
+    act(() => {
+      mocks.eventHandler?.({
+        type: "gap_found",
+        index: 0,
+        cluster: documented,
+      });
+      mocks.eventHandler?.({
+        type: "gap_found",
+        index: 1,
+        cluster: progressiveGap,
+      });
+    });
+    expect(await screen.findByText("Retry behavior")).toBeInTheDocument();
+    expect(screen.queryByText("GitHub stacks")).not.toBeInTheDocument();
+    expect(screen.getByText("1 found")).toBeInTheDocument();
+    mocks.getRun.mockResolvedValue({
+      ...runningRun,
+      status: "completed",
+      outcome: "no_recommendations",
+      top_gaps: [],
+      summary: "No documentation gaps remain.",
+    });
+    act(() =>
+      mocks.eventHandler?.({
+        type: "run_completed",
+        status: "completed",
+        outcome: "no_recommendations",
+      }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByText("Retry behavior")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("0 found")).toBeInTheDocument();
+  });
+
+  it("does not force the timeline to the bottom while reading earlier events", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
+    await startConnectedRun(container);
+    const viewport = screen.getByLabelText("Agent activity");
+    Object.defineProperty(viewport, "scrollHeight", {
+      configurable: true,
+      value: 1000,
+    });
+    Object.defineProperty(viewport, "clientHeight", {
+      configurable: true,
+      value: 200,
+    });
+    fireEvent.scroll(viewport, { target: { scrollTop: 0 } });
+    mocks.scrollIntoView.mockClear();
+    act(() => mocks.eventHandler?.({ type: "issues_fetched", count: 7 }));
+    expect(await screen.findByText("7 issues fetched")).toBeInTheDocument();
+    await act(() => new Promise((resolve) => setTimeout(resolve, 30)));
+    expect(mocks.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("shows verification uncertainty as a warning while retaining ready proposals", async () => {
+    const unverified: GapCluster = {
+      ...progressiveGap,
+      name: "External thread status API",
+      review_status: "no_change_needed",
+      documentation_coverage: {
+        status: "unable_to_verify",
+        recommended_action: "create_page",
+        rationale:
+          "Authentication and subscription behavior need implementation verification.",
+        recommended_path: null,
+        relevant_sources: [],
+      },
+    };
+    const completed: Run = {
+      ...runningRun,
+      status: "completed",
+      outcome: "completed_with_warnings",
+      summary:
+        "1 documentation proposal is ready; 1 candidate needs verification.",
+      top_gaps: [progressiveGap, unverified],
+    };
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    );
+    await startConnectedRun(container);
+    mocks.getRun.mockResolvedValue(completed);
+    act(() =>
+      mocks.eventHandler?.({
+        type: "run_completed",
+        status: completed.status,
+        outcome: completed.outcome,
+        summary: completed.summary,
+      }),
+    );
+    expect(
+      await screen.findByRole("heading", {
+        name: "Run completed — verification needed",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Run completed with errors"),
+    ).not.toBeInTheDocument();
+    expect(await screen.findByText("Retry behavior")).toBeInTheDocument();
+    expect(screen.getByText("1 found")).toBeInTheDocument();
+    expect(container.querySelector(".run-outcome-warning")).toHaveTextContent(
+      "Authentication and subscription behavior",
+    );
+    expect(container.querySelectorAll(".gap-card")).toHaveLength(1);
   });
 
   it("shows terminal agent errors instead of leaving analysis in progress", async () => {

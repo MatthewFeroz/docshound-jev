@@ -6,6 +6,7 @@ import { api } from "../api";
 import { BrandHeader } from "../components/BrandHeader";
 import { ErrorMessage, Loading } from "../components/Status";
 import type { Finding } from "../types";
+import { isDocumentationProposal } from "../lib/findings";
 
 export function FindingPage() {
   const { runId = "", index = "0" } = useParams();
@@ -240,11 +241,11 @@ export function FindingPage() {
               </p>
             ) : null}
           </section>
-          {cluster.review_status === "no_change_needed" ? (
+          {!isDocumentationProposal(cluster) ? (
             <section className="approval-callout finding-section">
               <div>
                 <div className="review-label">No draft created</div>
-                <h3>The existing documentation already covers this finding</h3>
+                <h3>No documentation change proposed</h3>
                 <p>
                   DocsHound keeps the finding for auditability and skips the
                   documentation PR.

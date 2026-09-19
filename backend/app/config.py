@@ -20,12 +20,12 @@ class Settings(BaseSettings):
 
     merge_gateway_api_key: str | None = None
     merge_gateway_base_url: str = "https://api-gateway.merge.dev/v1/openai"
-    merge_gateway_primary_model: str = "google/gemini-3.7-flash"
-    merge_gateway_fallback_model: str = "openai/gpt-5.6-luna"
+    merge_gateway_primary_model: str = "openai/gpt-5.6-luna"
+    merge_gateway_fallback_model: str = ""
 
     # Backwards compatibility for installations that call OpenAI directly.
     openai_api_key: str | None = None
-    openai_model: str = "gpt-4o-mini"
+    openai_model: str = "gpt-5.6-luna"
     docshound_db_path: str | None = None
     docshound_demo_scenario: str | None = None
 

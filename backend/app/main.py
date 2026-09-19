@@ -435,6 +435,7 @@ async def list_findings() -> list[FindingResponse]:
         _finding_response(state, index)
         for state in load_runs()
         for index in range(len(state.clusters))
+        if state.clusters[index].is_documentation_proposal
     ]
     findings.sort(
         key=lambda finding: (
@@ -526,7 +527,7 @@ async def approve_finding(
         )
 
     cluster = finding.cluster
-    if cluster.review_status == "no_change_needed":
+    if not cluster.is_documentation_proposal:
         raise HTTPException(
             status_code=409,
             detail="Existing documentation already covers this finding.",

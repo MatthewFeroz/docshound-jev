@@ -96,10 +96,10 @@ existing local installations):
 APP_ENV=development   # set to production to disable browser key entry
 GITHUB_TOKEN=          # optional server token for scans and documentation PRs
 MERGE_GATEWAY_API_KEY= # recommended: model-based analysis through Gateway
-MERGE_GATEWAY_PRIMARY_MODEL=google/gemini-3.7-flash
-MERGE_GATEWAY_FALLBACK_MODEL=openai/gpt-5.6-luna
+MERGE_GATEWAY_PRIMARY_MODEL=openai/gpt-5.6-luna
+MERGE_GATEWAY_FALLBACK_MODEL=
 OPENAI_API_KEY=        # optional legacy direct-provider fallback
-OPENAI_MODEL=gpt-4o-mini
+OPENAI_MODEL=gpt-5.6-luna
 LANGSMITH_API_KEY=     # default OTLP trace destination
 LANGSMITH_PROJECT=docshound
 ALLOWED_ORIGINS=http://localhost:5173
