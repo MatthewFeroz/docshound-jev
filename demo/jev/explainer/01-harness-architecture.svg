@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect x="0" y="0" width="1920" height="1080" rx="14" fill="#faf9f6" stroke="#faf9f6" stroke-width="2"/>
+<text x="70" y="88.48" font-family="Arial, Helvetica, sans-serif" font-size="44" fill="#193249">Where Jev sits in DocsHound</text>
+<text x="70" y="136.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Two classifier nodes + one optional drafting gate. This is the implemented LangGraph flow.</text>
+<rect x="70" y="200" width="1740" height="105" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="92" y="246.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">llm_decide (Luna) + guarded route()</text>
+<text x="92" y="286.33" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#526779">Select the next stage. Dashed arrows are conditional routes; the bottom path returns control.</text>
+<polyline points="220,313 220,332" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="220,381 220,399" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="212.80861692093694,385.8362615716444 220,399 227.19138307906303,385.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<text x="92" y="367.4" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#526779">1  RESEARCH</text>
+<polyline points="580,313 580,332" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="580,381 580,399" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="572.808616920937,385.8362615716444 580,399 587.191383079063,385.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<text x="452" y="367.4" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#526779">2  ANALYZE</text>
+<polyline points="940,313 940,332" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="940,381 940,399" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="932.808616920937,385.8362615716444 940,399 947.191383079063,385.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<text x="812" y="367.4" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#526779">3  SEARCH DOCS</text>
+<polyline points="1300,313 1300,332" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1300,381 1300,399" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1292.8086169209369,385.8362615716444 1300,399 1307.1913830790631,385.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<text x="1172" y="367.4" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#526779">4  DRAFT</text>
+<polyline points="1660,313 1660,332" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1660,381 1660,399" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1652.8086169209369,385.8362615716444 1660,399 1667.1913830790631,385.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<text x="1532" y="367.4" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#526779">5  STORE</text>
+<rect x="70" y="410" width="300" height="145" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="92" y="454.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">GitHub research</text>
+<text x="92" y="492.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Read issues and</text>
+<text x="92" y="521.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">merged PRs.</text>
+<rect x="430" y="410" width="300" height="145" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="452" y="454.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Luna analysis</text>
+<text x="452" y="492.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Turn source activity</text>
+<text x="452" y="521.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">into candidate findings.</text>
+<polyline points="580,561 580,588" fill="none" stroke="#26734d" stroke-width="3"/>
+<polyline points="572.808616920937,574.8362615716444 580,588 587.191383079063,574.8362615716444" fill="none" stroke="#26734d" stroke-width="3"/>
+<rect x="430" y="595" width="300" height="175" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="452" y="639.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Jev: triage</text>
+<text x="452" y="677.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Finding type</text>
+<text x="452" y="706.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Behavior readiness</text>
+<text x="452" y="735.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Intended audience</text>
+<rect x="790" y="410" width="300" height="145" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="812" y="454.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Docs search</text>
+<text x="812" y="492.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">NVIDIA retrieval +</text>
+<text x="812" y="521.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Luna coverage verdict.</text>
+<polyline points="940,561 940,588" fill="none" stroke="#26734d" stroke-width="3"/>
+<polyline points="932.808616920937,574.8362615716444 940,588 947.191383079063,574.8362615716444" fill="none" stroke="#26734d" stroke-width="3"/>
+<rect x="790" y="595" width="300" height="175" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="812" y="639.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Jev: evidence</text>
+<text x="812" y="677.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Documentation need</text>
+<text x="812" y="706.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Relevance of each</text>
+<text x="812" y="735.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">retrieved passage</text>
+<rect x="1150" y="410" width="300" height="360" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<rect x="1165" y="427" width="270" height="153" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="1187" y="470.92" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#193249">Python gate</text>
+<text x="1187" y="506.82" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#526779">If enabled + verify</text>
+<text x="1187" y="533.07" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#526779">implementation:</text>
+<text x="1187" y="559.32" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#526779">mark finding held.</text>
+<text x="1175" y="630.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Luna writes</text>
+<text x="1175" y="670.24" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#526779">Only remaining</text>
+<text x="1175" y="697.74" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#526779">eligible findings.</text>
+<text x="1175" y="725.24" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#526779">Keep held items visible.</text>
+<rect x="1510" y="410" width="300" height="145" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="1532" y="454.84" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#193249">Finalize run</text>
+<text x="1532" y="492.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Harness persists</text>
+<text x="1532" y="521.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">state and trace.</text>
+<polyline points="1660,563 1660,616" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="1652.8086169209369,602.8362615716444 1660,616 1667.1913830790631,602.8362615716444" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="1585" y="628" width="150" height="62" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="1623" y="667.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#193249">END</text>
+<polyline points="220,563 220,825" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="580,778 580,825" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="940,778 940,825" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1300,778 1300,825" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="220,825 1860,825 1860,252 1818,252" fill="none" stroke="#526779" stroke-width="3" stroke-dasharray="8 8"/>
+<polyline points="1831.1637384283556,244.80861692093694 1818,252 1831.1637384283556,259.19138307906303" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="70" y="878" width="1090" height="138" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="92" y="921.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#193249">Both Jev nodes call Merge Gateway /v1/decisions</text>
+<text x="92" y="958.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">typesafe/jev-1.13 returns choices. Shared state carries them to Python recommend(), then the drafting</text>
+<text x="92" y="987.16" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">gate.</text>
+<rect x="1190" y="878" width="620" height="138" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="1212" y="920.08" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#193249">Only verification holds are enforced</text>
+<text x="1212" y="956.24" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#526779">retrieve_more does not search again. No confidence</text>
+<text x="1212" y="983.74" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#526779">threshold. Unavailable results advise manual review.</text>
+</svg>

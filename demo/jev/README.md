@@ -70,6 +70,7 @@ local `experiments/results/<run-id>/` files retain the complete audit trail.
 - [Source-reviewed T3Code patches](reviewed-docs/README.md)
 - [Live case selection](../../experiments/t3code-demo.json)
 - [Expanded OpenCode and Pi results and review dataset](cross-repository/README.md)
+- [Editable Excalidraw architecture and evaluation walkthrough](explainer/README.md)
 
 Jev's gate affects draft eligibility only when selected. It does not delete
 findings, change Luna's coverage assessment, retry retrieval, or publish

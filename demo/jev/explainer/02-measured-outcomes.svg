@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect x="0" y="0" width="1920" height="1080" rx="14" fill="#faf9f6" stroke="#faf9f6" stroke-width="2"/>
+<text x="70" y="88.48" font-family="Arial, Helvetica, sans-serif" font-size="44" fill="#193249">What changed in the 10 real runs?</text>
+<text x="70" y="136.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">OpenCode + Pi | 200 issues + 200 merged PRs | distinct source items, not independent labels</text>
+<rect x="70" y="195" width="420" height="120" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="92" y="247.2" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#193249">71</text>
+<text x="92" y="287.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">findings</text>
+<rect x="515" y="195" width="420" height="120" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="537" y="247.2" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#193249">142</text>
+<text x="537" y="287.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Jev requests</text>
+<rect x="960" y="195" width="420" height="120" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="982" y="247.2" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#193249">497</text>
+<text x="982" y="287.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">classification answers</text>
+<rect x="1405" y="195" width="420" height="120" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="1427" y="247.2" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#193249">$0.01228</text>
+<text x="1427" y="287.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">reported Jev cost</text>
+<rect x="70" y="465" width="350" height="165" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="92" y="514.44" font-family="Arial, Helvetica, sans-serif" font-size="32" fill="#193249">71 findings</text>
+<text x="92" y="556.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Luna assesses</text>
+<text x="92" y="587.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">documentation coverage.</text>
+<polyline points="429,540 487,540 487,418 560,418" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="546.8362615716444,425.19138307906303 560,418 546.8362615716444,410.80861692093697" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="487,540 487,705 560,705" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="546.8362615716444,712.191383079063 560,705 546.8362615716444,697.808616920937" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="570" y="335" width="500" height="170" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="592" y="382.6" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#193249">52 eligible under Luna</text>
+<text x="592" y="422.58" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#526779">Coverage + recommended action</text>
+<text x="592" y="452.58" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#526779">allow a documentation draft.</text>
+<rect x="570" y="620" width="500" height="170" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="592" y="667.6" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#193249">19 already ineligible</text>
+<text x="592" y="707.58" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#526779">Luna already says documented</text>
+<text x="592" y="737.58" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#526779">or unable to verify.</text>
+<polyline points="1078,420 1200,420 1200,406 1348,406" fill="none" stroke="#a76910" stroke-width="3"/>
+<polyline points="1334.8362615716444,413.19138307906303 1348,406 1334.8362615716444,398.80861692093697" fill="none" stroke="#a76910" stroke-width="3"/>
+<polyline points="1200,420 1200,608 1348,608" fill="none" stroke="#26734d" stroke-width="3"/>
+<polyline points="1334.8362615716444,615.191383079063 1348,608 1334.8362615716444,600.808616920937" fill="none" stroke="#26734d" stroke-width="3"/>
+<rect x="1360" y="333" width="450" height="153" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="1382" y="383.36" font-family="Arial, Helvetica, sans-serif" font-size="33" fill="#193249">33 newly held</text>
+<text x="1382" y="423.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Jev gate changes eligibility.</text>
+<text x="1382" y="452.16" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Whether that helped is unjudged.</text>
+<rect x="1360" y="535" width="450" height="153" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="1382" y="584.44" font-family="Arial, Helvetica, sans-serif" font-size="32" fill="#193249">19 drafts generated</text>
+<text x="1382" y="624.16" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">These findings pass the gate</text>
+<text x="1382" y="652.91" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">and Luna writes review drafts.</text>
+<polyline points="1078,705 1200,705 1200,805 1348,805" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="1334.8362615716444,812.191383079063 1348,805 1334.8362615716444,797.808616920937" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="1360" y="746" width="450" height="139" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="1382" y="789.92" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#193249">11 also flagged; 8 unheld</text>
+<text x="1382" y="827.66" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">None of these 19 was eligible</text>
+<text x="1382" y="856.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">for a draft under Luna anyway.</text>
+<rect x="70" y="920" width="1740" height="104" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="92" y="966.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">44 hold flags = 33 eligibility changes + 11 overlapping decisions</text>
+<text x="92" y="1005.41" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#526779">Zero independent human labels. The runs demonstrate a functioning gate, not improved accuracy or 44 bad drafts prevented.</text>
+</svg>

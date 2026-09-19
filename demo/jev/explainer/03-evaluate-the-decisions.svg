@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect x="0" y="0" width="1920" height="1080" rx="14" fill="#faf9f6" stroke="#faf9f6" stroke-width="2"/>
+<text x="70" y="88.48" font-family="Arial, Helvetica, sans-serif" font-size="44" fill="#193249">Was Jev right? Review the disagreements.</text>
+<text x="70" y="136.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">The video should show an observable intervention, then a fair test of whether that intervention helped.</text>
+<rect x="70" y="215" width="550" height="400" rx="14" fill="#edf0f3" stroke="#193249" stroke-width="2"/>
+<text x="92" y="263.52" font-family="Arial, Helvetica, sans-serif" font-size="31" fill="#193249">1  Freeze the evidence</text>
+<text x="92" y="305.67" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">Use the saved finding, original issue/PR text</text>
+<text x="92" y="338.17" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">and exact retrieved excerpts.</text>
+<text x="92" y="370.67" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779"></text>
+<text x="92" y="403.17" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">Keep the repo revision and date. Record the</text>
+<text x="92" y="435.67" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">available evidence; do not silently add future</text>
+<text x="92" y="468.17" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">fixes.</text>
+<text x="92" y="500.67" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779"></text>
+<text x="92" y="533.17" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#526779">71 cases are saved with blank review fields.</text>
+<polyline points="630,413 673,413" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="659.8362615716444,420.19138307906303 673,413 659.8362615716444,405.80861692093697" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="685" y="215" width="550" height="400" rx="14" fill="#e5efff" stroke="#193249" stroke-width="2"/>
+<text x="707" y="262.6" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#193249">2  Review before revealing</text>
+<text x="707" y="303.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Hide Luna and Jev verdicts.</text>
+<text x="707" y="334.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779"></text>
+<text x="707" y="366.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Is the claimed behavior established? Do the</text>
+<text x="707" y="397.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">docs already answer the question? Is a draft</text>
+<text x="707" y="428.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">justified?</text>
+<text x="707" y="459.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779"></text>
+<text x="707" y="491.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Allow unknown. For stronger ground truth,</text>
+<text x="707" y="522.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">separately inspect pinned implementation</text>
+<text x="707" y="553.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">code.</text>
+<polyline points="1245,413 1288,413" fill="none" stroke="#526779" stroke-width="3"/>
+<polyline points="1274.8362615716444,420.19138307906303 1288,413 1274.8362615716444,405.80861692093697" fill="none" stroke="#526779" stroke-width="3"/>
+<rect x="1300" y="215" width="550" height="400" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="1322" y="261.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">3  Compare the decisions</text>
+<text x="1322" y="302.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Reveal model labels and actual action.</text>
+<text x="1322" y="333.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779"></text>
+<text x="1322" y="364.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Review all 33 newly held findings and the 19</text>
+<text x="1322" y="396.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">drafts that passed. Check the 19</text>
+<text x="1322" y="427.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">baseline-ineligible cases too.</text>
+<text x="1322" y="458.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779"></text>
+<text x="1322" y="489.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Keep rationale and evidence links, including</text>
+<text x="1322" y="521.0" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">disagreements.</text>
+<rect x="70" y="670" width="550" height="190" rx="14" fill="#d9f5e5" stroke="#193249" stroke-width="2"/>
+<text x="92" y="716.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">Useful intervention</text>
+<text x="92" y="757.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Among the 33 new holds:</text>
+<text x="92" y="788.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">how many findings lacked the evidence</text>
+<text x="92" y="819.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">needed to justify drafting?</text>
+<rect x="685" y="670" width="550" height="190" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="707" y="716.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">Unnecessary friction</text>
+<text x="707" y="757.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Among the same 33 holds:</text>
+<text x="707" y="788.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">how many ready, useful documentation</text>
+<text x="707" y="819.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">changes were delayed?</text>
+<rect x="1300" y="670" width="550" height="190" rx="14" fill="#fff0cd" stroke="#193249" stroke-width="2"/>
+<text x="1322" y="716.68" font-family="Arial, Helvetica, sans-serif" font-size="29" fill="#193249">Missed problems</text>
+<text x="1322" y="757.25" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">Among the 19 generated drafts:</text>
+<text x="1322" y="788.5" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">how many still contain unsupported claims or</text>
+<text x="1322" y="819.75" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#526779">duplicate existing docs?</text>
+<rect x="70" y="910" width="1780" height="113" rx="14" fill="#193249" stroke="#193249" stroke-width="2"/>
+<text x="94" y="955.76" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#ffffff">SHOW: one hold, one pass, one redundant decision. SAY: quality benefit is still unproven.</text>
+<text x="94" y="995.16" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#d7e3ed">Report unknowns separately. The relevance labels, confidence scores and number of holds are not correctness measurements.</text>
+</svg>
