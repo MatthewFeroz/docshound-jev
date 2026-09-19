@@ -5,6 +5,8 @@ import { ScrollArea } from "./ui/scroll-area";
 const stages: Record<string, string> = {
   research: "Repository research",
   analyze: "Candidate analysis",
+  jev_triage: "Jev finding classification",
+  jev_review: "Jev evidence review",
   search_docs: "Documentation search",
   draft: "Drafting",
   store: "Finalizing",

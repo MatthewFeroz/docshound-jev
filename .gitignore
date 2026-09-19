@@ -13,6 +13,7 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 experiments/results/
+experiments/*.pid
 .ruff_cache/
 .langgraph_api/
 data/*.db

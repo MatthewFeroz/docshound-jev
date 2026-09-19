@@ -18,7 +18,7 @@ def manifest() -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-async def demo_request() -> RunRequest:
+async def demo_request(*, hold_unverified: bool = False) -> RunRequest:
     selection = manifest()
     repo, revision = selection["repo"], selection["revision"]
     token = get_github_api_token() or get_settings().github_token
@@ -54,6 +54,7 @@ async def demo_request() -> RunRequest:
                 }
             )
     return RunRequest(
+        jev_gate_enabled=hold_unverified,
         repo=repo,
         issue_numbers=selection["issue_numbers"],
         pull_request_numbers=selection["pull_request_numbers"],

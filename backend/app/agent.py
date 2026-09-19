@@ -14,6 +14,7 @@ from app.langgraph_agent import graph  # noqa: E402
 async def run_agent(request: RunRequest, state: AgentState | None = None) -> AgentState:
     state = state or AgentState(repo=request.repo, dry_run=request.dry_run)
     settings = get_settings()
+    state.jev_gate_enabled = request.jev_gate_enabled
     state.scan_limits = {
         "issues": request.limit,
         "merged_pull_requests": request.limit,
@@ -63,6 +64,7 @@ async def run_agent(request: RunRequest, state: AgentState | None = None) -> Age
                         request.include_documentation_activity
                     ),
                     "limit": request.limit,
+                    "jev_gate_enabled": request.jev_gate_enabled,
                     "issue_numbers": request.issue_numbers,
                     "pull_request_numbers": request.pull_request_numbers,
                     "implementation_evidence": request.implementation_evidence,

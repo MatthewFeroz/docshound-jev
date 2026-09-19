@@ -21,6 +21,10 @@ class CreateRunResponse(BaseModel):
     documentation_source: DocumentationSource | None = None
 
 
+class JevDemoOptions(BaseModel):
+    hold_unverified: bool = False
+
+
 class ResolveSourcesRequest(BaseModel):
     repo: str = Field(min_length=1)
 

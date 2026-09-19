@@ -17,6 +17,7 @@ from app.api_models import (
     DocumentResponse,
     FindingResponse,
     GitHubCredentialRequest,
+    JevDemoOptions,
     LLMCredentialRequest,
     PreviewDocumentationPullRequestRequest,
     ResolveSourcesRequest,
@@ -128,6 +129,7 @@ def _normalize_repo(value: str) -> str:
 def _run_response(state: AgentState) -> RunResponse:
     apply_run_outcome(state)
     return RunResponse(
+        jev_gate_enabled=state.jev_gate_enabled,
         run_id=state.run_id,
         status=state.status,
         scan_limits=state.scan_limits,
@@ -395,7 +397,9 @@ async def jev_demo_manifest() -> dict:
 
 
 @app.post("/api/v1/jev-demo/runs", response_model=CreateRunResponse, status_code=202)
-async def create_jev_demo_run() -> CreateRunResponse:
+async def create_jev_demo_run(
+    options: JevDemoOptions | None = None,
+) -> CreateRunResponse:
     from app.jev_demo import demo_request
 
     if not get_settings().jev_shadow_enabled:
@@ -403,7 +407,9 @@ async def create_jev_demo_run() -> CreateRunResponse:
             status_code=409, detail="Enable JEV_SHADOW_ENABLED for the demo."
         )
     try:
-        request = await demo_request()
+        request = await demo_request(
+            hold_unverified=bool(options and options.hold_unverified)
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=502,

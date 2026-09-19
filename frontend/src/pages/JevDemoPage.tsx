@@ -28,6 +28,7 @@ export function JevDemoPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
+  const [holdUnverified, setHoldUnverified] = useState(true);
   const runId = params.get("run");
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export function JevDemoPage() {
     setBusy(true);
     setError(null);
     try {
-      const created = await api.runJevDemo();
+      const created = await api.runJevDemo(holdUnverified);
       setParams({ run: created.run_id });
     } catch (e) {
       setError(String(e));
@@ -126,6 +127,14 @@ export function JevDemoPage() {
             </p>
           </div>
           <div className="jev-run-controls">
+            <label className="jev-gate-option">
+              <input
+                type="checkbox"
+                checked={holdUnverified}
+                onChange={(event) => setHoldUnverified(event.target.checked)}
+              />
+              Hold unverified drafts in the next run
+            </label>
             <button
               className="publish-btn"
               disabled={!enabled || busy || running}
@@ -206,6 +215,13 @@ export function JevDemoPage() {
             <span>reported Jev cost</span>
           </div>
         </section>
+        {run && (
+          <p className="jev-mode">
+            {run.jev_gate_enabled
+              ? `Draft gate enabled · ${findings.filter((f) => f.jev_draft_hold).length} findings held for verification`
+              : "Advisory run · Jev did not block drafts"}
+          </p>
+        )}
         {running && (
           <p role="status" className="jev-running">
             Live run in progress. The workflow above updates as each stage
@@ -282,9 +298,9 @@ export function JevDemoPage() {
           <OperationInspector events={events} />
         </details>
         <p className="jev-footnote">
-          Selected real cases, not a benchmark. Jev is advisory: the run
-          preserves Luna's drafting decisions so disagreements remain visible.
-          Classification confidence is not measured accuracy.
+          Selected real cases, not a benchmark. The optional gate holds findings
+          that need implementation verification; retrieval recommendations
+          remain advisory. Classification confidence is not measured accuracy.
         </p>
       </main>
     </>

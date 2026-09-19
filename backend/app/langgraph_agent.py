@@ -39,6 +39,7 @@ class DocsHoundGraphState(TypedDict, total=False):
     repo_docs_max_files: int
     nvidia_embed_max_passages: int
     limit: int
+    jev_gate_enabled: bool
     issue_numbers: list[int] | None
     pull_request_numbers: list[int] | None
     implementation_evidence: list[dict]
@@ -476,23 +477,49 @@ async def draft(state: DocsHoundGraphState) -> DocsHoundGraphState:
         clusters = [
             GapCluster.model_validate(cluster) for cluster in state.get("clusters", [])
         ]
-        clusters = await run_traced(
+        draftable = []
+        for cluster in clusters:
+            if (
+                state.get("jev_gate_enabled")
+                and (cluster.jev_assessment or {}).get("recommendation")
+                == "verify_implementation"
+            ):
+                cluster.jev_draft_hold = "verify_implementation"
+                cluster.draft_title = cluster.draft_summary = cluster.draft_markdown = (
+                    None
+                )
+                events.publish(
+                    state["run_id"],
+                    {
+                        "type": "jev_draft_held",
+                        "finding": cluster.name,
+                        "reason": "Implementation evidence needs verification",
+                    },
+                )
+            else:
+                draftable.append(cluster)
+        drafted = await run_traced(
             "draft_review_documents",
             state["run_id"],
             state["repo"],
             draft_review_documents,
-            clusters,
+            draftable,
             issues,
             pull_requests,
             trace_input=summarize_analysis_inputs(
                 {
-                    "clusters": clusters,
+                    "clusters": draftable,
                     "issues": issues,
                     "pull_requests": pull_requests,
                 }
             ),
             trace_output=summarize_cluster_outputs,
         )
+        completed_drafts = iter(drafted)
+        clusters = [
+            cluster if cluster.jev_draft_hold else next(completed_drafts)
+            for cluster in clusters
+        ]
         cluster_dicts = [cluster.model_dump(mode="json") for cluster in clusters]
         state["clusters"] = cluster_dicts
         for index, cluster in enumerate(cluster_dicts):

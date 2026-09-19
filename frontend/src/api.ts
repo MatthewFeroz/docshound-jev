@@ -50,8 +50,11 @@ export const api = {
   listRuns: () => request<Run[]>("/api/v1/runs"),
   getJevDemo: () =>
     request<{ enabled: boolean; selection_note: string }>("/api/v1/jev-demo"),
-  runJevDemo: () =>
-    request<CreateRunResponse>("/api/v1/jev-demo/runs", { method: "POST" }),
+  runJevDemo: (holdUnverified = false) =>
+    request<CreateRunResponse>("/api/v1/jev-demo/runs", {
+      method: "POST",
+      body: JSON.stringify({ hold_unverified: holdUnverified }),
+    }),
   getUsage: () => request<UsageHistory>("/api/v1/usage"),
   getRuntimeConfig: () => request<RuntimeConfig>("/api/v1/config"),
   setMergeGatewayApiKey: (apiKey: string) =>

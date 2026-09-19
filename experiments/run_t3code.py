@@ -37,7 +37,9 @@ def configure() -> None:
     )
 
 
-async def run(limit: int, output: Path, demo: bool = False) -> None:
+async def run(
+    limit: int, output: Path, demo: bool = False, hold_unverified: bool = False
+) -> None:
     from app import events
     from app.agent import run_agent
     from app.config import get_settings
@@ -57,7 +59,8 @@ async def run(limit: int, output: Path, demo: bool = False) -> None:
     if demo:
         from app.jev_demo import demo_request
 
-        request = await demo_request()
+        request = await demo_request(hold_unverified=hold_unverified)
+    request.jev_gate_enabled = hold_unverified
     state = AgentState(
         repo=request.repo,
         dry_run=True,
@@ -120,7 +123,7 @@ async def run(limit: int, output: Path, demo: bool = False) -> None:
         f"{result.docs_candidates_inspected} documents inspected, "
         f"{len(result.clusters)} findings.",
         "",
-        "Jev ran in shadow mode before drafting. Its confidence is not measured "
+        f"Jev draft gate enabled: {request.jev_gate_enabled}. Its confidence is not measured "
         "accuracy. Human labels remain empty; disagreements require review.",
         "",
     ]
@@ -210,6 +213,11 @@ if __name__ == "__main__":
         help="Use the selected live T3Code issues and source evidence",
     )
     parser.add_argument("--output", type=Path, default=ROOT / "experiments/results")
+    parser.add_argument(
+        "--hold-unverified",
+        action="store_true",
+        help="Hold findings Jev recommends verifying before drafting",
+    )
     args = parser.parse_args()
     configure()
-    asyncio.run(run(args.limit, args.output, args.demo))
+    asyncio.run(run(args.limit, args.output, args.demo, args.hold_unverified))

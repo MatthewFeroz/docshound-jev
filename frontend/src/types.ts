@@ -64,6 +64,7 @@ export interface PullRequest {
 }
 
 export interface GapCluster {
+  jev_draft_hold?: string | null;
   jev_triage?: JevResult | null;
   jev_assessment?: JevResult | null;
   implementation_evidence?: {
@@ -172,6 +173,7 @@ export type RunOutcome =
   | "failed";
 
 export interface Run {
+  jev_gate_enabled?: boolean;
   scan_limits?: Record<string, number>;
   usage?: UsageSummary | null;
   operation_events?: RunEvent[];

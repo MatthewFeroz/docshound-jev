@@ -41,12 +41,15 @@ export function JevAssessment({ cluster }: { cluster: GapCluster }) {
       <div className="jev-panel-heading">
         <span className="jev-wordmark">JEV</span>
         <span>CLASSIFICATION & EVIDENCE</span>
-        <span className="jev-shadow">Advisory</span>
+        <span className="jev-shadow">
+          {cluster.jev_draft_hold ? "Draft held" : "Assessment"}
+        </span>
       </div>
       <h3>{recommendations[advice] || readable(advice)}</h3>
       <p className="jev-muted">
-        Jev recommends a review step. Luna's drafting decision remains visible
-        for comparison.
+        {cluster.jev_draft_hold
+          ? "The draft gate kept this finding out of the drafting call. Verify the implementation before proposing instructions."
+          : "Jev recommends a review step. The coverage assessment remains visible for comparison."}
       </p>
       {(triage?.status !== "succeeded" || review?.status !== "succeeded") && (
         <p role="status">

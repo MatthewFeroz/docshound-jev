@@ -248,7 +248,11 @@ export function FindingPage() {
             <section className="approval-callout finding-section">
               <div>
                 <div className="review-label">No draft created</div>
-                <h3>No documentation change proposed</h3>
+                <h3>
+                  {cluster.jev_draft_hold
+                    ? "Held for implementation verification"
+                    : "No documentation change proposed"}
+                </h3>
                 <p>
                   DocsHound keeps the finding for auditability and skips the
                   documentation PR.

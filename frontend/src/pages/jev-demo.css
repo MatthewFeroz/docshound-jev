@@ -3,6 +3,15 @@
   margin: auto;
   padding: 42px 34px 60px;
 }
+.jev-run-controls .jev-gate-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #bcd9ce;
+  line-height: 1.5;
+}
+.jev-gate-option input { accent-color: #7ddac0; }
+.jev-mode { color: #7ddac0; font-size: 12px; margin-top: -20px; margin-bottom: 26px; }
 .jev-hero {
   display: grid;
   grid-template-columns: 1fr 320px;

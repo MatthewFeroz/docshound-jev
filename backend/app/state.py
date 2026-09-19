@@ -43,6 +43,7 @@ class DocumentationSource(BaseModel):
 
 
 class RunRequest(BaseModel):
+    jev_gate_enabled: bool = False
     issue_numbers: list[Annotated[int, Field(gt=0)]] | None = Field(
         default=None, max_length=100
     )
@@ -131,22 +132,28 @@ class GapCluster(BaseModel):
     documentation_coverage: DocumentationCoverage | None = None
     jev_assessment: dict | None = None
     jev_triage: dict | None = None
+    jev_draft_hold: str | None = None
     documentation_evidence: list[dict] = Field(default_factory=list)
     implementation_evidence: list[dict] = Field(default_factory=list)
 
     @property
     def is_documentation_proposal(self) -> bool:
         coverage = self.documentation_coverage
-        return self.review_status != "no_change_needed" and (
-            coverage is None
-            or (
-                coverage.status in {"missing", "partial"}
-                and coverage.recommended_action != "no_change"
+        return (
+            self.jev_draft_hold is None
+            and self.review_status != "no_change_needed"
+            and (
+                coverage is None
+                or (
+                    coverage.status in {"missing", "partial"}
+                    and coverage.recommended_action != "no_change"
+                )
             )
         )
 
 
 class AgentState(BaseModel):
+    jev_gate_enabled: bool = False
     scan_limits: dict[str, int] = Field(default_factory=dict)
     usage: RunUsage | None = None
     operation_events: list[dict] = Field(default_factory=list)
@@ -184,6 +191,7 @@ class AgentState(BaseModel):
 
 
 class RunResponse(BaseModel):
+    jev_gate_enabled: bool = False
     scan_limits: dict[str, int] = Field(default_factory=dict)
     usage: dict | None = None
     operation_events: list[dict] = Field(default_factory=list)
