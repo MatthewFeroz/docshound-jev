@@ -47,6 +47,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  listRuns: () => request<Run[]>("/api/v1/runs"),
+  getJevDemo: () =>
+    request<{ enabled: boolean; selection_note: string }>("/api/v1/jev-demo"),
+  runJevDemo: () =>
+    request<CreateRunResponse>("/api/v1/jev-demo/runs", { method: "POST" }),
   getUsage: () => request<UsageHistory>("/api/v1/usage"),
   getRuntimeConfig: () => request<RuntimeConfig>("/api/v1/config"),
   setMergeGatewayApiKey: (apiKey: string) =>

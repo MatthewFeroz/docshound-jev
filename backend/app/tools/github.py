@@ -90,6 +90,7 @@ async def research_repo(
     limit: int,
     *,
     client: httpx.AsyncClient | None = None,
+    numbers: list[int] | None = None,
 ) -> list[Issue]:
     headers = _github_headers(configured_github_token())
     issues: list[Issue] = []
@@ -100,7 +101,7 @@ async def research_repo(
         timeout=20,
     )
     try:
-        for number in pinned_issue_numbers(repo):
+        for number in numbers if numbers is not None else pinned_issue_numbers(repo):
             response = await github.get(
                 f"/repos/{repo}/issues/{number}",
                 headers=headers,
@@ -116,7 +117,7 @@ async def research_repo(
             if len(issues) >= limit:
                 return issues
 
-        if not include_recent_activity(repo):
+        if numbers is not None or not include_recent_activity(repo):
             return issues
 
         for page in range(1, 6):
@@ -156,6 +157,7 @@ async def research_pull_requests(
     include_open: bool = False,
     *,
     client: httpx.AsyncClient | None = None,
+    numbers: list[int] | None = None,
 ) -> list[PullRequest]:
     """Fetch merged PRs, plus open PRs for a separate documentation repo."""
     headers = _github_headers(configured_github_token())
@@ -168,7 +170,9 @@ async def research_pull_requests(
         timeout=20,
     )
     try:
-        for number in pinned_pull_request_numbers(repo):
+        for number in (
+            numbers if numbers is not None else pinned_pull_request_numbers(repo)
+        ):
             response = await github.get(
                 f"/repos/{repo}/pulls/{number}",
                 headers=headers,
@@ -184,7 +188,7 @@ async def research_pull_requests(
             if len(pull_requests) >= target:
                 return pull_requests
 
-        if not include_recent_activity(repo):
+        if numbers is not None or not include_recent_activity(repo):
             return pull_requests
 
         for page in range(1, 6):

@@ -5,11 +5,69 @@ from unittest.mock import AsyncMock, Mock, patch
 import httpx
 
 from app.config import Settings
-from app.jev import assess_finding
-from app.state import DocumentationCoverage, GapCluster
+from app.jev import assess_finding, recommend, review_evidence, triage_finding
+from app.state import DocumentationCoverage, GapCluster, Issue
 
 
 class JevTests(unittest.IsolatedAsyncioTestCase):
+    async def test_triage_uses_original_matching_activity_without_future_fields(self):
+        self.cluster.issue_refs = ["pingdotgg/t3code#1"]
+        payload = dict(
+            number=1,
+            title="Original issue",
+            body="original source text",
+            url="https://github.com/pingdotgg/t3code/issues/1",
+            state="open",
+            created_at="2026-09-18T00:00:00Z",
+            updated_at="2026-09-18T00:00:00Z",
+        )
+        issues = [
+            Issue(**payload, source_repo="pingdotgg/t3code"),
+            Issue(**{**payload, "body": "wrong repository"}, source_repo="other/repo"),
+        ]
+        with patch("app.jev.decide", new=AsyncMock(return_value={})) as call:
+            await triage_finding(self.cluster, issues, [], settings=self.settings)
+        state = call.await_args.args[0]
+        self.assertEqual(len(state["source_activity"]), 1)
+        self.assertEqual(state["source_activity"][0]["body"], "original source text")
+        self.assertNotIn("FUTURE_DRAFT", json.dumps(state))
+        self.assertNotIn("documentation_coverage", state["finding"])
+
+    async def test_evidence_check_is_independent_of_luna_coverage(self):
+        self.cluster.documentation_evidence = [
+            {**self.evidence[0], "url": "https://example.com/doc"}
+        ]
+        with patch(
+            "app.jev.decide",
+            new=AsyncMock(return_value={"status": "unavailable", "answers": {}}),
+        ) as call:
+            record = await review_evidence(self.cluster, settings=self.settings)
+        state, questions = call.await_args.args
+        self.assertNotIn("proposed_assessment", state)
+        self.assertNotIn("documentation_coverage", json.dumps(state))
+        self.assertEqual(set(questions), {"gap_kind", "document_0"})
+        self.assertEqual(record["recommendation"], "manual_review")
+
+    def test_no_evidence_routes_to_retrieval_and_unverified_behavior_to_verification(
+        self,
+    ):
+        triage = {
+            "status": "succeeded",
+            "answers": {"readiness": {"choice": "confirmed"}},
+        }
+        review = {
+            "status": "succeeded",
+            "answers": {
+                "gap_kind": {"choice": "missing_procedure"},
+                "document_0": {"choice": "unrelated"},
+            },
+        }
+        self.assertEqual(recommend(triage, review), "retrieve_more")
+        review["answers"]["document_0"]["choice"] = "useful_background"
+        self.assertEqual(recommend(triage, review), "review_draft")
+        triage["answers"]["readiness"]["choice"] = "needs_verification"
+        self.assertEqual(recommend(triage, review), "verify_implementation")
+
     def setUp(self):
         self.settings = Settings(_env_file=None, merge_gateway_api_key="test")
         self.cluster = GapCluster(

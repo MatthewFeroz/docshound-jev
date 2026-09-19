@@ -37,7 +37,7 @@ def configure() -> None:
     )
 
 
-async def run(limit: int, output: Path) -> None:
+async def run(limit: int, output: Path, demo: bool = False) -> None:
     from app import events
     from app.agent import run_agent
     from app.config import get_settings
@@ -54,6 +54,10 @@ async def run(limit: int, output: Path) -> None:
         ),
         dry_run=True,
     )
+    if demo:
+        from app.jev_demo import demo_request
+
+        request = await demo_request()
     state = AgentState(
         repo=request.repo,
         dry_run=True,
@@ -77,7 +81,7 @@ async def run(limit: int, output: Path) -> None:
     }
     (directory / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(
-        f"Run {state.run_id}: Luna/high + Jev shadow; {limit} issues and PRs each",
+        f"Run {state.run_id}: Luna/high + Jev shadow; {'selected T3Code cases' if demo else f'up to {limit} issues and PRs each'}",
         flush=True,
     )
     print(f"Artifacts: {directory}", flush=True)
@@ -130,13 +134,20 @@ async def run(limit: int, output: Path) -> None:
                 cluster.recurring_question,
                 "",
                 f"Luna coverage: **{coverage.status if coverage else 'unknown'}**. "
-                f"Jev: **{assessment.get('verdict', 'not_checked')}** "
+                f"Jev recommendation: **{assessment.get('recommendation', assessment.get('verdict', 'not_checked'))}** "
                 f"({assessment.get('status', 'not_checked')}).",
                 "",
                 coverage.rationale if coverage else "No coverage assessment.",
                 "",
             ]
         )
+        triage = cluster.jev_triage or {}
+        for name, answer in triage.get("answers", {}).items():
+            lines.append(f"- {name}: **{answer['choice']}**")
+        for document in assessment.get("documents", []):
+            label = (document.get("answer") or {}).get("choice", "unavailable")
+            lines.append(f"- [{document['path']}]({document['url']}): **{label}**")
+        lines.append("")
         if coverage:
             lines.extend(f"- [{s.title}]({s.url})" for s in coverage.relevant_sources)
             lines.append("")
@@ -152,6 +163,7 @@ async def run(limit: int, output: Path) -> None:
                 if coverage
                 else None,
                 "jev": assessment,
+                "triage": triage,
                 "human_label": None,
                 "human_rationale": None,
             }
@@ -175,7 +187,7 @@ async def run(limit: int, output: Path) -> None:
                 "findings": len(result.clusters),
                 "jev": dict(
                     Counter(
-                        (c.jev_assessment or {}).get("verdict", "not_checked")
+                        (c.jev_assessment or {}).get("recommendation", "not_checked")
                         for c in result.clusters
                     )
                 ),
@@ -192,7 +204,12 @@ async def run(limit: int, output: Path) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, default=50)
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Use the selected live T3Code issues and source evidence",
+    )
     parser.add_argument("--output", type=Path, default=ROOT / "experiments/results")
     args = parser.parse_args()
     configure()
-    asyncio.run(run(args.limit, args.output))
+    asyncio.run(run(args.limit, args.output, args.demo))

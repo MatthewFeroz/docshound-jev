@@ -1,0 +1,14 @@
+{
+  "title": "T3Code: documentation or a product problem?",
+  "repo": "pingdotgg/t3code",
+  "revision": "9cb586acd0494c4f47f60045ee42ef25edb5a07c",
+  "issue_numbers": [9352, 12330, 12451],
+  "pull_request_numbers": [12493],
+  "selection_note": "Purposively selected real cases, not a random benchmark: a hidden existing setting, a documented-in-code provider limitation, an unresolved migration request, and a shipped observability feature. No model verdicts are fixed.",
+  "source_files": [
+    {"path": "apps/web/src/components/settings/SettingsPanels.tsx", "start_line": 2039, "end_line": 2082, "source_refs": ["pingdotgg/t3code#9352"]},
+    {"path": "packages/contracts/src/settings.ts", "start_line": 420, "end_line": 435, "source_refs": ["pingdotgg/t3code#9352"]},
+    {"path": "apps/server/src/git/GitManager.ts", "start_line": 2018, "end_line": 2039, "source_refs": ["pingdotgg/t3code#12330"]},
+    {"path": "apps/server/src/sourceControl/PrTemplateDetection.ts", "start_line": 7, "end_line": 26, "source_refs": ["pingdotgg/t3code#12330"]}
+  ]
+}

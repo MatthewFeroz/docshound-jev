@@ -11,7 +11,6 @@ import httpx2 as httpx
 
 from app.config import get_settings
 from app.demo_scenarios import documentation_target_path
-from app.jev import assess_finding
 from app.llm import complete_json, llm_is_configured, require_json_array
 from app.runtime_credentials import get_github_api_token
 from app.state import (
@@ -451,19 +450,7 @@ async def search_official_docs(
                 }
                 for document in ranked_documents[index]
             ]
-            cluster.jev_assessment = await observe_operation(
-                "jev_predraft_check",
-                assess_finding,
-                cluster,
-                evidence,
-                search_complete=repository_search_succeeded,
-                settings=settings,
-                input_details={"finding": cluster.name, "evidence_count": len(evidence)},
-                output_details=lambda value: {
-                    key: value.get(key)
-                    for key in ("status", "verdict", "confidence", "duration_ms")
-                },
-            )
+            cluster.documentation_evidence = evidence
 
     unique_sources: dict[str, DocSource] = {
         source.url: source for source in homepage_sources
@@ -920,6 +907,7 @@ async def _assess_coverage_with_model(
                     "name": cluster.name,
                     "summary": cluster.summary,
                     "question": cluster.recurring_question,
+                    "implementation_evidence": cluster.implementation_evidence,
                 },
                 "candidate_docs": [
                     {

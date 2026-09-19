@@ -387,6 +387,37 @@ async def create_run(request: CreateRunRequest) -> CreateRunResponse:
     )
 
 
+@app.get("/api/v1/jev-demo")
+async def jev_demo_manifest() -> dict:
+    from app.jev_demo import manifest
+
+    return {**manifest(), "enabled": get_settings().jev_shadow_enabled}
+
+
+@app.post("/api/v1/jev-demo/runs", response_model=CreateRunResponse, status_code=202)
+async def create_jev_demo_run() -> CreateRunResponse:
+    from app.jev_demo import demo_request
+
+    if not get_settings().jev_shadow_enabled:
+        raise HTTPException(
+            status_code=409, detail="Enable JEV_SHADOW_ENABLED for the demo."
+        )
+    try:
+        request = await demo_request()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Could not fetch the pinned implementation evidence.",
+        ) from exc
+    state = _start_run(request)
+    return CreateRunResponse(
+        run_id=state.run_id,
+        status=state.status,
+        repo=state.repo,
+        documentation_source=state.documentation_source,
+    )
+
+
 @app.post(
     "/api/v1/sources/resolve",
     response_model=ResolveSourcesResponse,
@@ -736,7 +767,7 @@ async def frontend(path: str):
     if candidate.is_relative_to(dist.resolve()) and candidate.is_file():
         return FileResponse(candidate)
     if path and not re.fullmatch(
-        r"(?:usage|findings|showcase|documents/[^/]+(?:/pull-request)?|runs/[^/]+/findings/\d+)",
+        r"(?:jev|usage|findings|showcase|documents/[^/]+(?:/pull-request)?|runs/[^/]+/findings/\d+)",
         path,
     ):
         raise HTTPException(status_code=404, detail="Not found")

@@ -675,6 +675,7 @@ async def _draft_with_llm(
                     "finding_type": cluster.finding_type,
                 },
                 "coverage": coverage.model_dump(mode="json") if coverage else None,
+                "implementation_evidence": cluster.implementation_evidence,
                 "issues": [
                     {
                         "ref": _source_ref(issue),

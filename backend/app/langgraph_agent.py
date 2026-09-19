@@ -5,6 +5,8 @@ from langgraph.graph import END, StateGraph
 from pydantic import BaseModel, Field
 
 from app import events
+from app.config import get_settings
+from app.jev import review_evidence, triage_finding
 from app.llm import complete_json, llm_is_configured
 from app.observability import observed_stage
 from app.state import DocumentationSource, GapCluster, Issue, PullRequest
@@ -37,6 +39,9 @@ class DocsHoundGraphState(TypedDict, total=False):
     repo_docs_max_files: int
     nvidia_embed_max_passages: int
     limit: int
+    issue_numbers: list[int] | None
+    pull_request_numbers: list[int] | None
+    implementation_evidence: list[dict]
     dry_run: bool
     issues: list[dict]
     pull_requests: list[dict]
@@ -207,6 +212,11 @@ async def research(state: DocsHoundGraphState) -> DocsHoundGraphState:
                 research_repo,
                 state["repo"],
                 state.get("limit", 50),
+                **(
+                    {"numbers": state["issue_numbers"]}
+                    if state.get("issue_numbers") is not None
+                    else {}
+                ),
             ),
             run_traced(
                 "research_pull_requests",
@@ -215,6 +225,11 @@ async def research(state: DocsHoundGraphState) -> DocsHoundGraphState:
                 research_pull_requests,
                 state["repo"],
                 state.get("limit", 50),
+                **(
+                    {"numbers": state["pull_request_numbers"]}
+                    if state.get("pull_request_numbers") is not None
+                    else {}
+                ),
             ),
         )
         state["issues"] = [issue.model_dump(mode="json") for issue in issues]
@@ -387,6 +402,69 @@ async def search_docs(state: DocsHoundGraphState) -> DocsHoundGraphState:
     return state
 
 
+@observed_stage("jev_triage")
+async def jev_triage(state: DocsHoundGraphState) -> dict:
+    settings = get_settings()
+    if not settings.jev_shadow_enabled or state.get("errors"):
+        return {}
+    issues = [Issue.model_validate(i) for i in state.get("issues", [])]
+    prs = [PullRequest.model_validate(p) for p in state.get("pull_requests", [])]
+    clusters = [GapCluster.model_validate(c) for c in state.get("clusters", [])]
+    for cluster in clusters:
+        refs = set(cluster.issue_refs + cluster.pr_refs)
+        refs.update(
+            f"{state['repo']}#{n}" for n in cluster.issue_numbers + cluster.pr_numbers
+        )
+        cluster.implementation_evidence = [
+            source
+            for source in state.get("implementation_evidence", [])
+            if refs.intersection(source.get("source_refs", []))
+        ]
+        cluster.jev_triage = await run_traced(
+            "jev_triage_finding",
+            state["run_id"],
+            state["repo"],
+            triage_finding,
+            cluster,
+            issues,
+            prs,
+            settings=settings,
+            trace_input={"finding": cluster.name, "source_refs": sorted(refs)},
+            trace_output=lambda record: {
+                "status": record["status"],
+                "answers": record["answers"],
+            },
+        )
+    return {"clusters": [c.model_dump(mode="json") for c in clusters]}
+
+
+@observed_stage("jev_review")
+async def jev_review(state: DocsHoundGraphState) -> dict:
+    settings = get_settings()
+    if not settings.jev_shadow_enabled or state.get("errors"):
+        return {}
+    clusters = [GapCluster.model_validate(c) for c in state.get("clusters", [])]
+    for cluster in clusters:
+        cluster.jev_assessment = await run_traced(
+            "jev_review_evidence",
+            state["run_id"],
+            state["repo"],
+            review_evidence,
+            cluster,
+            settings=settings,
+            trace_input={
+                "finding": cluster.name,
+                "documents": len(cluster.documentation_evidence),
+            },
+            trace_output=lambda record: {
+                "status": record["status"],
+                "answers": record["answers"],
+                "recommendation": record["recommendation"],
+            },
+        )
+    return {"clusters": [c.model_dump(mode="json") for c in clusters]}
+
+
 @observed_stage("draft")
 async def draft(state: DocsHoundGraphState) -> DocsHoundGraphState:
     try:
@@ -439,6 +517,8 @@ builder = StateGraph(DocsHoundGraphState)
 builder.add_node("llm_decide", llm_decide)
 builder.add_node("research", research)
 builder.add_node("analyze", analyze)
+builder.add_node("jev_triage", jev_triage)
+builder.add_node("jev_review", jev_review)
 builder.add_node("search_docs", search_docs)
 builder.add_node("draft", draft)
 builder.add_node("store", store)
@@ -456,8 +536,10 @@ builder.add_conditional_edges(
     },
 )
 builder.add_edge("research", "llm_decide")
-builder.add_edge("analyze", "llm_decide")
-builder.add_edge("search_docs", "llm_decide")
+builder.add_edge("analyze", "jev_triage")
+builder.add_edge("jev_triage", "llm_decide")
+builder.add_edge("search_docs", "jev_review")
+builder.add_edge("jev_review", "llm_decide")
 builder.add_edge("draft", "llm_decide")
 builder.add_edge("store", END)
 

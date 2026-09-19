@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Literal
+from typing import Annotated, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
@@ -43,6 +43,13 @@ class DocumentationSource(BaseModel):
 
 
 class RunRequest(BaseModel):
+    issue_numbers: list[Annotated[int, Field(gt=0)]] | None = Field(
+        default=None, max_length=100
+    )
+    pull_request_numbers: list[Annotated[int, Field(gt=0)]] | None = Field(
+        default=None, max_length=100
+    )
+    implementation_evidence: list[dict] = Field(default_factory=list)
     repo: str = Field(
         pattern=r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
     )
@@ -123,6 +130,9 @@ class GapCluster(BaseModel):
     approved_document_slug: str | None = None
     documentation_coverage: DocumentationCoverage | None = None
     jev_assessment: dict | None = None
+    jev_triage: dict | None = None
+    documentation_evidence: list[dict] = Field(default_factory=list)
+    implementation_evidence: list[dict] = Field(default_factory=list)
 
     @property
     def is_documentation_proposal(self) -> bool:

@@ -7,6 +7,8 @@ import { BrandHeader } from "../components/BrandHeader";
 import { ErrorMessage, Loading } from "../components/Status";
 import type { Finding } from "../types";
 import { isDocumentationProposal } from "../lib/findings";
+import { JevAssessment } from "../components/JevAssessment";
+import "./jev-demo.css";
 
 export function FindingPage() {
   const { runId = "", index = "0" } = useParams();
@@ -125,6 +127,7 @@ export function FindingPage() {
           <h2>{cluster.name}</h2>
           <p className="finding-question">{cluster.recurring_question}</p>
           <p className="finding-summary">{cluster.summary}</p>
+          <JevAssessment cluster={cluster} />
           <section className="workflow-strip" aria-label="Finding workflow">
             {[
               "Review repository evidence",

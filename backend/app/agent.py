@@ -63,6 +63,9 @@ async def run_agent(request: RunRequest, state: AgentState | None = None) -> Age
                         request.include_documentation_activity
                     ),
                     "limit": request.limit,
+                    "issue_numbers": request.issue_numbers,
+                    "pull_request_numbers": request.pull_request_numbers,
+                    "implementation_evidence": request.implementation_evidence,
                     "repo_docs_max_files": state.scan_limits["repository_documents"],
                     "nvidia_embed_max_passages": state.scan_limits["semantic_passages"],
                     "dry_run": request.dry_run,

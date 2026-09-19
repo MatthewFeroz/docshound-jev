@@ -64,6 +64,15 @@ export interface PullRequest {
 }
 
 export interface GapCluster {
+  jev_triage?: JevResult | null;
+  jev_assessment?: JevResult | null;
+  implementation_evidence?: {
+    path: string;
+    url: string;
+    content: string;
+    revision: string;
+  }[];
+  documentation_evidence?: { path: string; url: string; content: string }[];
   name: string;
   summary: string;
   recurring_question: string;
@@ -80,6 +89,24 @@ export interface GapCluster {
   review_status: ReviewStatus;
   approved_document_slug: string | null;
   documentation_coverage: DocumentationCoverage | null;
+}
+
+export interface JevAnswer {
+  choice: string;
+  confidence: number;
+  probabilities: Record<string, number>;
+}
+
+export interface JevResult {
+  status: string;
+  mode: string;
+  prompt_version?: string;
+  answers?: Record<string, JevAnswer>;
+  recommendation?: string;
+  duration_ms?: number;
+  reason?: string;
+  documents?: { path: string; url: string; answer?: JevAnswer | null }[];
+  usage?: { cost?: number };
 }
 
 export interface ApprovedSource {

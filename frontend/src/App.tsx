@@ -6,11 +6,13 @@ import { FindingsPage } from "./pages/FindingsPage";
 import { UsagePage } from "./pages/UsagePage";
 import { HomePage } from "./pages/HomePage";
 import { PullRequestPage } from "./pages/PullRequestPage";
+import { JevDemoPage } from "./pages/JevDemoPage";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/jev" element={<JevDemoPage />} />
       <Route path="/showcase" element={<Navigate to="/#overview" replace />} />
       <Route path="/usage" element={<UsagePage />} />
       <Route path="/findings" element={<FindingsPage />} />
