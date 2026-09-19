@@ -38,8 +38,12 @@ def configure() -> None:
 
 
 async def run(
-    limit: int, output: Path, demo: bool = False, hold_unverified: bool = False
-) -> None:
+    limit: int,
+    output: Path,
+    demo: bool = False,
+    hold_unverified: bool = False,
+    request_override: dict | None = None,
+) -> Path:
     from app import events
     from app.agent import run_agent
     from app.config import get_settings
@@ -56,7 +60,9 @@ async def run(
         ),
         dry_run=True,
     )
-    if demo:
+    if request_override is not None:
+        request = RunRequest.model_validate(request_override)
+    elif demo:
         from app.jev_demo import demo_request
 
         request = await demo_request(hold_unverified=hold_unverified)
@@ -89,7 +95,7 @@ async def run(
     }
     (directory / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(
-        f"Run {state.run_id}: Luna/high + Jev; draft gate={request.jev_gate_enabled}; {'selected T3Code cases' if demo else f'up to {limit} issues and PRs each'}",
+        f"Run {state.run_id}: {request.repo}; Luna/high + Jev; draft gate={request.jev_gate_enabled}; {'selected T3Code cases' if demo else f'up to {request.limit} issues and PRs each'}",
         flush=True,
     )
     print(f"Artifacts: {directory}", flush=True)
@@ -120,7 +126,7 @@ async def run(
     )
     cases = []
     lines = [
-        "# T3Code: Luna high with Jev pre-draft review",
+        f"# {request.repo}: Luna high with Jev pre-draft review",
         "",
         f"Run: `{state.run_id}`. Status: **{result.status}**.",
         "",
@@ -213,6 +219,7 @@ async def run(
     )
     if result.errors:
         raise SystemExit(1)
+    return directory
 
 
 if __name__ == "__main__":
@@ -225,10 +232,20 @@ if __name__ == "__main__":
     )
     parser.add_argument("--output", type=Path, default=ROOT / "experiments/results")
     parser.add_argument(
+        "--request", type=Path, help="Read a repository RunRequest JSON"
+    )
+    parser.add_argument(
         "--hold-unverified",
         action="store_true",
         help="Hold findings Jev recommends verifying before drafting",
     )
     args = parser.parse_args()
     configure()
-    asyncio.run(run(args.limit, args.output, args.demo, args.hold_unverified))
+    if args.demo and args.request:
+        parser.error("Choose --demo or --request")
+    request_override = (
+        json.loads(args.request.read_text(encoding="utf-8")) if args.request else None
+    )
+    asyncio.run(
+        run(args.limit, args.output, args.demo, args.hold_unverified, request_override)
+    )
